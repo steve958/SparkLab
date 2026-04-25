@@ -26,6 +26,7 @@ export default function GamePage() {
   const mission = useGameStore((s) => s.currentMission);
   const scene = useGameStore((s) => s.scene);
   const scoreState = useGameStore((s) => s.scoreState);
+  const hintState = useGameStore((s) => s.hintState);
   const reactionMode = useGameStore((s) => s.reactionMode);
   const initMission = useGameStore((s) => s.initMission);
   const addAtom = useGameStore((s) => s.addAtom);
@@ -52,7 +53,7 @@ export default function GamePage() {
           ? getString(content.strings, `explanation_${molecule.moleculeId}`, "en")
           : "Great job!";
 
-        const calc = calculateScore(true, scoreState.attempts, null, scoreState.attempts + 1);
+        const calc = calculateScore(true, hintState.hintsUsed, null, scoreState.attempts + 1);
         completeMission(calc.stars, null);
 
         // Save progress
@@ -80,7 +81,7 @@ export default function GamePage() {
           (a) => a.elementId === condition.targetElement
         );
         if (atoms.length >= 1) {
-          const calc = calculateScore(true, scoreState.attempts, null, scoreState.attempts + 1);
+          const calc = calculateScore(true, hintState.hintsUsed, null, scoreState.attempts + 1);
           completeMission(calc.stars, null);
           if (currentProfile) {
             const progressRecord = {
@@ -129,7 +130,7 @@ export default function GamePage() {
             "en"
           ) || result.explanation;
 
-          const calc = calculateScore(true, scoreState.attempts, null, scoreState.attempts + 1);
+          const calc = calculateScore(true, hintState.hintsUsed, null, scoreState.attempts + 1);
           completeMission(calc.stars, null);
 
           if (currentProfile) {
@@ -159,7 +160,7 @@ export default function GamePage() {
     } else {
       showFeedback("Checking...", "info");
     }
-  }, [mission, content, scene, scoreState, currentProfile, completeMission, showFeedback]);
+  }, [mission, content, scene, scoreState, hintState, currentProfile, completeMission, showFeedback]);
 
   useEffect(() => {
     if (!currentProfile) {
