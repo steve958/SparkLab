@@ -140,6 +140,13 @@ export interface Mission {
   difficulty: Difficulty;
   ageBand: AgeBand;
   prerequisites: string[]; // missionIds
+  explanationQuiz?: ExplanationQuiz;
+}
+
+export interface ExplanationQuiz {
+  question: string;
+  options: string[];
+  correctIndex: number;
 }
 
 export type SuccessCondition =

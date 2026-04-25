@@ -14,7 +14,8 @@ import { nudgePosition, findNearestAtom } from "@/engine/interaction";
 import { calculateScore } from "@/engine/scoring";
 import GameHUD from "@/components/GameHUD";
 import CanvasAccessibilityOverlay from "@/components/CanvasAccessibilityOverlay";
-import type { SceneAtom, SceneBond } from "@/types";
+import ExplanationQuizModal from "@/components/ExplanationQuizModal";
+import type { ExplanationQuiz, SceneAtom, SceneBond } from "@/types";
 
 const PixiApp = dynamic(() => import("@/game/PixiApp"), { ssr: false });
 
@@ -40,6 +41,58 @@ export default function GamePage() {
   const [content, setContent] = useState<ContentBundle | null>(null);
   const [contentError, setContentError] = useState<Error | null>(null);
   const [contentReloadKey, setContentReloadKey] = useState(0);
+  const [pendingQuiz, setPendingQuiz] = useState<{
+    quiz: ExplanationQuiz;
+    explanationText: string;
+  } | null>(null);
+
+  const finalizeMission = useCallback(
+    async (explanationCorrect: boolean | null, explanationText: string) => {
+      if (!mission) return;
+      const calc = calculateScore(
+        true,
+        hintState.hintsUsed,
+        explanationCorrect,
+        scoreState.attempts + 1
+      );
+      completeMission(calc.stars, explanationCorrect);
+
+      if (currentProfile) {
+        const progressRecord = {
+          profileId: currentProfile.id,
+          missionId: mission.missionId,
+          stars: calc.stars,
+          completedAt: Date.now(),
+          attempts: scoreState.attempts + 1,
+          bestIndependenceScore: calc.independenceScore,
+        };
+        await saveMissionProgress(progressRecord);
+        await updateProgress(progressRecord);
+      }
+
+      showFeedback(explanationText, "success");
+    },
+    [
+      mission,
+      hintState,
+      scoreState,
+      currentProfile,
+      completeMission,
+      showFeedback,
+      updateProgress,
+    ]
+  );
+
+  const handleSuccess = useCallback(
+    async (explanationText: string) => {
+      if (mission?.explanationQuiz) {
+        setPendingQuiz({ quiz: mission.explanationQuiz, explanationText });
+      } else {
+        await finalizeMission(null, explanationText);
+      }
+    },
+    [mission, finalizeMission]
+  );
 
   const checkMission = useCallback(async () => {
     if (!mission || !content) return;
@@ -52,25 +105,7 @@ export default function GamePage() {
         const explanation = molecule
           ? getString(content.strings, `explanation_${molecule.moleculeId}`, "en")
           : "Great job!";
-
-        const calc = calculateScore(true, hintState.hintsUsed, null, scoreState.attempts + 1);
-        completeMission(calc.stars, null);
-
-        // Save progress
-        if (currentProfile) {
-          const progressRecord = {
-            profileId: currentProfile.id,
-            missionId: mission.missionId,
-            stars: calc.stars,
-            completedAt: Date.now(),
-            attempts: scoreState.attempts + 1,
-            bestIndependenceScore: calc.independenceScore,
-          };
-          await saveMissionProgress(progressRecord);
-          await updateProgress(progressRecord);
-        }
-
-        showFeedback(explanation, "success");
+        await handleSuccess(explanation);
       } else {
         showFeedback(result.explanation, "error");
       }
@@ -81,21 +116,7 @@ export default function GamePage() {
           (a) => a.elementId === condition.targetElement
         );
         if (atoms.length >= 1) {
-          const calc = calculateScore(true, hintState.hintsUsed, null, scoreState.attempts + 1);
-          completeMission(calc.stars, null);
-          if (currentProfile) {
-            const progressRecord = {
-              profileId: currentProfile.id,
-              missionId: mission.missionId,
-              stars: calc.stars,
-              completedAt: Date.now(),
-              attempts: scoreState.attempts + 1,
-              bestIndependenceScore: calc.independenceScore,
-            };
-            await saveMissionProgress(progressRecord);
-            await updateProgress(progressRecord);
-          }
-          showFeedback("You built the atom correctly!", "success");
+          await handleSuccess("You built the atom correctly!");
         } else {
           showFeedback("Build an atom with the right number of particles.", "error");
         }
@@ -129,30 +150,7 @@ export default function GamePage() {
             `explanation_${reaction.reactionId}`,
             "en"
           ) || result.explanation;
-
-          const calc = calculateScore(true, hintState.hintsUsed, null, scoreState.attempts + 1);
-          completeMission(calc.stars, null);
-
-          if (currentProfile) {
-            await saveMissionProgress({
-              profileId: currentProfile.id,
-              missionId: mission.missionId,
-              stars: calc.stars,
-              completedAt: Date.now(),
-              attempts: scoreState.attempts + 1,
-              bestIndependenceScore: calc.independenceScore,
-            });
-            await updateProgress({
-              profileId: currentProfile.id,
-              missionId: mission.missionId,
-              stars: calc.stars,
-              completedAt: Date.now(),
-              attempts: scoreState.attempts + 1,
-              bestIndependenceScore: calc.independenceScore,
-            });
-          }
-
-          showFeedback(explanation, "success");
+          await handleSuccess(explanation);
         } else {
           showFeedback(result.explanation, "error");
         }
@@ -160,7 +158,7 @@ export default function GamePage() {
     } else {
       showFeedback("Checking...", "info");
     }
-  }, [mission, content, scene, scoreState, hintState, currentProfile, completeMission, showFeedback]);
+  }, [mission, content, scene, handleSuccess, showFeedback]);
 
   useEffect(() => {
     if (!currentProfile) {
@@ -385,6 +383,18 @@ export default function GamePage() {
           </p>
         </div>
       </div>
+
+      {pendingQuiz && (
+        <ExplanationQuizModal
+          quiz={pendingQuiz.quiz}
+          explanationText={pendingQuiz.explanationText}
+          onAnswer={(correct) => {
+            const text = pendingQuiz.explanationText;
+            setPendingQuiz(null);
+            void finalizeMission(correct, text);
+          }}
+        />
+      )}
     </main>
   );
 }

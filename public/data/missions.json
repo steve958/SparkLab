@@ -14,7 +14,12 @@
     "teacherNotes": "Students should understand that hydrogen has 1 proton and 1 electron.",
     "difficulty": 1,
     "ageBand": "8-10",
-    "prerequisites": []
+    "prerequisites": [],
+    "explanationQuiz": {
+      "question": "How many protons does a hydrogen atom have?",
+      "options": ["1", "2", "0"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "f02_make_water",
@@ -31,7 +36,16 @@
     "teacherNotes": "Students connect 2 H and 1 O with single covalent bonds.",
     "difficulty": 1,
     "ageBand": "8-10",
-    "prerequisites": ["f01_build_h_atom"]
+    "prerequisites": ["f01_build_h_atom"],
+    "explanationQuiz": {
+      "question": "Why do hydrogen and oxygen stick together to make water?",
+      "options": [
+        "They share electrons",
+        "They are pulled together by tiny magnets",
+        "Water is just one big atom"
+      ],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "f03_make_methane",
@@ -48,7 +62,12 @@
     "teacherNotes": "Students build CH4 with 4 single bonds to carbon.",
     "difficulty": 2,
     "ageBand": "8-10",
-    "prerequisites": ["f02_make_water"]
+    "prerequisites": ["f02_make_water"],
+    "explanationQuiz": {
+      "question": "How many bonds does carbon make in methane?",
+      "options": ["4", "2", "1"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "f04_count_particles",
@@ -68,7 +87,12 @@
     "teacherNotes": "Students count atoms in a pre-built water molecule.",
     "difficulty": 1,
     "ageBand": "8-10",
-    "prerequisites": ["f02_make_water"]
+    "prerequisites": ["f02_make_water"],
+    "explanationQuiz": {
+      "question": "How many atoms are in one water molecule?",
+      "options": ["3", "2", "4"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "f05_make_co2",
@@ -85,7 +109,12 @@
     "teacherNotes": "Students build CO2 with double bonds. Introduces double bonds conceptually.",
     "difficulty": 2,
     "ageBand": "8-10",
-    "prerequisites": ["f03_make_methane"]
+    "prerequisites": ["f03_make_methane"],
+    "explanationQuiz": {
+      "question": "What kind of bonds connect carbon and oxygen in CO₂?",
+      "options": ["Double bonds", "Single bonds", "Triple bonds"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c01_form_nacl",
@@ -102,7 +131,16 @@
     "teacherNotes": "Students learn about electron transfer and ionic bonding.",
     "difficulty": 3,
     "ageBand": "11-14",
-    "prerequisites": []
+    "prerequisites": [],
+    "explanationQuiz": {
+      "question": "What happens to electrons when sodium and chlorine form salt?",
+      "options": [
+        "Sodium gives an electron to chlorine",
+        "They share electrons equally",
+        "Chlorine gives an electron to sodium"
+      ],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c02_conserve_atoms",
@@ -119,7 +157,16 @@
     "teacherNotes": "Students run the water formation reaction and verify atom conservation.",
     "difficulty": 3,
     "ageBand": "11-14",
-    "prerequisites": ["c01_form_nacl"]
+    "prerequisites": ["c01_form_nacl"],
+    "explanationQuiz": {
+      "question": "What is true of every chemical reaction?",
+      "options": [
+        "Atoms are rearranged but not created or destroyed",
+        "New atoms are made from energy",
+        "Some atoms disappear into nothing"
+      ],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c03_ionic_vs_covalent",
@@ -139,7 +186,16 @@
     "teacherNotes": "Students contrast covalent (water) and ionic (NaCl) bonding.",
     "difficulty": 4,
     "ageBand": "11-14",
-    "prerequisites": ["c02_conserve_atoms"]
+    "prerequisites": ["c02_conserve_atoms"],
+    "explanationQuiz": {
+      "question": "What is the main difference between ionic and covalent bonds?",
+      "options": [
+        "Ionic bonds transfer electrons; covalent bonds share them",
+        "Both transfer electrons",
+        "Covalent bonds only happen between metals"
+      ],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c04_make_ammonia",
@@ -156,7 +212,12 @@
     "teacherNotes": "Students build NH3, reinforcing valence electron concepts.",
     "difficulty": 3,
     "ageBand": "11-14",
-    "prerequisites": ["c01_form_nacl"]
+    "prerequisites": ["c01_form_nacl"],
+    "explanationQuiz": {
+      "question": "How many hydrogen atoms are bonded to nitrogen in ammonia?",
+      "options": ["3", "4", "2"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c05_nitrogen_triple",
@@ -173,7 +234,12 @@
     "teacherNotes": "Students build N2 with a triple bond. Advanced covalent bonding.",
     "difficulty": 4,
     "ageBand": "11-14",
-    "prerequisites": ["c04_make_ammonia"]
+    "prerequisites": ["c04_make_ammonia"],
+    "explanationQuiz": {
+      "question": "How many pairs of electrons are shared in a triple bond?",
+      "options": ["3", "1", "2"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c06_hcl_formation",
@@ -190,7 +256,12 @@
     "teacherNotes": "Students run the H2 + Cl2 -> 2HCl reaction and verify atom conservation.",
     "difficulty": 3,
     "ageBand": "11-14",
-    "prerequisites": ["c02_conserve_atoms"]
+    "prerequisites": ["c02_conserve_atoms"],
+    "explanationQuiz": {
+      "question": "When one H₂ and one Cl₂ react, how many HCl molecules form?",
+      "options": ["2", "1", "4"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c07_methane_combustion",
@@ -207,7 +278,16 @@
     "teacherNotes": "Students run CH4 + 2O2 -> CO2 + 2H2O, a classic combustion reaction.",
     "difficulty": 4,
     "ageBand": "11-14",
-    "prerequisites": ["c06_hcl_formation"]
+    "prerequisites": ["c06_hcl_formation"],
+    "explanationQuiz": {
+      "question": "What products form when methane burns in oxygen?",
+      "options": [
+        "Carbon dioxide and water",
+        "Just carbon dioxide",
+        "Hydrogen and oxygen gas"
+      ],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c08_ammonia_formation",
@@ -224,7 +304,12 @@
     "teacherNotes": "Students run N2 + 3H2 -> 2NH3, the Haber-Bosch process simplified.",
     "difficulty": 4,
     "ageBand": "11-14",
-    "prerequisites": ["c04_make_ammonia"]
+    "prerequisites": ["c04_make_ammonia"],
+    "explanationQuiz": {
+      "question": "How many H₂ molecules are needed to react with one N₂ to make ammonia?",
+      "options": ["3", "2", "1"],
+      "correctIndex": 0
+    }
   },
 
   {
@@ -242,7 +327,12 @@
     "teacherNotes": "Reinforce that the atomic number equals the proton count.",
     "difficulty": 1,
     "ageBand": "8-10",
-    "prerequisites": ["f01_build_h_atom"]
+    "prerequisites": ["f01_build_h_atom"],
+    "explanationQuiz": {
+      "question": "How many electrons does a neutral helium atom have?",
+      "options": ["2", "1", "4"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "f07_oxygen_atom",
@@ -259,7 +349,12 @@
     "teacherNotes": "Students build O with 8 protons and 8 electrons.",
     "difficulty": 2,
     "ageBand": "8-10",
-    "prerequisites": ["f01_build_h_atom"]
+    "prerequisites": ["f01_build_h_atom"],
+    "explanationQuiz": {
+      "question": "How many protons does an oxygen atom have?",
+      "options": ["8", "6", "2"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "f08_carbon_atom",
@@ -276,7 +371,12 @@
     "teacherNotes": "Bridges atom-building toward later carbon-based molecules.",
     "difficulty": 2,
     "ageBand": "8-10",
-    "prerequisites": ["f01_build_h_atom"]
+    "prerequisites": ["f01_build_h_atom"],
+    "explanationQuiz": {
+      "question": "A neutral carbon atom has 6 protons. How many electrons does it have?",
+      "options": ["6", "4", "8"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "f09_make_h2_gas",
@@ -293,7 +393,12 @@
     "teacherNotes": "Simplest diatomic molecule — gentle intro to covalent bonding.",
     "difficulty": 1,
     "ageBand": "8-10",
-    "prerequisites": ["f02_make_water"]
+    "prerequisites": ["f02_make_water"],
+    "explanationQuiz": {
+      "question": "How many bonds connect the two hydrogens in H₂?",
+      "options": ["1", "2", "3"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "f10_make_o2_gas",
@@ -310,7 +415,12 @@
     "teacherNotes": "Introduces the double bond before tackling CO₂.",
     "difficulty": 2,
     "ageBand": "8-10",
-    "prerequisites": ["f07_oxygen_atom"]
+    "prerequisites": ["f07_oxygen_atom"],
+    "explanationQuiz": {
+      "question": "What kind of bond holds the two oxygens together in O₂?",
+      "options": ["A double bond", "A single bond", "A triple bond"],
+      "correctIndex": 0
+    }
   },
 
   {
@@ -328,7 +438,12 @@
     "teacherNotes": "Sets up the next mission on Cl₂ gas.",
     "difficulty": 2,
     "ageBand": "11-14",
-    "prerequisites": []
+    "prerequisites": [],
+    "explanationQuiz": {
+      "question": "How many protons does a chlorine atom have?",
+      "options": ["17", "15", "19"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c10_make_cl2_gas",
@@ -345,7 +460,16 @@
     "teacherNotes": "Diatomic halogen with a single covalent bond.",
     "difficulty": 2,
     "ageBand": "11-14",
-    "prerequisites": ["c09_chlorine_atom"]
+    "prerequisites": ["c09_chlorine_atom"],
+    "explanationQuiz": {
+      "question": "What kind of bond is between the two chlorines in Cl₂?",
+      "options": [
+        "A single covalent bond",
+        "An ionic bond",
+        "A triple bond"
+      ],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c11_make_carbon_monoxide",
@@ -362,7 +486,12 @@
     "teacherNotes": "Reinforces triple bonds in a heteronuclear molecule.",
     "difficulty": 4,
     "ageBand": "11-14",
-    "prerequisites": ["c05_nitrogen_triple"]
+    "prerequisites": ["c05_nitrogen_triple"],
+    "explanationQuiz": {
+      "question": "How many bonds connect carbon and oxygen in carbon monoxide (CO)?",
+      "options": ["3", "1", "2"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "c12_make_hydrogen_peroxide",
@@ -379,7 +508,12 @@
     "teacherNotes": "Introduces O–O single bonds; longer molecule chain than water.",
     "difficulty": 3,
     "ageBand": "11-14",
-    "prerequisites": ["c02_conserve_atoms"]
+    "prerequisites": ["c02_conserve_atoms"],
+    "explanationQuiz": {
+      "question": "How many oxygen atoms are in one molecule of hydrogen peroxide?",
+      "options": ["2", "1", "3"],
+      "correctIndex": 0
+    }
   },
 
   {
@@ -397,7 +531,16 @@
     "teacherNotes": "Reverse of water_formation. Demonstrates electrolysis and conservation.",
     "difficulty": 4,
     "ageBand": "11-14",
-    "prerequisites": ["c02_conserve_atoms"]
+    "prerequisites": ["c02_conserve_atoms"],
+    "explanationQuiz": {
+      "question": "What is needed to split water into hydrogen and oxygen gas?",
+      "options": [
+        "Electricity (electrolysis)",
+        "Sunlight alone",
+        "Magnets"
+      ],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "r02_co_oxidation",
@@ -414,7 +557,12 @@
     "teacherNotes": "Reactant CO has a triple bond; product CO₂ has two double bonds.",
     "difficulty": 5,
     "ageBand": "11-14",
-    "prerequisites": ["c11_make_carbon_monoxide"]
+    "prerequisites": ["c11_make_carbon_monoxide"],
+    "explanationQuiz": {
+      "question": "What does carbon monoxide turn into when it gets more oxygen?",
+      "options": ["Carbon dioxide", "Methane", "Water"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "r03_h2o2_decomposition",
@@ -431,7 +579,16 @@
     "teacherNotes": "Decomposition reaction; two molecules in, two molecules out.",
     "difficulty": 4,
     "ageBand": "11-14",
-    "prerequisites": ["c12_make_hydrogen_peroxide"]
+    "prerequisites": ["c12_make_hydrogen_peroxide"],
+    "explanationQuiz": {
+      "question": "What does hydrogen peroxide break down into?",
+      "options": [
+        "Water and oxygen gas",
+        "Hydrogen gas and oxygen gas",
+        "Just water"
+      ],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "r04_methane_combustion_review",
@@ -448,7 +605,12 @@
     "teacherNotes": "Capstone review of multi-product combustion.",
     "difficulty": 5,
     "ageBand": "11-14",
-    "prerequisites": ["c07_methane_combustion"]
+    "prerequisites": ["c07_methane_combustion"],
+    "explanationQuiz": {
+      "question": "How many O₂ molecules are needed to burn one methane molecule?",
+      "options": ["2", "1", "3"],
+      "correctIndex": 0
+    }
   },
   {
     "missionId": "r05_ammonia_synthesis_review",
@@ -465,6 +627,11 @@
     "teacherNotes": "Reinforces the Haber-Bosch process and triple-bond cleavage.",
     "difficulty": 5,
     "ageBand": "11-14",
-    "prerequisites": ["c08_ammonia_formation"]
+    "prerequisites": ["c08_ammonia_formation"],
+    "explanationQuiz": {
+      "question": "Ammonia is mostly used to make what?",
+      "options": ["Fertilizers", "Plastics", "Fuels"],
+      "correctIndex": 0
+    }
   }
 ]
