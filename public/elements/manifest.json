@@ -1,0 +1,1182 @@
+[
+  {
+    "atomic_number": 1,
+    "symbol": "H",
+    "name": "Hydrogen",
+    "category": "reactive nonmetal",
+    "png_512": "png_512/001_H_Hydrogen.png",
+    "svg_source": "svg_source/001_H_Hydrogen.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 2,
+    "symbol": "He",
+    "name": "Helium",
+    "category": "noble gas",
+    "png_512": "png_512/002_He_Helium.png",
+    "svg_source": "svg_source/002_He_Helium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 3,
+    "symbol": "Li",
+    "name": "Lithium",
+    "category": "alkali metal",
+    "png_512": "png_512/003_Li_Lithium.png",
+    "svg_source": "svg_source/003_Li_Lithium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 4,
+    "symbol": "Be",
+    "name": "Beryllium",
+    "category": "alkaline earth metal",
+    "png_512": "png_512/004_Be_Beryllium.png",
+    "svg_source": "svg_source/004_Be_Beryllium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 5,
+    "symbol": "B",
+    "name": "Boron",
+    "category": "metalloid",
+    "png_512": "png_512/005_B_Boron.png",
+    "svg_source": "svg_source/005_B_Boron.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 6,
+    "symbol": "C",
+    "name": "Carbon",
+    "category": "reactive nonmetal",
+    "png_512": "png_512/006_C_Carbon.png",
+    "svg_source": "svg_source/006_C_Carbon.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 7,
+    "symbol": "N",
+    "name": "Nitrogen",
+    "category": "reactive nonmetal",
+    "png_512": "png_512/007_N_Nitrogen.png",
+    "svg_source": "svg_source/007_N_Nitrogen.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 8,
+    "symbol": "O",
+    "name": "Oxygen",
+    "category": "reactive nonmetal",
+    "png_512": "png_512/008_O_Oxygen.png",
+    "svg_source": "svg_source/008_O_Oxygen.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 9,
+    "symbol": "F",
+    "name": "Fluorine",
+    "category": "halogen",
+    "png_512": "png_512/009_F_Fluorine.png",
+    "svg_source": "svg_source/009_F_Fluorine.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 10,
+    "symbol": "Ne",
+    "name": "Neon",
+    "category": "noble gas",
+    "png_512": "png_512/010_Ne_Neon.png",
+    "svg_source": "svg_source/010_Ne_Neon.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 11,
+    "symbol": "Na",
+    "name": "Sodium",
+    "category": "alkali metal",
+    "png_512": "png_512/011_Na_Sodium.png",
+    "svg_source": "svg_source/011_Na_Sodium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 12,
+    "symbol": "Mg",
+    "name": "Magnesium",
+    "category": "alkaline earth metal",
+    "png_512": "png_512/012_Mg_Magnesium.png",
+    "svg_source": "svg_source/012_Mg_Magnesium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 13,
+    "symbol": "Al",
+    "name": "Aluminium",
+    "category": "post-transition metal",
+    "png_512": "png_512/013_Al_Aluminium.png",
+    "svg_source": "svg_source/013_Al_Aluminium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 14,
+    "symbol": "Si",
+    "name": "Silicon",
+    "category": "metalloid",
+    "png_512": "png_512/014_Si_Silicon.png",
+    "svg_source": "svg_source/014_Si_Silicon.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 15,
+    "symbol": "P",
+    "name": "Phosphorus",
+    "category": "reactive nonmetal",
+    "png_512": "png_512/015_P_Phosphorus.png",
+    "svg_source": "svg_source/015_P_Phosphorus.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 16,
+    "symbol": "S",
+    "name": "Sulfur",
+    "category": "reactive nonmetal",
+    "png_512": "png_512/016_S_Sulfur.png",
+    "svg_source": "svg_source/016_S_Sulfur.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 17,
+    "symbol": "Cl",
+    "name": "Chlorine",
+    "category": "halogen",
+    "png_512": "png_512/017_Cl_Chlorine.png",
+    "svg_source": "svg_source/017_Cl_Chlorine.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 18,
+    "symbol": "Ar",
+    "name": "Argon",
+    "category": "noble gas",
+    "png_512": "png_512/018_Ar_Argon.png",
+    "svg_source": "svg_source/018_Ar_Argon.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 19,
+    "symbol": "K",
+    "name": "Potassium",
+    "category": "alkali metal",
+    "png_512": "png_512/019_K_Potassium.png",
+    "svg_source": "svg_source/019_K_Potassium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 20,
+    "symbol": "Ca",
+    "name": "Calcium",
+    "category": "alkaline earth metal",
+    "png_512": "png_512/020_Ca_Calcium.png",
+    "svg_source": "svg_source/020_Ca_Calcium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 21,
+    "symbol": "Sc",
+    "name": "Scandium",
+    "category": "transition metal",
+    "png_512": "png_512/021_Sc_Scandium.png",
+    "svg_source": "svg_source/021_Sc_Scandium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 22,
+    "symbol": "Ti",
+    "name": "Titanium",
+    "category": "transition metal",
+    "png_512": "png_512/022_Ti_Titanium.png",
+    "svg_source": "svg_source/022_Ti_Titanium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 23,
+    "symbol": "V",
+    "name": "Vanadium",
+    "category": "transition metal",
+    "png_512": "png_512/023_V_Vanadium.png",
+    "svg_source": "svg_source/023_V_Vanadium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 24,
+    "symbol": "Cr",
+    "name": "Chromium",
+    "category": "transition metal",
+    "png_512": "png_512/024_Cr_Chromium.png",
+    "svg_source": "svg_source/024_Cr_Chromium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 25,
+    "symbol": "Mn",
+    "name": "Manganese",
+    "category": "transition metal",
+    "png_512": "png_512/025_Mn_Manganese.png",
+    "svg_source": "svg_source/025_Mn_Manganese.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 26,
+    "symbol": "Fe",
+    "name": "Iron",
+    "category": "transition metal",
+    "png_512": "png_512/026_Fe_Iron.png",
+    "svg_source": "svg_source/026_Fe_Iron.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 27,
+    "symbol": "Co",
+    "name": "Cobalt",
+    "category": "transition metal",
+    "png_512": "png_512/027_Co_Cobalt.png",
+    "svg_source": "svg_source/027_Co_Cobalt.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 28,
+    "symbol": "Ni",
+    "name": "Nickel",
+    "category": "transition metal",
+    "png_512": "png_512/028_Ni_Nickel.png",
+    "svg_source": "svg_source/028_Ni_Nickel.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 29,
+    "symbol": "Cu",
+    "name": "Copper",
+    "category": "transition metal",
+    "png_512": "png_512/029_Cu_Copper.png",
+    "svg_source": "svg_source/029_Cu_Copper.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 30,
+    "symbol": "Zn",
+    "name": "Zinc",
+    "category": "transition metal",
+    "png_512": "png_512/030_Zn_Zinc.png",
+    "svg_source": "svg_source/030_Zn_Zinc.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 31,
+    "symbol": "Ga",
+    "name": "Gallium",
+    "category": "post-transition metal",
+    "png_512": "png_512/031_Ga_Gallium.png",
+    "svg_source": "svg_source/031_Ga_Gallium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 32,
+    "symbol": "Ge",
+    "name": "Germanium",
+    "category": "metalloid",
+    "png_512": "png_512/032_Ge_Germanium.png",
+    "svg_source": "svg_source/032_Ge_Germanium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 33,
+    "symbol": "As",
+    "name": "Arsenic",
+    "category": "metalloid",
+    "png_512": "png_512/033_As_Arsenic.png",
+    "svg_source": "svg_source/033_As_Arsenic.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 34,
+    "symbol": "Se",
+    "name": "Selenium",
+    "category": "reactive nonmetal",
+    "png_512": "png_512/034_Se_Selenium.png",
+    "svg_source": "svg_source/034_Se_Selenium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 35,
+    "symbol": "Br",
+    "name": "Bromine",
+    "category": "halogen",
+    "png_512": "png_512/035_Br_Bromine.png",
+    "svg_source": "svg_source/035_Br_Bromine.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 36,
+    "symbol": "Kr",
+    "name": "Krypton",
+    "category": "noble gas",
+    "png_512": "png_512/036_Kr_Krypton.png",
+    "svg_source": "svg_source/036_Kr_Krypton.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 37,
+    "symbol": "Rb",
+    "name": "Rubidium",
+    "category": "alkali metal",
+    "png_512": "png_512/037_Rb_Rubidium.png",
+    "svg_source": "svg_source/037_Rb_Rubidium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 38,
+    "symbol": "Sr",
+    "name": "Strontium",
+    "category": "alkaline earth metal",
+    "png_512": "png_512/038_Sr_Strontium.png",
+    "svg_source": "svg_source/038_Sr_Strontium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 39,
+    "symbol": "Y",
+    "name": "Yttrium",
+    "category": "transition metal",
+    "png_512": "png_512/039_Y_Yttrium.png",
+    "svg_source": "svg_source/039_Y_Yttrium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 40,
+    "symbol": "Zr",
+    "name": "Zirconium",
+    "category": "transition metal",
+    "png_512": "png_512/040_Zr_Zirconium.png",
+    "svg_source": "svg_source/040_Zr_Zirconium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 41,
+    "symbol": "Nb",
+    "name": "Niobium",
+    "category": "transition metal",
+    "png_512": "png_512/041_Nb_Niobium.png",
+    "svg_source": "svg_source/041_Nb_Niobium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 42,
+    "symbol": "Mo",
+    "name": "Molybdenum",
+    "category": "transition metal",
+    "png_512": "png_512/042_Mo_Molybdenum.png",
+    "svg_source": "svg_source/042_Mo_Molybdenum.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 43,
+    "symbol": "Tc",
+    "name": "Technetium",
+    "category": "transition metal",
+    "png_512": "png_512/043_Tc_Technetium.png",
+    "svg_source": "svg_source/043_Tc_Technetium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 44,
+    "symbol": "Ru",
+    "name": "Ruthenium",
+    "category": "transition metal",
+    "png_512": "png_512/044_Ru_Ruthenium.png",
+    "svg_source": "svg_source/044_Ru_Ruthenium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 45,
+    "symbol": "Rh",
+    "name": "Rhodium",
+    "category": "transition metal",
+    "png_512": "png_512/045_Rh_Rhodium.png",
+    "svg_source": "svg_source/045_Rh_Rhodium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 46,
+    "symbol": "Pd",
+    "name": "Palladium",
+    "category": "transition metal",
+    "png_512": "png_512/046_Pd_Palladium.png",
+    "svg_source": "svg_source/046_Pd_Palladium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 47,
+    "symbol": "Ag",
+    "name": "Silver",
+    "category": "transition metal",
+    "png_512": "png_512/047_Ag_Silver.png",
+    "svg_source": "svg_source/047_Ag_Silver.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 48,
+    "symbol": "Cd",
+    "name": "Cadmium",
+    "category": "transition metal",
+    "png_512": "png_512/048_Cd_Cadmium.png",
+    "svg_source": "svg_source/048_Cd_Cadmium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 49,
+    "symbol": "In",
+    "name": "Indium",
+    "category": "post-transition metal",
+    "png_512": "png_512/049_In_Indium.png",
+    "svg_source": "svg_source/049_In_Indium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 50,
+    "symbol": "Sn",
+    "name": "Tin",
+    "category": "post-transition metal",
+    "png_512": "png_512/050_Sn_Tin.png",
+    "svg_source": "svg_source/050_Sn_Tin.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 51,
+    "symbol": "Sb",
+    "name": "Antimony",
+    "category": "metalloid",
+    "png_512": "png_512/051_Sb_Antimony.png",
+    "svg_source": "svg_source/051_Sb_Antimony.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 52,
+    "symbol": "Te",
+    "name": "Tellurium",
+    "category": "metalloid",
+    "png_512": "png_512/052_Te_Tellurium.png",
+    "svg_source": "svg_source/052_Te_Tellurium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 53,
+    "symbol": "I",
+    "name": "Iodine",
+    "category": "halogen",
+    "png_512": "png_512/053_I_Iodine.png",
+    "svg_source": "svg_source/053_I_Iodine.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 54,
+    "symbol": "Xe",
+    "name": "Xenon",
+    "category": "noble gas",
+    "png_512": "png_512/054_Xe_Xenon.png",
+    "svg_source": "svg_source/054_Xe_Xenon.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 55,
+    "symbol": "Cs",
+    "name": "Caesium",
+    "category": "alkali metal",
+    "png_512": "png_512/055_Cs_Caesium.png",
+    "svg_source": "svg_source/055_Cs_Caesium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 56,
+    "symbol": "Ba",
+    "name": "Barium",
+    "category": "alkaline earth metal",
+    "png_512": "png_512/056_Ba_Barium.png",
+    "svg_source": "svg_source/056_Ba_Barium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 57,
+    "symbol": "La",
+    "name": "Lanthanum",
+    "category": "lanthanoid",
+    "png_512": "png_512/057_La_Lanthanum.png",
+    "svg_source": "svg_source/057_La_Lanthanum.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 58,
+    "symbol": "Ce",
+    "name": "Cerium",
+    "category": "lanthanoid",
+    "png_512": "png_512/058_Ce_Cerium.png",
+    "svg_source": "svg_source/058_Ce_Cerium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 59,
+    "symbol": "Pr",
+    "name": "Praseodymium",
+    "category": "lanthanoid",
+    "png_512": "png_512/059_Pr_Praseodymium.png",
+    "svg_source": "svg_source/059_Pr_Praseodymium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 60,
+    "symbol": "Nd",
+    "name": "Neodymium",
+    "category": "lanthanoid",
+    "png_512": "png_512/060_Nd_Neodymium.png",
+    "svg_source": "svg_source/060_Nd_Neodymium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 61,
+    "symbol": "Pm",
+    "name": "Promethium",
+    "category": "lanthanoid",
+    "png_512": "png_512/061_Pm_Promethium.png",
+    "svg_source": "svg_source/061_Pm_Promethium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 62,
+    "symbol": "Sm",
+    "name": "Samarium",
+    "category": "lanthanoid",
+    "png_512": "png_512/062_Sm_Samarium.png",
+    "svg_source": "svg_source/062_Sm_Samarium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 63,
+    "symbol": "Eu",
+    "name": "Europium",
+    "category": "lanthanoid",
+    "png_512": "png_512/063_Eu_Europium.png",
+    "svg_source": "svg_source/063_Eu_Europium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 64,
+    "symbol": "Gd",
+    "name": "Gadolinium",
+    "category": "lanthanoid",
+    "png_512": "png_512/064_Gd_Gadolinium.png",
+    "svg_source": "svg_source/064_Gd_Gadolinium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 65,
+    "symbol": "Tb",
+    "name": "Terbium",
+    "category": "lanthanoid",
+    "png_512": "png_512/065_Tb_Terbium.png",
+    "svg_source": "svg_source/065_Tb_Terbium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 66,
+    "symbol": "Dy",
+    "name": "Dysprosium",
+    "category": "lanthanoid",
+    "png_512": "png_512/066_Dy_Dysprosium.png",
+    "svg_source": "svg_source/066_Dy_Dysprosium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 67,
+    "symbol": "Ho",
+    "name": "Holmium",
+    "category": "lanthanoid",
+    "png_512": "png_512/067_Ho_Holmium.png",
+    "svg_source": "svg_source/067_Ho_Holmium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 68,
+    "symbol": "Er",
+    "name": "Erbium",
+    "category": "lanthanoid",
+    "png_512": "png_512/068_Er_Erbium.png",
+    "svg_source": "svg_source/068_Er_Erbium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 69,
+    "symbol": "Tm",
+    "name": "Thulium",
+    "category": "lanthanoid",
+    "png_512": "png_512/069_Tm_Thulium.png",
+    "svg_source": "svg_source/069_Tm_Thulium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 70,
+    "symbol": "Yb",
+    "name": "Ytterbium",
+    "category": "lanthanoid",
+    "png_512": "png_512/070_Yb_Ytterbium.png",
+    "svg_source": "svg_source/070_Yb_Ytterbium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 71,
+    "symbol": "Lu",
+    "name": "Lutetium",
+    "category": "lanthanoid",
+    "png_512": "png_512/071_Lu_Lutetium.png",
+    "svg_source": "svg_source/071_Lu_Lutetium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 72,
+    "symbol": "Hf",
+    "name": "Hafnium",
+    "category": "transition metal",
+    "png_512": "png_512/072_Hf_Hafnium.png",
+    "svg_source": "svg_source/072_Hf_Hafnium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 73,
+    "symbol": "Ta",
+    "name": "Tantalum",
+    "category": "transition metal",
+    "png_512": "png_512/073_Ta_Tantalum.png",
+    "svg_source": "svg_source/073_Ta_Tantalum.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 74,
+    "symbol": "W",
+    "name": "Tungsten",
+    "category": "transition metal",
+    "png_512": "png_512/074_W_Tungsten.png",
+    "svg_source": "svg_source/074_W_Tungsten.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 75,
+    "symbol": "Re",
+    "name": "Rhenium",
+    "category": "transition metal",
+    "png_512": "png_512/075_Re_Rhenium.png",
+    "svg_source": "svg_source/075_Re_Rhenium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 76,
+    "symbol": "Os",
+    "name": "Osmium",
+    "category": "transition metal",
+    "png_512": "png_512/076_Os_Osmium.png",
+    "svg_source": "svg_source/076_Os_Osmium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 77,
+    "symbol": "Ir",
+    "name": "Iridium",
+    "category": "transition metal",
+    "png_512": "png_512/077_Ir_Iridium.png",
+    "svg_source": "svg_source/077_Ir_Iridium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 78,
+    "symbol": "Pt",
+    "name": "Platinum",
+    "category": "transition metal",
+    "png_512": "png_512/078_Pt_Platinum.png",
+    "svg_source": "svg_source/078_Pt_Platinum.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 79,
+    "symbol": "Au",
+    "name": "Gold",
+    "category": "transition metal",
+    "png_512": "png_512/079_Au_Gold.png",
+    "svg_source": "svg_source/079_Au_Gold.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 80,
+    "symbol": "Hg",
+    "name": "Mercury",
+    "category": "transition metal",
+    "png_512": "png_512/080_Hg_Mercury.png",
+    "svg_source": "svg_source/080_Hg_Mercury.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 81,
+    "symbol": "Tl",
+    "name": "Thallium",
+    "category": "post-transition metal",
+    "png_512": "png_512/081_Tl_Thallium.png",
+    "svg_source": "svg_source/081_Tl_Thallium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 82,
+    "symbol": "Pb",
+    "name": "Lead",
+    "category": "post-transition metal",
+    "png_512": "png_512/082_Pb_Lead.png",
+    "svg_source": "svg_source/082_Pb_Lead.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 83,
+    "symbol": "Bi",
+    "name": "Bismuth",
+    "category": "post-transition metal",
+    "png_512": "png_512/083_Bi_Bismuth.png",
+    "svg_source": "svg_source/083_Bi_Bismuth.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 84,
+    "symbol": "Po",
+    "name": "Polonium",
+    "category": "post-transition metal",
+    "png_512": "png_512/084_Po_Polonium.png",
+    "svg_source": "svg_source/084_Po_Polonium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 85,
+    "symbol": "At",
+    "name": "Astatine",
+    "category": "halogen",
+    "png_512": "png_512/085_At_Astatine.png",
+    "svg_source": "svg_source/085_At_Astatine.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 86,
+    "symbol": "Rn",
+    "name": "Radon",
+    "category": "noble gas",
+    "png_512": "png_512/086_Rn_Radon.png",
+    "svg_source": "svg_source/086_Rn_Radon.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 87,
+    "symbol": "Fr",
+    "name": "Francium",
+    "category": "alkali metal",
+    "png_512": "png_512/087_Fr_Francium.png",
+    "svg_source": "svg_source/087_Fr_Francium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 88,
+    "symbol": "Ra",
+    "name": "Radium",
+    "category": "alkaline earth metal",
+    "png_512": "png_512/088_Ra_Radium.png",
+    "svg_source": "svg_source/088_Ra_Radium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 89,
+    "symbol": "Ac",
+    "name": "Actinium",
+    "category": "actinoid",
+    "png_512": "png_512/089_Ac_Actinium.png",
+    "svg_source": "svg_source/089_Ac_Actinium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 90,
+    "symbol": "Th",
+    "name": "Thorium",
+    "category": "actinoid",
+    "png_512": "png_512/090_Th_Thorium.png",
+    "svg_source": "svg_source/090_Th_Thorium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 91,
+    "symbol": "Pa",
+    "name": "Protactinium",
+    "category": "actinoid",
+    "png_512": "png_512/091_Pa_Protactinium.png",
+    "svg_source": "svg_source/091_Pa_Protactinium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 92,
+    "symbol": "U",
+    "name": "Uranium",
+    "category": "actinoid",
+    "png_512": "png_512/092_U_Uranium.png",
+    "svg_source": "svg_source/092_U_Uranium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 93,
+    "symbol": "Np",
+    "name": "Neptunium",
+    "category": "actinoid",
+    "png_512": "png_512/093_Np_Neptunium.png",
+    "svg_source": "svg_source/093_Np_Neptunium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 94,
+    "symbol": "Pu",
+    "name": "Plutonium",
+    "category": "actinoid",
+    "png_512": "png_512/094_Pu_Plutonium.png",
+    "svg_source": "svg_source/094_Pu_Plutonium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 95,
+    "symbol": "Am",
+    "name": "Americium",
+    "category": "actinoid",
+    "png_512": "png_512/095_Am_Americium.png",
+    "svg_source": "svg_source/095_Am_Americium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 96,
+    "symbol": "Cm",
+    "name": "Curium",
+    "category": "actinoid",
+    "png_512": "png_512/096_Cm_Curium.png",
+    "svg_source": "svg_source/096_Cm_Curium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 97,
+    "symbol": "Bk",
+    "name": "Berkelium",
+    "category": "actinoid",
+    "png_512": "png_512/097_Bk_Berkelium.png",
+    "svg_source": "svg_source/097_Bk_Berkelium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 98,
+    "symbol": "Cf",
+    "name": "Californium",
+    "category": "actinoid",
+    "png_512": "png_512/098_Cf_Californium.png",
+    "svg_source": "svg_source/098_Cf_Californium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 99,
+    "symbol": "Es",
+    "name": "Einsteinium",
+    "category": "actinoid",
+    "png_512": "png_512/099_Es_Einsteinium.png",
+    "svg_source": "svg_source/099_Es_Einsteinium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 100,
+    "symbol": "Fm",
+    "name": "Fermium",
+    "category": "actinoid",
+    "png_512": "png_512/100_Fm_Fermium.png",
+    "svg_source": "svg_source/100_Fm_Fermium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 101,
+    "symbol": "Md",
+    "name": "Mendelevium",
+    "category": "actinoid",
+    "png_512": "png_512/101_Md_Mendelevium.png",
+    "svg_source": "svg_source/101_Md_Mendelevium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 102,
+    "symbol": "No",
+    "name": "Nobelium",
+    "category": "actinoid",
+    "png_512": "png_512/102_No_Nobelium.png",
+    "svg_source": "svg_source/102_No_Nobelium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 103,
+    "symbol": "Lr",
+    "name": "Lawrencium",
+    "category": "actinoid",
+    "png_512": "png_512/103_Lr_Lawrencium.png",
+    "svg_source": "svg_source/103_Lr_Lawrencium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 104,
+    "symbol": "Rf",
+    "name": "Rutherfordium",
+    "category": "transition metal",
+    "png_512": "png_512/104_Rf_Rutherfordium.png",
+    "svg_source": "svg_source/104_Rf_Rutherfordium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 105,
+    "symbol": "Db",
+    "name": "Dubnium",
+    "category": "transition metal",
+    "png_512": "png_512/105_Db_Dubnium.png",
+    "svg_source": "svg_source/105_Db_Dubnium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 106,
+    "symbol": "Sg",
+    "name": "Seaborgium",
+    "category": "transition metal",
+    "png_512": "png_512/106_Sg_Seaborgium.png",
+    "svg_source": "svg_source/106_Sg_Seaborgium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 107,
+    "symbol": "Bh",
+    "name": "Bohrium",
+    "category": "transition metal",
+    "png_512": "png_512/107_Bh_Bohrium.png",
+    "svg_source": "svg_source/107_Bh_Bohrium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 108,
+    "symbol": "Hs",
+    "name": "Hassium",
+    "category": "transition metal",
+    "png_512": "png_512/108_Hs_Hassium.png",
+    "svg_source": "svg_source/108_Hs_Hassium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 109,
+    "symbol": "Mt",
+    "name": "Meitnerium",
+    "category": "unknown properties",
+    "png_512": "png_512/109_Mt_Meitnerium.png",
+    "svg_source": "svg_source/109_Mt_Meitnerium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 110,
+    "symbol": "Ds",
+    "name": "Darmstadtium",
+    "category": "unknown properties",
+    "png_512": "png_512/110_Ds_Darmstadtium.png",
+    "svg_source": "svg_source/110_Ds_Darmstadtium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 111,
+    "symbol": "Rg",
+    "name": "Roentgenium",
+    "category": "unknown properties",
+    "png_512": "png_512/111_Rg_Roentgenium.png",
+    "svg_source": "svg_source/111_Rg_Roentgenium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 112,
+    "symbol": "Cn",
+    "name": "Copernicium",
+    "category": "transition metal",
+    "png_512": "png_512/112_Cn_Copernicium.png",
+    "svg_source": "svg_source/112_Cn_Copernicium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 113,
+    "symbol": "Nh",
+    "name": "Nihonium",
+    "category": "unknown properties",
+    "png_512": "png_512/113_Nh_Nihonium.png",
+    "svg_source": "svg_source/113_Nh_Nihonium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 114,
+    "symbol": "Fl",
+    "name": "Flerovium",
+    "category": "post-transition metal",
+    "png_512": "png_512/114_Fl_Flerovium.png",
+    "svg_source": "svg_source/114_Fl_Flerovium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 115,
+    "symbol": "Mc",
+    "name": "Moscovium",
+    "category": "unknown properties",
+    "png_512": "png_512/115_Mc_Moscovium.png",
+    "svg_source": "svg_source/115_Mc_Moscovium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 116,
+    "symbol": "Lv",
+    "name": "Livermorium",
+    "category": "post-transition metal",
+    "png_512": "png_512/116_Lv_Livermorium.png",
+    "svg_source": "svg_source/116_Lv_Livermorium.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 117,
+    "symbol": "Ts",
+    "name": "Tennessine",
+    "category": "halogen",
+    "png_512": "png_512/117_Ts_Tennessine.png",
+    "svg_source": "svg_source/117_Ts_Tennessine.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  },
+  {
+    "atomic_number": 118,
+    "symbol": "Og",
+    "name": "Oganesson",
+    "category": "noble gas",
+    "png_512": "png_512/118_Og_Oganesson.png",
+    "svg_source": "svg_source/118_Og_Oganesson.svg",
+    "license": "Generated for this conversation; use freely in Spark Lab",
+    "source_reference": "Element names/symbols aligned with IUPAC periodic table"
+  }
+]

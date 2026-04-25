@@ -1,0 +1,125 @@
+{
+  "app": {
+    "name": "SparkLab",
+    "tagline": "Spiele mit Chemie"
+  },
+  "menu": {
+    "play": "Spielen",
+    "settings": "Einstellungen",
+    "dashboard": "Erwachsene",
+    "back": "Zurück"
+  },
+  "profile": {
+    "title": "Wer spielt?",
+    "new": "Neuer Spieler",
+    "name_placeholder": "Gib deinen Namen ein",
+    "age": "Alter",
+    "create": "Erstellen",
+    "cancel": "Abbrechen",
+    "welcome_back": "Willkommen zurück, {{name}}!"
+  },
+  "worlds": {
+    "title": "Wähle eine Welt",
+    "subtitle": "Wähle, wo du erkunden möchtest",
+    "foundations_name": "Grundlagen",
+    "foundations_desc": "Lerne über Atome und einfache Moleküle. Alter 8–10.",
+    "core_name": "Kern-Chemie",
+    "core_desc": "Baue Bindungen, reagiere und erhalte Atome. Alter 11–14."
+  },
+  "missions": {
+    "locked": "Gesperrt",
+    "minutes": "{{count}} min",
+    "star_0": "Versuche es weiter! Du schaffst das.",
+    "star_1": "Guter Anfang! Versuche es erneut für mehr Sterne.",
+    "star_2": "Tolle Arbeit! Du verstehst das gut.",
+    "star_3": "Unglaublich! Du bist ein Chemie-Star!"
+  },
+  "game": {
+    "hint": "Tipp",
+    "hide_hint": "Tipp ausblenden",
+    "undo": "Rückgängig",
+    "redo": "Wiederholen",
+    "reset": "Zurücksetzen",
+    "check": "Prüfen",
+    "submit": "Absenden",
+    "exit": "Beenden",
+    "atoms_label": "Atome:",
+    "mission_complete": "Mission Abgeschlossen!",
+    "continue": "Weiter",
+    "view_3d": "3D-Ansicht",
+    "view_3d_title": "3D-Molek\u00fclansicht",
+    "reactants": "Reaktanten",
+    "products": "Produkte",
+    "conserved": "Ausgeglichen",
+    "not_conserved": "Nicht Ausgeglichen"
+  },
+  "feedback": {
+    "valid_bond": "Schön! Diese Bindung funktioniert.",
+    "invalid_bond": "Diese Bindung funktioniert hier nicht. Denke daran, wie viele Elektronen jedes Atom braucht.",
+    "mission_complete_msg": "Mission abgeschlossen! Du hast es geschafft!"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Passe dein Erlebnis an",
+    "sound": "Ton",
+    "sound_desc": "Soundeffekte abspielen",
+    "reduced_motion": "Reduzierte Bewegung",
+    "reduced_motion_desc": "Animationen minimieren",
+    "high_contrast": "Hoher Kontrast",
+    "high_contrast_desc": "Stärkere Farben und Ränder",
+    "language": "Sprache",
+    "language_desc": "Deutsch",
+    "no_profile": "Erstelle ein Profil, um Einstellungen zu speichern."
+  },
+  "dashboard": {
+    "title": "Erwachsenen-Dashboard",
+    "pin_prompt": "Gib die PIN ein, um fortzufahren",
+    "pin_enter": "Eingeben",
+    "pin_error": "Falsche PIN. Versuche es erneut.",
+    "profiles": "Spielerprofile",
+    "progress": "Fortschritt",
+    "export": "Daten exportieren",
+    "delete": "Alle Daten löschen",
+    "no_profiles": "Noch keine Profile vorhanden.",
+    "missions_completed": "{{count}} Missionen abgeschlossen",
+    "stars_earned": "{{count}} Sterne verdient",
+    "data_management": "Datenverwaltung",
+    "delete_confirm_title": "Alle Daten löschen?",
+    "delete_confirm_text": "Dies wird alle Profile, Fortschritte und Einstellungen dauerhaft löschen. Dies kann nicht rückgängig gemacht werden.",
+    "delete_cancel": "Abbrechen",
+    "delete_confirm": "Alles Löschen"
+  },
+  "periodic_table": {
+    "title": "Periodensystem",
+    "subtitle": "Erkunde alle 118 Elemente",
+    "search": "Elemente suchen...",
+    "filter_all": "Alle",
+    "filter_metals": "Metalle",
+    "filter_nonmetals": "Nichtmetalle",
+    "filter_noble": "Edelgase",
+    "atomic_number": "Ordnungszahl",
+    "atomic_weight": "Atommasse",
+    "group": "Gruppe",
+    "period": "Periode",
+    "category": "Kategorie",
+    "state": "Zustand bei STP",
+    "electrons": "Valenzelektronen",
+    "fact": "Wusstest du?"
+  },
+  "cms": {
+    "title": "Content-Studio",
+    "subtitle": "Erstelle und bearbeite Chemie-Inhalte",
+    "tab_elements": "Elemente",
+    "tab_molecules": "Moleküle",
+    "tab_missions": "Missionen",
+    "tab_reactions": "Reaktionen",
+    "save": "Speichern",
+    "preview": "Vorschau",
+    "export_json": "JSON exportieren",
+    "import_json": "JSON importieren",
+    "new_element": "Neues Element",
+    "new_molecule": "Neues Molekül",
+    "new_mission": "Neue Mission",
+    "new_reaction": "Neue Reaktion"
+  }
+}

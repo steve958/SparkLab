@@ -1,0 +1,439 @@
+import { describe, it, expect } from "vitest";
+import { buildAtom, getExpectedBondCount } from "@/engine/atom";
+import { validateBond, countBondOrder } from "@/engine/bond";
+import { validateSceneMolecule } from "@/engine/molecule";
+import { validateAtomConservation, validateReactionMission } from "@/engine/reaction";
+import { calculateScore } from "@/engine/scoring";
+import type { Element, BondRule, SceneAtom, SceneBond, Molecule, Reaction } from "@/types";
+
+const testElements: Element[] = [
+  {
+    atomicNumber: 1,
+    symbol: "H",
+    name: "Hydrogen",
+    group: 1,
+    period: 1,
+    block: "s",
+    category: "nonmetal",
+    standardAtomicWeight: 1.008,
+    stateAtStp: "gas",
+    shellOccupancy: [1],
+    valenceElectronsMainGroup: 1,
+    commonOxidationStates: [1, -1],
+    electronegativityPauling: 2.2,
+    colorToken: "#3b82f6",
+    iconAsset: null,
+    unlockWorld: "foundations",
+    factCardKey: "fact_hydrogen",
+    sourceRef: "NIST",
+  },
+  {
+    atomicNumber: 8,
+    symbol: "O",
+    name: "Oxygen",
+    group: 16,
+    period: 2,
+    block: "p",
+    category: "nonmetal",
+    standardAtomicWeight: 15.999,
+    stateAtStp: "gas",
+    shellOccupancy: [2, 6],
+    valenceElectronsMainGroup: 6,
+    commonOxidationStates: [-2],
+    electronegativityPauling: 3.44,
+    colorToken: "#ef4444",
+    iconAsset: null,
+    unlockWorld: "foundations",
+    factCardKey: "fact_oxygen",
+    sourceRef: "NIST",
+  },
+  {
+    atomicNumber: 11,
+    symbol: "Na",
+    name: "Sodium",
+    group: 1,
+    period: 3,
+    block: "s",
+    category: "alkali-metal",
+    standardAtomicWeight: 22.99,
+    stateAtStp: "solid",
+    shellOccupancy: [2, 8, 1],
+    valenceElectronsMainGroup: 1,
+    commonOxidationStates: [1],
+    electronegativityPauling: 0.93,
+    colorToken: "#dc2626",
+    iconAsset: null,
+    unlockWorld: "core",
+    factCardKey: "fact_sodium",
+    sourceRef: "NIST",
+  },
+];
+
+const testBondRules: BondRule[] = [
+  {
+    ruleId: "h-o-single",
+    ageBand: "8-10",
+    atomA: "H",
+    atomB: "O",
+    bondType: "covalent-single",
+    maxOrder: 1,
+    slotCostA: 1,
+    slotCostB: 1,
+    formalChargeDeltaA: 0,
+    formalChargeDeltaB: 0,
+    geometryHint: null,
+    allowedWorlds: ["foundations"],
+    explanationKey: "hint_h_o_bond",
+  },
+];
+
+describe("Atom Engine", () => {
+  it("builds a neutral hydrogen atom correctly", () => {
+    const result = buildAtom(testElements, 1, 0, 1);
+    expect(result.element.symbol).toBe("H");
+    expect(result.charge).toBe(0);
+    expect(result.isValid).toBe(true);
+  });
+
+  it("detects invalid proton count", () => {
+    const result = buildAtom(testElements, 99, 0, 99);
+    expect(result.isValid).toBe(false);
+  });
+
+  it("calculates expected bond counts", () => {
+    const h = testElements.find((e) => e.symbol === "H")!;
+    const o = testElements.find((e) => e.symbol === "O")!;
+    expect(getExpectedBondCount(h)).toBe(1);
+    expect(getExpectedBondCount(o)).toBe(2);
+  });
+});
+
+describe("Bond Engine", () => {
+  it("validates H-O bond for age 8-10", () => {
+    const h = testElements.find((e) => e.symbol === "H")!;
+    const o = testElements.find((e) => e.symbol === "O")!;
+    const result = validateBond(testBondRules, h, o, "8-10", 0, 0);
+    expect(result.valid).toBe(true);
+    expect(result.bondType).toBe("covalent-single");
+  });
+
+  it("rejects invalid element pair", () => {
+    const h = testElements.find((e) => e.symbol === "H")!;
+    const na = testElements.find((e) => e.symbol === "Na")!;
+    const result = validateBond(testBondRules, h, na, "8-10", 0, 0);
+    expect(result.valid).toBe(false);
+  });
+
+  it("counts bond orders correctly", () => {
+    const bonds: { bondType: SceneBond["bondType"] }[] = [
+      { bondType: "covalent-single" },
+      { bondType: "covalent-double" },
+      { bondType: "covalent-triple" },
+      { bondType: "ionic" },
+    ];
+    expect(countBondOrder(bonds)).toBe(7);
+  });
+});
+
+describe("Molecule Engine", () => {
+  it("matches a water molecule", () => {
+    const atoms: SceneAtom[] = [
+      { id: "a1", elementId: "O", x: 0, y: 0, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "a2", elementId: "H", x: 0, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "a3", elementId: "H", x: 0, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+    ];
+    const bonds: SceneBond[] = [
+      { id: "b1", atomAId: "a1", atomBId: "a2", bondType: "covalent-single" },
+      { id: "b2", atomAId: "a1", atomBId: "a3", bondType: "covalent-single" },
+    ];
+
+    const result = validateSceneMolecule([], atoms, bonds);
+    // No molecules in empty array, so should not match
+    expect(result.matches).toBe(false);
+  });
+
+  it("detects disconnected atoms", () => {
+    const atoms: SceneAtom[] = [
+      { id: "a1", elementId: "H", x: 0, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "a2", elementId: "H", x: 100, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+    ];
+    const bonds: SceneBond[] = [];
+
+    const result = validateSceneMolecule([], atoms, bonds);
+    expect(result.matches).toBe(false);
+    expect(result.explanation.toLowerCase()).toContain("not all connected");
+  });
+});
+
+describe("Reaction Engine", () => {
+  it("validates atom conservation", () => {
+    const reactants: SceneAtom[] = [
+      { id: "r1", elementId: "H", x: 0, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "r2", elementId: "H", x: 0, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "r3", elementId: "O", x: 0, y: 0, protons: 8, neutrons: 8, electrons: 8 },
+    ];
+    const products: SceneAtom[] = [
+      { id: "p1", elementId: "H", x: 0, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "p2", elementId: "H", x: 0, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "p3", elementId: "O", x: 0, y: 0, protons: 8, neutrons: 8, electrons: 8 },
+    ];
+
+    const result = validateAtomConservation(reactants, products);
+    expect(result.conserved).toBe(true);
+    expect(result.reactantCounts["H"]).toBe(2);
+    expect(result.productCounts["H"]).toBe(2);
+  });
+
+  it("detects non-conservation", () => {
+    const reactants: SceneAtom[] = [
+      { id: "r1", elementId: "H", x: 0, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+    ];
+    const products: SceneAtom[] = [
+      { id: "p1", elementId: "O", x: 0, y: 0, protons: 8, neutrons: 8, electrons: 8 },
+    ];
+
+    const result = validateAtomConservation(reactants, products);
+    expect(result.conserved).toBe(false);
+  });
+});
+
+const testMolecules: Molecule[] = [
+  {
+    moleculeId: "water",
+    displayName: "Water",
+    formulaHill: "H2O",
+    ageBand: "8-10",
+    allowedBondGraph: {
+      nodes: [{ elementId: "O" }, { elementId: "H" }, { elementId: "H" }],
+      edges: [
+        { from: 0, to: 1, type: "covalent-single" },
+        { from: 0, to: 2, type: "covalent-single" },
+      ],
+    },
+    synonyms: [],
+    difficulty: 1,
+    uses3dTemplate: false,
+    factKey: "fact_water",
+  },
+  {
+    moleculeId: "hydrogen_gas",
+    displayName: "Hydrogen Gas",
+    formulaHill: "H2",
+    ageBand: "8-10",
+    allowedBondGraph: {
+      nodes: [{ elementId: "H" }, { elementId: "H" }],
+      edges: [{ from: 0, to: 1, type: "covalent-single" }],
+    },
+    synonyms: [],
+    difficulty: 1,
+    uses3dTemplate: false,
+    factKey: "fact_hydrogen_gas",
+  },
+  {
+    moleculeId: "oxygen_gas",
+    displayName: "Oxygen Gas",
+    formulaHill: "O2",
+    ageBand: "8-10",
+    allowedBondGraph: {
+      nodes: [{ elementId: "O" }, { elementId: "O" }],
+      edges: [{ from: 0, to: 1, type: "covalent-double" }],
+    },
+    synonyms: [],
+    difficulty: 2,
+    uses3dTemplate: false,
+    factKey: "fact_oxygen_gas",
+  },
+];
+
+const waterFormationReaction: Reaction = {
+  reactionId: "water_formation",
+  ageBand: "8-10",
+  reactants: [
+    { moleculeId: "hydrogen_gas", coefficient: 2 },
+    { moleculeId: "oxygen_gas", coefficient: 1 },
+  ],
+  products: [{ moleculeId: "water", coefficient: 2 }],
+  conditionTags: ["spark"],
+  conservationSignature: { H: 4, O: 2 },
+  equationDisplay: "2H₂ + O₂ → 2H₂O",
+  animationTemplate: "combustion",
+  energyChangeLabel: "exothermic",
+  standardsTags: ["NGSS-5-PS1-4"],
+};
+
+describe("Reaction Mission Validation", () => {
+  it("passes for correct water formation reaction", () => {
+    // 2 H2 + O2 -> 2 H2O
+    // Reactants (left of center=400): 2 H2 + 1 O2 = 4H + 2O
+    const atoms: SceneAtom[] = [
+      // H2 molecule 1 (reactant)
+      { id: "h1", elementId: "H", x: 100, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h2", elementId: "H", x: 150, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      // H2 molecule 2 (reactant)
+      { id: "h3", elementId: "H", x: 100, y: 200, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h4", elementId: "H", x: 150, y: 200, protons: 1, neutrons: 0, electrons: 1 },
+      // O2 molecule (reactant)
+      { id: "o1", elementId: "O", x: 250, y: 150, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "o2", elementId: "O", x: 300, y: 150, protons: 8, neutrons: 8, electrons: 8 },
+      // H2O molecule 1 (product)
+      { id: "h5", elementId: "H", x: 500, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h6", elementId: "H", x: 550, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "o3", elementId: "O", x: 525, y: 100, protons: 8, neutrons: 8, electrons: 8 },
+      // H2O molecule 2 (product)
+      { id: "h7", elementId: "H", x: 500, y: 200, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h8", elementId: "H", x: 550, y: 200, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "o4", elementId: "O", x: 525, y: 200, protons: 8, neutrons: 8, electrons: 8 },
+    ];
+
+    const bonds: SceneBond[] = [
+      // H2 bonds (reactants)
+      { id: "b1", atomAId: "h1", atomBId: "h2", bondType: "covalent-single" },
+      { id: "b2", atomAId: "h3", atomBId: "h4", bondType: "covalent-single" },
+      // O2 bond (reactant)
+      { id: "b3", atomAId: "o1", atomBId: "o2", bondType: "covalent-double" },
+      // H2O bonds (products)
+      { id: "b4", atomAId: "o3", atomBId: "h5", bondType: "covalent-single" },
+      { id: "b5", atomAId: "o3", atomBId: "h6", bondType: "covalent-single" },
+      { id: "b6", atomAId: "o4", atomBId: "h7", bondType: "covalent-single" },
+      { id: "b7", atomAId: "o4", atomBId: "h8", bondType: "covalent-single" },
+    ];
+
+    const result = validateReactionMission(
+      waterFormationReaction,
+      testMolecules,
+      atoms,
+      bonds,
+      400
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.conservation.conserved).toBe(true);
+    expect(result.productsValid).toBe(true);
+    expect(result.reactantsValid).toBe(true);
+  });
+
+  it("fails when atoms are not conserved", () => {
+    const atoms: SceneAtom[] = [
+      // Only 1 H2 on reactant side = 2H
+      { id: "h1", elementId: "H", x: 100, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h2", elementId: "H", x: 150, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      // O2 on reactant side = 2O
+      { id: "o1", elementId: "O", x: 250, y: 150, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "o2", elementId: "O", x: 300, y: 150, protons: 8, neutrons: 8, electrons: 8 },
+      // 2 H2O on product side = 4H + 2O (needs 4H, only have 2H)
+      { id: "h3", elementId: "H", x: 500, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h4", elementId: "H", x: 550, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "o3", elementId: "O", x: 525, y: 100, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "h5", elementId: "H", x: 500, y: 200, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h6", elementId: "H", x: 550, y: 200, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "o4", elementId: "O", x: 525, y: 200, protons: 8, neutrons: 8, electrons: 8 },
+    ];
+
+    const bonds: SceneBond[] = [
+      { id: "b1", atomAId: "h1", atomBId: "h2", bondType: "covalent-single" },
+      { id: "b2", atomAId: "o1", atomBId: "o2", bondType: "covalent-double" },
+      { id: "b3", atomAId: "o3", atomBId: "h3", bondType: "covalent-single" },
+      { id: "b4", atomAId: "o3", atomBId: "h4", bondType: "covalent-single" },
+      { id: "b5", atomAId: "o4", atomBId: "h5", bondType: "covalent-single" },
+      { id: "b6", atomAId: "o4", atomBId: "h6", bondType: "covalent-single" },
+    ];
+
+    const result = validateReactionMission(
+      waterFormationReaction,
+      testMolecules,
+      atoms,
+      bonds,
+      400
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.conservation.conserved).toBe(false);
+  });
+
+  it("fails when product molecules are wrong", () => {
+    // Correct atom counts but wrong molecule structure on product side
+    const atoms: SceneAtom[] = [
+      // 2 H2 + O2 on reactant side
+      { id: "h1", elementId: "H", x: 100, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h2", elementId: "H", x: 150, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h3", elementId: "H", x: 100, y: 200, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h4", elementId: "H", x: 150, y: 200, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "o1", elementId: "O", x: 250, y: 150, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "o2", elementId: "O", x: 300, y: 150, protons: 8, neutrons: 8, electrons: 8 },
+      // Product side: correct counts (4H + 2O) but as H2 + O2 instead of 2 H2O
+      { id: "h5", elementId: "H", x: 500, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h6", elementId: "H", x: 550, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "o3", elementId: "O", x: 500, y: 200, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "o4", elementId: "O", x: 550, y: 200, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "h7", elementId: "H", x: 600, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h8", elementId: "H", x: 650, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+    ];
+
+    const bonds: SceneBond[] = [
+      // Reactant bonds
+      { id: "b1", atomAId: "h1", atomBId: "h2", bondType: "covalent-single" },
+      { id: "b2", atomAId: "h3", atomBId: "h4", bondType: "covalent-single" },
+      { id: "b3", atomAId: "o1", atomBId: "o2", bondType: "covalent-double" },
+      // Product bonds: H2 + O2 + H2 (not 2 H2O)
+      { id: "b4", atomAId: "h5", atomBId: "h6", bondType: "covalent-single" },
+      { id: "b5", atomAId: "o3", atomBId: "o4", bondType: "covalent-double" },
+      { id: "b6", atomAId: "h7", atomBId: "h8", bondType: "covalent-single" },
+    ];
+
+    const result = validateReactionMission(
+      waterFormationReaction,
+      testMolecules,
+      atoms,
+      bonds,
+      400
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.conservation.conserved).toBe(true);
+    expect(result.productsValid).toBe(false);
+  });
+
+  it("fails with empty product side", () => {
+    const atoms: SceneAtom[] = [
+      { id: "h1", elementId: "H", x: 100, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h2", elementId: "H", x: 150, y: 100, protons: 1, neutrons: 0, electrons: 1 },
+    ];
+    const bonds: SceneBond[] = [
+      { id: "b1", atomAId: "h1", atomBId: "h2", bondType: "covalent-single" },
+    ];
+
+    const result = validateReactionMission(
+      waterFormationReaction,
+      testMolecules,
+      atoms,
+      bonds,
+      400
+    );
+
+    expect(result.success).toBe(false);
+    expect(result.productsValid).toBe(false);
+  });
+});
+
+describe("Scoring Engine", () => {
+  it("gives 3 stars for perfect completion", () => {
+    const result = calculateScore(true, 0, true, 1);
+    expect(result.stars).toBe(3);
+    expect(result.independenceScore).toBe(1);
+  });
+
+  it("gives 1 star for correct with hints", () => {
+    const result = calculateScore(true, 2, false, 1);
+    expect(result.stars).toBe(1);
+  });
+
+  it("gives 0 stars for incorrect", () => {
+    const result = calculateScore(false, 0, null, 1);
+    expect(result.stars).toBe(0);
+  });
+
+  it("penalizes many attempts", () => {
+    const result = calculateScore(true, 0, true, 5);
+    expect(result.stars).toBe(2); // capped at 2 due to attempts > 3
+  });
+});

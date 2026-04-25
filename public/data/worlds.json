@@ -1,0 +1,59 @@
+[
+  {
+    "worldId": "foundations",
+    "name": "Foundations",
+    "description": "Learn about atoms and simple molecules. Ages 8–10.",
+    "ageBand": "8-10",
+    "themeColor": "#3b82f6",
+    "unlockRequirements": [],
+    "missionIds": [
+      "f01_build_h_atom",
+      "f02_make_water",
+      "f03_make_methane",
+      "f04_count_particles",
+      "f05_make_co2",
+      "f06_helium_atom",
+      "f07_oxygen_atom",
+      "f08_carbon_atom",
+      "f09_make_h2_gas",
+      "f10_make_o2_gas"
+    ]
+  },
+  {
+    "worldId": "core",
+    "name": "Core Chemistry",
+    "description": "Build bonds, run reactions, and conserve atoms. Ages 11–14.",
+    "ageBand": "11-14",
+    "themeColor": "#8b5cf6",
+    "unlockRequirements": ["foundations"],
+    "missionIds": [
+      "c01_form_nacl",
+      "c02_conserve_atoms",
+      "c03_ionic_vs_covalent",
+      "c04_make_ammonia",
+      "c05_nitrogen_triple",
+      "c06_hcl_formation",
+      "c07_methane_combustion",
+      "c08_ammonia_formation",
+      "c09_chlorine_atom",
+      "c10_make_cl2_gas",
+      "c11_make_carbon_monoxide",
+      "c12_make_hydrogen_peroxide"
+    ]
+  },
+  {
+    "worldId": "reactions",
+    "name": "Reactions Lab",
+    "description": "Mix it up. Spark, burn, split — watch atoms rearrange but never disappear.",
+    "ageBand": "11-14",
+    "themeColor": "#ef4444",
+    "unlockRequirements": ["core"],
+    "missionIds": [
+      "r01_water_decomposition",
+      "r02_co_oxidation",
+      "r03_h2o2_decomposition",
+      "r04_methane_combustion_review",
+      "r05_ammonia_synthesis_review"
+    ]
+  }
+]

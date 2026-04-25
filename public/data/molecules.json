@@ -1,0 +1,248 @@
+[
+  {
+    "moleculeId": "hydrogen_gas",
+    "displayName": "Hydrogen Gas",
+    "formulaHill": "H2",
+    "ageBand": "8-10",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "H", "label": "H1" },
+        { "elementId": "H", "label": "H2" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["dihydrogen"],
+    "difficulty": 1,
+    "uses3dTemplate": false,
+    "factKey": "fact_hydrogen_gas"
+  },
+  {
+    "moleculeId": "chlorine_gas",
+    "displayName": "Chlorine Gas",
+    "formulaHill": "Cl2",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "Cl", "label": "Cl1" },
+        { "elementId": "Cl", "label": "Cl2" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["dichlorine"],
+    "difficulty": 2,
+    "uses3dTemplate": false,
+    "factKey": "fact_chlorine_gas"
+  },
+  {
+    "moleculeId": "water",
+    "displayName": "Water",
+    "formulaHill": "H2O",
+    "ageBand": "8-10",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "O", "label": "O" },
+        { "elementId": "H", "label": "H1" },
+        { "elementId": "H", "label": "H2" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-single" },
+        { "from": 0, "to": 2, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["dihydrogen monoxide"],
+    "difficulty": 1,
+    "uses3dTemplate": false,
+    "factKey": "fact_water"
+  },
+  {
+    "moleculeId": "carbon_dioxide",
+    "displayName": "Carbon Dioxide",
+    "formulaHill": "CO2",
+    "ageBand": "8-10",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "C", "label": "C" },
+        { "elementId": "O", "label": "O1" },
+        { "elementId": "O", "label": "O2" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-double" },
+        { "from": 0, "to": 2, "type": "covalent-double" }
+      ]
+    },
+    "synonyms": ["CO2"],
+    "difficulty": 2,
+    "uses3dTemplate": false,
+    "factKey": "fact_carbon_dioxide"
+  },
+  {
+    "moleculeId": "methane",
+    "displayName": "Methane",
+    "formulaHill": "CH4",
+    "ageBand": "8-10",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "C", "label": "C" },
+        { "elementId": "H", "label": "H1" },
+        { "elementId": "H", "label": "H2" },
+        { "elementId": "H", "label": "H3" },
+        { "elementId": "H", "label": "H4" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-single" },
+        { "from": 0, "to": 2, "type": "covalent-single" },
+        { "from": 0, "to": 3, "type": "covalent-single" },
+        { "from": 0, "to": 4, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["natural gas"],
+    "difficulty": 2,
+    "uses3dTemplate": false,
+    "factKey": "fact_methane"
+  },
+  {
+    "moleculeId": "ammonia",
+    "displayName": "Ammonia",
+    "formulaHill": "NH3",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "N", "label": "N" },
+        { "elementId": "H", "label": "H1" },
+        { "elementId": "H", "label": "H2" },
+        { "elementId": "H", "label": "H3" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-single" },
+        { "from": 0, "to": 2, "type": "covalent-single" },
+        { "from": 0, "to": 3, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["NH3"],
+    "difficulty": 3,
+    "uses3dTemplate": false,
+    "factKey": "fact_ammonia"
+  },
+  {
+    "moleculeId": "oxygen_gas",
+    "displayName": "Oxygen Gas",
+    "formulaHill": "O2",
+    "ageBand": "8-10",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "O", "label": "O1" },
+        { "elementId": "O", "label": "O2" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-double" }
+      ]
+    },
+    "synonyms": ["dioxygen"],
+    "difficulty": 1,
+    "uses3dTemplate": false,
+    "factKey": "fact_oxygen_gas"
+  },
+  {
+    "moleculeId": "nitrogen_gas",
+    "displayName": "Nitrogen Gas",
+    "formulaHill": "N2",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "N", "label": "N1" },
+        { "elementId": "N", "label": "N2" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-triple" }
+      ]
+    },
+    "synonyms": ["dinitrogen"],
+    "difficulty": 3,
+    "uses3dTemplate": false,
+    "factKey": "fact_nitrogen_gas"
+  },
+  {
+    "moleculeId": "hydrogen_chloride",
+    "displayName": "Hydrogen Chloride",
+    "formulaHill": "HCl",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "H", "label": "H" },
+        { "elementId": "Cl", "label": "Cl" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["HCl"],
+    "difficulty": 2,
+    "uses3dTemplate": false,
+    "factKey": "fact_hydrogen_chloride"
+  },
+  {
+    "moleculeId": "sodium_chloride",
+    "displayName": "Sodium Chloride",
+    "formulaHill": "NaCl",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "Na", "label": "Na" },
+        { "elementId": "Cl", "label": "Cl" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "ionic" }
+      ]
+    },
+    "synonyms": ["table salt", "NaCl"],
+    "difficulty": 3,
+    "uses3dTemplate": false,
+    "factKey": "fact_sodium_chloride"
+  },
+  {
+    "moleculeId": "carbon_monoxide",
+    "displayName": "Carbon Monoxide",
+    "formulaHill": "CO",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "C", "label": "C" },
+        { "elementId": "O", "label": "O" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-triple" }
+      ]
+    },
+    "synonyms": ["CO"],
+    "difficulty": 3,
+    "uses3dTemplate": false,
+    "factKey": "fact_carbon_monoxide"
+  },
+  {
+    "moleculeId": "hydrogen_peroxide",
+    "displayName": "Hydrogen Peroxide",
+    "formulaHill": "H2O2",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "H", "label": "H1" },
+        { "elementId": "O", "label": "O1" },
+        { "elementId": "O", "label": "O2" },
+        { "elementId": "H", "label": "H2" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-single" },
+        { "from": 1, "to": 2, "type": "covalent-single" },
+        { "from": 2, "to": 3, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["peroxide", "H2O2"],
+    "difficulty": 3,
+    "uses3dTemplate": false,
+    "factKey": "fact_hydrogen_peroxide"
+  }
+]

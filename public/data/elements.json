@@ -1,0 +1,3411 @@
+[
+  {
+    "atomicNumber": 1,
+    "symbol": "H",
+    "name": "Hydrogen",
+    "group": 1,
+    "period": 1,
+    "block": "s",
+    "category": "nonmetal",
+    "standardAtomicWeight": 1.008,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1,
+      -1
+    ],
+    "electronegativityPauling": 2.2,
+    "colorToken": "#3b82f6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_h",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 2,
+    "symbol": "He",
+    "name": "Helium",
+    "group": 18,
+    "period": 1,
+    "block": "s",
+    "category": "noble-gas",
+    "standardAtomicWeight": 4.0026,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      0
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#06b6d4",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_he",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 3,
+    "symbol": "Li",
+    "name": "Lithium",
+    "group": 1,
+    "period": 2,
+    "block": "s",
+    "category": "alkali-metal",
+    "standardAtomicWeight": 6.94,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1
+    ],
+    "electronegativityPauling": 0.98,
+    "colorToken": "#ef4444",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_li",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 4,
+    "symbol": "Be",
+    "name": "Beryllium",
+    "group": 2,
+    "period": 2,
+    "block": "s",
+    "category": "alkaline-earth-metal",
+    "standardAtomicWeight": 9.0122,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2
+    ],
+    "electronegativityPauling": 1.57,
+    "colorToken": "#f97316",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_be",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 5,
+    "symbol": "B",
+    "name": "Boron",
+    "group": 13,
+    "period": 2,
+    "block": "p",
+    "category": "metalloid",
+    "standardAtomicWeight": 10.81,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      3
+    ],
+    "valenceElectronsMainGroup": 3,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 2.04,
+    "colorToken": "#84cc16",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_b",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 6,
+    "symbol": "C",
+    "name": "Carbon",
+    "group": 14,
+    "period": 2,
+    "block": "p",
+    "category": "nonmetal",
+    "standardAtomicWeight": 12.011,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      4
+    ],
+    "valenceElectronsMainGroup": 4,
+    "commonOxidationStates": [
+      -4,
+      2,
+      4
+    ],
+    "electronegativityPauling": 2.55,
+    "colorToken": "#1e293b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_c",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 7,
+    "symbol": "N",
+    "name": "Nitrogen",
+    "group": 15,
+    "period": 2,
+    "block": "p",
+    "category": "nonmetal",
+    "standardAtomicWeight": 14.007,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      5
+    ],
+    "valenceElectronsMainGroup": 5,
+    "commonOxidationStates": [
+      -3,
+      3,
+      5
+    ],
+    "electronegativityPauling": 3.04,
+    "colorToken": "#3b82f6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_n",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 8,
+    "symbol": "O",
+    "name": "Oxygen",
+    "group": 16,
+    "period": 2,
+    "block": "p",
+    "category": "nonmetal",
+    "standardAtomicWeight": 15.999,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      6
+    ],
+    "valenceElectronsMainGroup": 6,
+    "commonOxidationStates": [
+      -2
+    ],
+    "electronegativityPauling": 3.44,
+    "colorToken": "#ef4444",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_o",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 9,
+    "symbol": "F",
+    "name": "Fluorine",
+    "group": 17,
+    "period": 2,
+    "block": "p",
+    "category": "halogen",
+    "standardAtomicWeight": 18.998,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      7
+    ],
+    "valenceElectronsMainGroup": 7,
+    "commonOxidationStates": [
+      -1
+    ],
+    "electronegativityPauling": 3.98,
+    "colorToken": "#8b5cf6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_f",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 10,
+    "symbol": "Ne",
+    "name": "Neon",
+    "group": 18,
+    "period": 2,
+    "block": "p",
+    "category": "noble-gas",
+    "standardAtomicWeight": 20.18,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      8
+    ],
+    "valenceElectronsMainGroup": 8,
+    "commonOxidationStates": [
+      0
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#06b6d4",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ne",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 11,
+    "symbol": "Na",
+    "name": "Sodium",
+    "group": 1,
+    "period": 3,
+    "block": "s",
+    "category": "alkali-metal",
+    "standardAtomicWeight": 22.99,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1
+    ],
+    "electronegativityPauling": 0.93,
+    "colorToken": "#dc2626",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_na",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 12,
+    "symbol": "Mg",
+    "name": "Magnesium",
+    "group": 2,
+    "period": 3,
+    "block": "s",
+    "category": "alkaline-earth-metal",
+    "standardAtomicWeight": 24.305,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2
+    ],
+    "electronegativityPauling": 1.31,
+    "colorToken": "#f97316",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_mg",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 13,
+    "symbol": "Al",
+    "name": "Aluminum",
+    "group": 13,
+    "period": 3,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 26.982,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      3
+    ],
+    "valenceElectronsMainGroup": 3,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.61,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_al",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 14,
+    "symbol": "Si",
+    "name": "Silicon",
+    "group": 14,
+    "period": 3,
+    "block": "p",
+    "category": "metalloid",
+    "standardAtomicWeight": 28.085,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      4
+    ],
+    "valenceElectronsMainGroup": 4,
+    "commonOxidationStates": [
+      4,
+      -4
+    ],
+    "electronegativityPauling": 1.9,
+    "colorToken": "#84cc16",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_si",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 15,
+    "symbol": "P",
+    "name": "Phosphorus",
+    "group": 15,
+    "period": 3,
+    "block": "p",
+    "category": "nonmetal",
+    "standardAtomicWeight": 30.974,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      5
+    ],
+    "valenceElectronsMainGroup": 5,
+    "commonOxidationStates": [
+      -3,
+      3,
+      5
+    ],
+    "electronegativityPauling": 2.19,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_p",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 16,
+    "symbol": "S",
+    "name": "Sulfur",
+    "group": 16,
+    "period": 3,
+    "block": "p",
+    "category": "nonmetal",
+    "standardAtomicWeight": 32.06,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      6
+    ],
+    "valenceElectronsMainGroup": 6,
+    "commonOxidationStates": [
+      -2,
+      4,
+      6
+    ],
+    "electronegativityPauling": 2.58,
+    "colorToken": "#eab308",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_s",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 17,
+    "symbol": "Cl",
+    "name": "Chlorine",
+    "group": 17,
+    "period": 3,
+    "block": "p",
+    "category": "halogen",
+    "standardAtomicWeight": 35.45,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      8,
+      7
+    ],
+    "valenceElectronsMainGroup": 7,
+    "commonOxidationStates": [
+      -1,
+      1,
+      3,
+      5,
+      7
+    ],
+    "electronegativityPauling": 3.16,
+    "colorToken": "#8b5cf6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_cl",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 18,
+    "symbol": "Ar",
+    "name": "Argon",
+    "group": 18,
+    "period": 3,
+    "block": "p",
+    "category": "noble-gas",
+    "standardAtomicWeight": 39.948,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      8,
+      8
+    ],
+    "valenceElectronsMainGroup": 8,
+    "commonOxidationStates": [
+      0
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#06b6d4",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ar",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 19,
+    "symbol": "K",
+    "name": "Potassium",
+    "group": 1,
+    "period": 4,
+    "block": "s",
+    "category": "alkali-metal",
+    "standardAtomicWeight": 39.098,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      8,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1
+    ],
+    "electronegativityPauling": 0.82,
+    "colorToken": "#ef4444",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_k",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 20,
+    "symbol": "Ca",
+    "name": "Calcium",
+    "group": 2,
+    "period": 4,
+    "block": "s",
+    "category": "alkaline-earth-metal",
+    "standardAtomicWeight": 40.078,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2
+    ],
+    "electronegativityPauling": 1.0,
+    "colorToken": "#f97316",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ca",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 21,
+    "symbol": "Sc",
+    "name": "Scandium",
+    "group": 3,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 44.956,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.36,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_sc",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 22,
+    "symbol": "Ti",
+    "name": "Titanium",
+    "group": 4,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 47.867,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      10,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3,
+      4
+    ],
+    "electronegativityPauling": 1.54,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ti",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 23,
+    "symbol": "V",
+    "name": "Vanadium",
+    "group": 5,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 50.942,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      11,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "electronegativityPauling": 1.63,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_v",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 24,
+    "symbol": "Cr",
+    "name": "Chromium",
+    "group": 6,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 51.996,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      13,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      2,
+      3,
+      6
+    ],
+    "electronegativityPauling": 1.66,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_cr",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 25,
+    "symbol": "Mn",
+    "name": "Manganese",
+    "group": 7,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 54.938,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      13,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3,
+      4,
+      6,
+      7
+    ],
+    "electronegativityPauling": 1.55,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_mn",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 26,
+    "symbol": "Fe",
+    "name": "Iron",
+    "group": 8,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 55.845,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      14,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.83,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_fe",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 27,
+    "symbol": "Co",
+    "name": "Cobalt",
+    "group": 9,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 58.933,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      15,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.88,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_co",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 28,
+    "symbol": "Ni",
+    "name": "Nickel",
+    "group": 10,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 58.693,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      16,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.91,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ni",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 29,
+    "symbol": "Cu",
+    "name": "Copper",
+    "group": 11,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 63.546,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1,
+      2
+    ],
+    "electronegativityPauling": 1.9,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_cu",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 30,
+    "symbol": "Zn",
+    "name": "Zinc",
+    "group": 12,
+    "period": 4,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 65.38,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2
+    ],
+    "electronegativityPauling": 1.65,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_zn",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 31,
+    "symbol": "Ga",
+    "name": "Gallium",
+    "group": 13,
+    "period": 4,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 69.723,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      3
+    ],
+    "valenceElectronsMainGroup": 3,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.81,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ga",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 32,
+    "symbol": "Ge",
+    "name": "Germanium",
+    "group": 14,
+    "period": 4,
+    "block": "p",
+    "category": "metalloid",
+    "standardAtomicWeight": 72.63,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      4
+    ],
+    "valenceElectronsMainGroup": 4,
+    "commonOxidationStates": [
+      4,
+      -4
+    ],
+    "electronegativityPauling": 2.01,
+    "colorToken": "#84cc16",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ge",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 33,
+    "symbol": "As",
+    "name": "Arsenic",
+    "group": 15,
+    "period": 4,
+    "block": "p",
+    "category": "metalloid",
+    "standardAtomicWeight": 74.922,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      5
+    ],
+    "valenceElectronsMainGroup": 5,
+    "commonOxidationStates": [
+      -3,
+      3,
+      5
+    ],
+    "electronegativityPauling": 2.18,
+    "colorToken": "#84cc16",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_as",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 34,
+    "symbol": "Se",
+    "name": "Selenium",
+    "group": 16,
+    "period": 4,
+    "block": "p",
+    "category": "nonmetal",
+    "standardAtomicWeight": 78.96,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      6
+    ],
+    "valenceElectronsMainGroup": 6,
+    "commonOxidationStates": [
+      -2,
+      4,
+      6
+    ],
+    "electronegativityPauling": 2.55,
+    "colorToken": "#3b82f6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_se",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 35,
+    "symbol": "Br",
+    "name": "Bromine",
+    "group": 17,
+    "period": 4,
+    "block": "p",
+    "category": "halogen",
+    "standardAtomicWeight": 79.904,
+    "stateAtStp": "liquid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      7
+    ],
+    "valenceElectronsMainGroup": 7,
+    "commonOxidationStates": [
+      -1,
+      1,
+      3,
+      5
+    ],
+    "electronegativityPauling": 2.96,
+    "colorToken": "#8b5cf6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_br",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 36,
+    "symbol": "Kr",
+    "name": "Krypton",
+    "group": 18,
+    "period": 4,
+    "block": "p",
+    "category": "noble-gas",
+    "standardAtomicWeight": 83.798,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      8
+    ],
+    "valenceElectronsMainGroup": 8,
+    "commonOxidationStates": [
+      0
+    ],
+    "electronegativityPauling": 3.0,
+    "colorToken": "#06b6d4",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_kr",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 37,
+    "symbol": "Rb",
+    "name": "Rubidium",
+    "group": 1,
+    "period": 5,
+    "block": "s",
+    "category": "alkali-metal",
+    "standardAtomicWeight": 85.468,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      8,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1
+    ],
+    "electronegativityPauling": 0.82,
+    "colorToken": "#ef4444",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_rb",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 38,
+    "symbol": "Sr",
+    "name": "Strontium",
+    "group": 2,
+    "period": 5,
+    "block": "s",
+    "category": "alkaline-earth-metal",
+    "standardAtomicWeight": 87.62,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2
+    ],
+    "electronegativityPauling": 0.95,
+    "colorToken": "#f97316",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_sr",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 39,
+    "symbol": "Y",
+    "name": "Yttrium",
+    "group": 3,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 88.906,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.22,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_y",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 40,
+    "symbol": "Zr",
+    "name": "Zirconium",
+    "group": 4,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 91.224,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      10,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      4
+    ],
+    "electronegativityPauling": 1.33,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_zr",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 41,
+    "symbol": "Nb",
+    "name": "Niobium",
+    "group": 5,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 92.906,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      12,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      3,
+      5
+    ],
+    "electronegativityPauling": 1.6,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_nb",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 42,
+    "symbol": "Mo",
+    "name": "Molybdenum",
+    "group": 6,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 95.95,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      13,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "electronegativityPauling": 2.16,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_mo",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 43,
+    "symbol": "Tc",
+    "name": "Technetium",
+    "group": 7,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 98,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      13,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      4,
+      7
+    ],
+    "electronegativityPauling": 1.9,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_tc",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 44,
+    "symbol": "Ru",
+    "name": "Ruthenium",
+    "group": 8,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 101.07,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      15,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      2,
+      3,
+      4,
+      6,
+      8
+    ],
+    "electronegativityPauling": 2.2,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ru",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 45,
+    "symbol": "Rh",
+    "name": "Rhodium",
+    "group": 9,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 102.91,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      16,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 2.28,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_rh",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 46,
+    "symbol": "Pd",
+    "name": "Palladium",
+    "group": 10,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 106.42,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18
+    ],
+    "valenceElectronsMainGroup": 0,
+    "commonOxidationStates": [
+      2,
+      4
+    ],
+    "electronegativityPauling": 2.2,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_pd",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 47,
+    "symbol": "Ag",
+    "name": "Silver",
+    "group": 11,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 107.87,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1
+    ],
+    "electronegativityPauling": 1.93,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ag",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 48,
+    "symbol": "Cd",
+    "name": "Cadmium",
+    "group": 12,
+    "period": 5,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 112.41,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2
+    ],
+    "electronegativityPauling": 1.69,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_cd",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 49,
+    "symbol": "In",
+    "name": "Indium",
+    "group": 13,
+    "period": 5,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 114.82,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      3
+    ],
+    "valenceElectronsMainGroup": 3,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.78,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_in",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 50,
+    "symbol": "Sn",
+    "name": "Tin",
+    "group": 14,
+    "period": 5,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 118.71,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      4
+    ],
+    "valenceElectronsMainGroup": 4,
+    "commonOxidationStates": [
+      2,
+      4
+    ],
+    "electronegativityPauling": 1.96,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_sn",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 51,
+    "symbol": "Sb",
+    "name": "Antimony",
+    "group": 15,
+    "period": 5,
+    "block": "p",
+    "category": "metalloid",
+    "standardAtomicWeight": 121.76,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      5
+    ],
+    "valenceElectronsMainGroup": 5,
+    "commonOxidationStates": [
+      -3,
+      3,
+      5
+    ],
+    "electronegativityPauling": 2.05,
+    "colorToken": "#84cc16",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_sb",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 52,
+    "symbol": "Te",
+    "name": "Tellurium",
+    "group": 16,
+    "period": 5,
+    "block": "p",
+    "category": "metalloid",
+    "standardAtomicWeight": 127.6,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      6
+    ],
+    "valenceElectronsMainGroup": 6,
+    "commonOxidationStates": [
+      -2,
+      4,
+      6
+    ],
+    "electronegativityPauling": 2.1,
+    "colorToken": "#84cc16",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_te",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 53,
+    "symbol": "I",
+    "name": "Iodine",
+    "group": 17,
+    "period": 5,
+    "block": "p",
+    "category": "halogen",
+    "standardAtomicWeight": 126.9,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      7
+    ],
+    "valenceElectronsMainGroup": 7,
+    "commonOxidationStates": [
+      -1,
+      1,
+      3,
+      5,
+      7
+    ],
+    "electronegativityPauling": 2.66,
+    "colorToken": "#8b5cf6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_i",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 54,
+    "symbol": "Xe",
+    "name": "Xenon",
+    "group": 18,
+    "period": 5,
+    "block": "p",
+    "category": "noble-gas",
+    "standardAtomicWeight": 131.29,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      8
+    ],
+    "valenceElectronsMainGroup": 8,
+    "commonOxidationStates": [
+      0
+    ],
+    "electronegativityPauling": 2.6,
+    "colorToken": "#06b6d4",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_xe",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 55,
+    "symbol": "Cs",
+    "name": "Cesium",
+    "group": 1,
+    "period": 6,
+    "block": "s",
+    "category": "alkali-metal",
+    "standardAtomicWeight": 132.91,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      8,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1
+    ],
+    "electronegativityPauling": 0.79,
+    "colorToken": "#ef4444",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_cs",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 56,
+    "symbol": "Ba",
+    "name": "Barium",
+    "group": 2,
+    "period": 6,
+    "block": "s",
+    "category": "alkaline-earth-metal",
+    "standardAtomicWeight": 137.33,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2
+    ],
+    "electronegativityPauling": 0.89,
+    "colorToken": "#f97316",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ba",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 57,
+    "symbol": "La",
+    "name": "Lanthanum",
+    "group": 3,
+    "period": 6,
+    "block": "d",
+    "category": "lanthanide",
+    "standardAtomicWeight": 138.91,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      18,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.1,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_la",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 58,
+    "symbol": "Ce",
+    "name": "Cerium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 140.12,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      19,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3,
+      4
+    ],
+    "electronegativityPauling": 1.12,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ce",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 59,
+    "symbol": "Pr",
+    "name": "Praseodymium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 140.91,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      21,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.13,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_pr",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 60,
+    "symbol": "Nd",
+    "name": "Neodymium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 144.24,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      22,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.14,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_nd",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 61,
+    "symbol": "Pm",
+    "name": "Promethium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 145,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      23,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.13,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_pm",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 62,
+    "symbol": "Sm",
+    "name": "Samarium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 150.36,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      24,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.17,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_sm",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 63,
+    "symbol": "Eu",
+    "name": "Europium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 151.96,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      25,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.2,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_eu",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 64,
+    "symbol": "Gd",
+    "name": "Gadolinium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 157.25,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      25,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.2,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_gd",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 65,
+    "symbol": "Tb",
+    "name": "Terbium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 158.93,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      27,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.2,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_tb",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 66,
+    "symbol": "Dy",
+    "name": "Dysprosium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 162.5,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      28,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.22,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_dy",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 67,
+    "symbol": "Ho",
+    "name": "Holmium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 164.93,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      29,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.23,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ho",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 68,
+    "symbol": "Er",
+    "name": "Erbium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 167.26,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      30,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.24,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_er",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 69,
+    "symbol": "Tm",
+    "name": "Thulium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 168.93,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      31,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.25,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_tm",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 70,
+    "symbol": "Yb",
+    "name": "Ytterbium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 173.05,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.1,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_yb",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 71,
+    "symbol": "Lu",
+    "name": "Lutetium",
+    "group": null,
+    "period": 6,
+    "block": "f",
+    "category": "lanthanide",
+    "standardAtomicWeight": 174.97,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.27,
+    "colorToken": "#ec4899",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_lu",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 72,
+    "symbol": "Hf",
+    "name": "Hafnium",
+    "group": 4,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 178.49,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      10,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      4
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_hf",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 73,
+    "symbol": "Ta",
+    "name": "Tantalum",
+    "group": 5,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 180.95,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      11,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      5
+    ],
+    "electronegativityPauling": 1.5,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ta",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 74,
+    "symbol": "W",
+    "name": "Tungsten",
+    "group": 6,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 183.84,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      12,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      4,
+      6
+    ],
+    "electronegativityPauling": 2.36,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_w",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 75,
+    "symbol": "Re",
+    "name": "Rhenium",
+    "group": 7,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 186.21,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      13,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      4,
+      6,
+      7
+    ],
+    "electronegativityPauling": 1.9,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_re",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 76,
+    "symbol": "Os",
+    "name": "Osmium",
+    "group": 8,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 190.23,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      14,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      4
+    ],
+    "electronegativityPauling": 2.2,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_os",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 77,
+    "symbol": "Ir",
+    "name": "Iridium",
+    "group": 9,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 192.22,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      15,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3,
+      4
+    ],
+    "electronegativityPauling": 2.2,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ir",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 78,
+    "symbol": "Pt",
+    "name": "Platinum",
+    "group": 10,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 195.08,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      17,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      2,
+      4
+    ],
+    "electronegativityPauling": 2.28,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_pt",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 79,
+    "symbol": "Au",
+    "name": "Gold",
+    "group": 11,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 196.97,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1,
+      3
+    ],
+    "electronegativityPauling": 2.54,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_au",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 80,
+    "symbol": "Hg",
+    "name": "Mercury",
+    "group": 12,
+    "period": 6,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 200.59,
+    "stateAtStp": "liquid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      1,
+      2
+    ],
+    "electronegativityPauling": 2.0,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_hg",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 81,
+    "symbol": "Tl",
+    "name": "Thallium",
+    "group": 13,
+    "period": 6,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 204.38,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      3
+    ],
+    "valenceElectronsMainGroup": 3,
+    "commonOxidationStates": [
+      1,
+      3
+    ],
+    "electronegativityPauling": 1.62,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_tl",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 82,
+    "symbol": "Pb",
+    "name": "Lead",
+    "group": 14,
+    "period": 6,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 207.2,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      4
+    ],
+    "valenceElectronsMainGroup": 4,
+    "commonOxidationStates": [
+      2,
+      4
+    ],
+    "electronegativityPauling": 2.33,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_pb",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 83,
+    "symbol": "Bi",
+    "name": "Bismuth",
+    "group": 15,
+    "period": 6,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 208.98,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      5
+    ],
+    "valenceElectronsMainGroup": 5,
+    "commonOxidationStates": [
+      3,
+      5
+    ],
+    "electronegativityPauling": 2.02,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_bi",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 84,
+    "symbol": "Po",
+    "name": "Polonium",
+    "group": 16,
+    "period": 6,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 209,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      6
+    ],
+    "valenceElectronsMainGroup": 6,
+    "commonOxidationStates": [
+      2,
+      4
+    ],
+    "electronegativityPauling": 2.0,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_po",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 85,
+    "symbol": "At",
+    "name": "Astatine",
+    "group": 17,
+    "period": 6,
+    "block": "p",
+    "category": "halogen",
+    "standardAtomicWeight": 210,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      7
+    ],
+    "valenceElectronsMainGroup": 7,
+    "commonOxidationStates": [
+      -1,
+      1,
+      3,
+      5
+    ],
+    "electronegativityPauling": 2.2,
+    "colorToken": "#8b5cf6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_at",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 86,
+    "symbol": "Rn",
+    "name": "Radon",
+    "group": 18,
+    "period": 6,
+    "block": "p",
+    "category": "noble-gas",
+    "standardAtomicWeight": 222,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      8
+    ],
+    "valenceElectronsMainGroup": 8,
+    "commonOxidationStates": [
+      0
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#06b6d4",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_rn",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 87,
+    "symbol": "Fr",
+    "name": "Francium",
+    "group": 1,
+    "period": 7,
+    "block": "s",
+    "category": "alkali-metal",
+    "standardAtomicWeight": 223,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      8,
+      1
+    ],
+    "valenceElectronsMainGroup": 1,
+    "commonOxidationStates": [
+      1
+    ],
+    "electronegativityPauling": 0.7,
+    "colorToken": "#ef4444",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_fr",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 88,
+    "symbol": "Ra",
+    "name": "Radium",
+    "group": 2,
+    "period": 7,
+    "block": "s",
+    "category": "alkaline-earth-metal",
+    "standardAtomicWeight": 226,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2
+    ],
+    "electronegativityPauling": 0.9,
+    "colorToken": "#f97316",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ra",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 89,
+    "symbol": "Ac",
+    "name": "Actinium",
+    "group": 3,
+    "period": 7,
+    "block": "d",
+    "category": "actinide",
+    "standardAtomicWeight": 227,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.1,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ac",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 90,
+    "symbol": "Th",
+    "name": "Thorium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 232.04,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      18,
+      10,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      4
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_th",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 91,
+    "symbol": "Pa",
+    "name": "Protactinium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 231.04,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      20,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      4,
+      5
+    ],
+    "electronegativityPauling": 1.5,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_pa",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 92,
+    "symbol": "U",
+    "name": "Uranium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 238.03,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      21,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "electronegativityPauling": 1.38,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_u",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 93,
+    "symbol": "Np",
+    "name": "Neptunium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 237,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      22,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "electronegativityPauling": 1.36,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_np",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 94,
+    "symbol": "Pu",
+    "name": "Plutonium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 244,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      24,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "electronegativityPauling": 1.28,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_pu",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 95,
+    "symbol": "Am",
+    "name": "Americium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 243,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      25,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3,
+      4,
+      5,
+      6
+    ],
+    "electronegativityPauling": 1.13,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_am",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 96,
+    "symbol": "Cm",
+    "name": "Curium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 247,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      25,
+      9,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.28,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_cm",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 97,
+    "symbol": "Bk",
+    "name": "Berkelium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 247,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      27,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3,
+      4
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_bk",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 98,
+    "symbol": "Cf",
+    "name": "Californium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 251,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      28,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_cf",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 99,
+    "symbol": "Es",
+    "name": "Einsteinium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 252,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      29,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_es",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 100,
+    "symbol": "Fm",
+    "name": "Fermium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 257,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      30,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_fm",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 101,
+    "symbol": "Md",
+    "name": "Mendelevium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 258,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      31,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_md",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 102,
+    "symbol": "No",
+    "name": "Nobelium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 259,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      8,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      2,
+      3
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_no",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 103,
+    "symbol": "Lr",
+    "name": "Lawrencium",
+    "group": null,
+    "period": 7,
+    "block": "f",
+    "category": "actinide",
+    "standardAtomicWeight": 266,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      8,
+      3
+    ],
+    "valenceElectronsMainGroup": 3,
+    "commonOxidationStates": [
+      3
+    ],
+    "electronegativityPauling": 1.3,
+    "colorToken": "#d946ef",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_lr",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 104,
+    "symbol": "Rf",
+    "name": "Rutherfordium",
+    "group": 4,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 267,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      10,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      4
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_rf",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 105,
+    "symbol": "Db",
+    "name": "Dubnium",
+    "group": 5,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 268,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      11,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      5
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_db",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 106,
+    "symbol": "Sg",
+    "name": "Seaborgium",
+    "group": 6,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 269,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      12,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      6
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_sg",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 107,
+    "symbol": "Bh",
+    "name": "Bohrium",
+    "group": 7,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 270,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      13,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      7
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_bh",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 108,
+    "symbol": "Hs",
+    "name": "Hassium",
+    "group": 8,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 269,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      14,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [
+      8
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#f59e0b",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_hs",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 109,
+    "symbol": "Mt",
+    "name": "Meitnerium",
+    "group": 9,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 278,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      15,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#94a3b8",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_mt",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 110,
+    "symbol": "Ds",
+    "name": "Darmstadtium",
+    "group": 10,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 281,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      16,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#94a3b8",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ds",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 111,
+    "symbol": "Rg",
+    "name": "Roentgenium",
+    "group": 11,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 282,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      17,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#94a3b8",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_rg",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 112,
+    "symbol": "Cn",
+    "name": "Copernicium",
+    "group": 12,
+    "period": 7,
+    "block": "d",
+    "category": "transition-metal",
+    "standardAtomicWeight": 285,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      18,
+      2
+    ],
+    "valenceElectronsMainGroup": 2,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#94a3b8",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_cn",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 113,
+    "symbol": "Nh",
+    "name": "Nihonium",
+    "group": 13,
+    "period": 7,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 286,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      18,
+      3
+    ],
+    "valenceElectronsMainGroup": 3,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_nh",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 114,
+    "symbol": "Fl",
+    "name": "Flerovium",
+    "group": 14,
+    "period": 7,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 289,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      18,
+      4
+    ],
+    "valenceElectronsMainGroup": 4,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_fl",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 115,
+    "symbol": "Mc",
+    "name": "Moscovium",
+    "group": 15,
+    "period": 7,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 290,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      18,
+      5
+    ],
+    "valenceElectronsMainGroup": 5,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_mc",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 116,
+    "symbol": "Lv",
+    "name": "Livermorium",
+    "group": 16,
+    "period": 7,
+    "block": "p",
+    "category": "post-transition-metal",
+    "standardAtomicWeight": 293,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      18,
+      6
+    ],
+    "valenceElectronsMainGroup": 6,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#a8a29e",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_lv",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 117,
+    "symbol": "Ts",
+    "name": "Tennessine",
+    "group": 17,
+    "period": 7,
+    "block": "p",
+    "category": "halogen",
+    "standardAtomicWeight": 294,
+    "stateAtStp": "solid",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      18,
+      7
+    ],
+    "valenceElectronsMainGroup": 7,
+    "commonOxidationStates": [],
+    "electronegativityPauling": null,
+    "colorToken": "#8b5cf6",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_ts",
+    "sourceRef": "NIST/IUPAC"
+  },
+  {
+    "atomicNumber": 118,
+    "symbol": "Og",
+    "name": "Oganesson",
+    "group": 18,
+    "period": 7,
+    "block": "p",
+    "category": "noble-gas",
+    "standardAtomicWeight": 294,
+    "stateAtStp": "gas",
+    "shellOccupancy": [
+      2,
+      8,
+      18,
+      32,
+      32,
+      18,
+      8
+    ],
+    "valenceElectronsMainGroup": 8,
+    "commonOxidationStates": [
+      0
+    ],
+    "electronegativityPauling": null,
+    "colorToken": "#06b6d4",
+    "iconAsset": null,
+    "unlockWorld": "encyclopedia",
+    "factCardKey": "fact_og",
+    "sourceRef": "NIST/IUPAC"
+  }
+]

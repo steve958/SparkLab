@@ -1,0 +1,125 @@
+{
+  "app": {
+    "name": "SparkLab",
+    "tagline": "Play with Chemistry"
+  },
+  "menu": {
+    "play": "Play",
+    "settings": "Settings",
+    "dashboard": "Grown-ups",
+    "back": "Back"
+  },
+  "profile": {
+    "title": "Who is playing?",
+    "new": "New Player",
+    "name_placeholder": "Enter your name",
+    "age": "Age",
+    "create": "Create",
+    "cancel": "Cancel",
+    "welcome_back": "Welcome back, {{name}}!"
+  },
+  "worlds": {
+    "title": "Choose a World",
+    "subtitle": "Pick where you want to explore",
+    "foundations_name": "Foundations",
+    "foundations_desc": "Learn about atoms and simple molecules. Ages 8–10.",
+    "core_name": "Core Chemistry",
+    "core_desc": "Build bonds, run reactions, and conserve atoms. Ages 11–14."
+  },
+  "missions": {
+    "locked": "Locked",
+    "minutes": "{{count}} min",
+    "star_0": "Keep trying! You can do it.",
+    "star_1": "Good start! Try again for more stars.",
+    "star_2": "Great work! You understand this well.",
+    "star_3": "Amazing! You are a chemistry star!"
+  },
+  "game": {
+    "hint": "Hint",
+    "hide_hint": "Hide Hint",
+    "undo": "Undo",
+    "redo": "Redo",
+    "reset": "Reset",
+    "check": "Check",
+    "submit": "Submit",
+    "exit": "Exit",
+    "atoms_label": "Atoms:",
+    "mission_complete": "Mission Complete!",
+    "continue": "Continue",
+    "view_3d": "View 3D",
+    "view_3d_title": "3D Molecule View",
+    "reactants": "Reactants",
+    "products": "Products",
+    "conserved": "Balanced",
+    "not_conserved": "Not Balanced"
+  },
+  "feedback": {
+    "valid_bond": "Nice! That bond works.",
+    "invalid_bond": "That bond does not work here. Think about how many electrons each atom needs.",
+    "mission_complete_msg": "Mission complete! You did it!"
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Customize your experience",
+    "sound": "Sound",
+    "sound_desc": "Play sound effects",
+    "reduced_motion": "Reduced Motion",
+    "reduced_motion_desc": "Minimize animations",
+    "high_contrast": "High Contrast",
+    "high_contrast_desc": "Stronger colors and borders",
+    "language": "Language",
+    "language_desc": "English (more coming soon)",
+    "no_profile": "Create a profile to save settings."
+  },
+  "dashboard": {
+    "title": "Grown-up Dashboard",
+    "pin_prompt": "Enter PIN to continue",
+    "pin_enter": "Enter",
+    "pin_error": "Incorrect PIN. Try again.",
+    "profiles": "Player Profiles",
+    "progress": "Progress",
+    "export": "Export Data",
+    "delete": "Delete All Data",
+    "no_profiles": "No profiles yet.",
+    "missions_completed": "{{count}} missions completed",
+    "stars_earned": "{{count}} stars earned",
+    "data_management": "Data Management",
+    "delete_confirm_title": "Delete All Data?",
+    "delete_confirm_text": "This will permanently delete all profiles, progress, and settings. This cannot be undone.",
+    "delete_cancel": "Cancel",
+    "delete_confirm": "Delete Everything"
+  },
+  "periodic_table": {
+    "title": "Periodic Table",
+    "subtitle": "Explore all 118 elements",
+    "search": "Search elements...",
+    "filter_all": "All",
+    "filter_metals": "Metals",
+    "filter_nonmetals": "Nonmetals",
+    "filter_noble": "Noble Gases",
+    "atomic_number": "Atomic #",
+    "atomic_weight": "Atomic Weight",
+    "group": "Group",
+    "period": "Period",
+    "category": "Category",
+    "state": "State at STP",
+    "electrons": "Valence Electrons",
+    "fact": "Did you know?"
+  },
+  "cms": {
+    "title": "Content Studio",
+    "subtitle": "Create and edit chemistry content",
+    "tab_elements": "Elements",
+    "tab_molecules": "Molecules",
+    "tab_missions": "Missions",
+    "tab_reactions": "Reactions",
+    "save": "Save",
+    "preview": "Preview",
+    "export_json": "Export JSON",
+    "import_json": "Import JSON",
+    "new_element": "New Element",
+    "new_molecule": "New Molecule",
+    "new_mission": "New Mission",
+    "new_reaction": "New Reaction"
+  }
+}

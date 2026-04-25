@@ -1,0 +1,122 @@
+[
+  {
+    "reactionId": "water_formation",
+    "ageBand": "8-10",
+    "reactants": [
+      { "moleculeId": "hydrogen_gas", "coefficient": 2 },
+      { "moleculeId": "oxygen_gas", "coefficient": 1 }
+    ],
+    "products": [
+      { "moleculeId": "water", "coefficient": 2 }
+    ],
+    "conditionTags": ["spark"],
+    "conservationSignature": { "H": 4, "O": 2 },
+    "equationDisplay": "2H₂ + O₂ → 2H₂O",
+    "animationTemplate": "combustion",
+    "energyChangeLabel": "exothermic",
+    "standardsTags": ["NGSS-5-PS1-4"]
+  },
+  {
+    "reactionId": "hcl_formation",
+    "ageBand": "11-14",
+    "reactants": [
+      { "moleculeId": "hydrogen_gas", "coefficient": 1 },
+      { "moleculeId": "chlorine_gas", "coefficient": 1 }
+    ],
+    "products": [
+      { "moleculeId": "hydrogen_chloride", "coefficient": 2 }
+    ],
+    "conditionTags": ["spark", "gas-phase"],
+    "conservationSignature": { "H": 2, "Cl": 2 },
+    "equationDisplay": "H₂ + Cl₂ → 2HCl",
+    "animationTemplate": "combustion",
+    "energyChangeLabel": "exothermic",
+    "standardsTags": ["NGSS-MS-PS1-5"]
+  },
+  {
+    "reactionId": "methane_combustion",
+    "ageBand": "11-14",
+    "reactants": [
+      { "moleculeId": "methane", "coefficient": 1 },
+      { "moleculeId": "oxygen_gas", "coefficient": 2 }
+    ],
+    "products": [
+      { "moleculeId": "carbon_dioxide", "coefficient": 1 },
+      { "moleculeId": "water", "coefficient": 2 }
+    ],
+    "conditionTags": ["combustion"],
+    "conservationSignature": { "C": 1, "H": 4, "O": 4 },
+    "equationDisplay": "CH₄ + 2O₂ → CO₂ + 2H₂O",
+    "animationTemplate": "combustion",
+    "energyChangeLabel": "exothermic",
+    "standardsTags": ["NGSS-MS-PS1-5"]
+  },
+  {
+    "reactionId": "ammonia_formation",
+    "ageBand": "11-14",
+    "reactants": [
+      { "moleculeId": "nitrogen_gas", "coefficient": 1 },
+      { "moleculeId": "hydrogen_gas", "coefficient": 3 }
+    ],
+    "products": [
+      { "moleculeId": "ammonia", "coefficient": 2 }
+    ],
+    "conditionTags": ["heat", "catalyst"],
+    "conservationSignature": { "N": 2, "H": 6 },
+    "equationDisplay": "N₂ + 3H₂ → 2NH₃",
+    "animationTemplate": "synthesis",
+    "energyChangeLabel": "exothermic",
+    "standardsTags": ["NGSS-MS-PS1-5"]
+  },
+  {
+    "reactionId": "co_oxidation",
+    "ageBand": "11-14",
+    "reactants": [
+      { "moleculeId": "carbon_monoxide", "coefficient": 2 },
+      { "moleculeId": "oxygen_gas", "coefficient": 1 }
+    ],
+    "products": [
+      { "moleculeId": "carbon_dioxide", "coefficient": 2 }
+    ],
+    "conditionTags": ["heat"],
+    "conservationSignature": { "C": 2, "O": 4 },
+    "equationDisplay": "2CO + O₂ → 2CO₂",
+    "animationTemplate": "combustion",
+    "energyChangeLabel": "exothermic",
+    "standardsTags": ["NGSS-MS-PS1-5"]
+  },
+  {
+    "reactionId": "water_decomposition",
+    "ageBand": "11-14",
+    "reactants": [
+      { "moleculeId": "water", "coefficient": 2 }
+    ],
+    "products": [
+      { "moleculeId": "hydrogen_gas", "coefficient": 2 },
+      { "moleculeId": "oxygen_gas", "coefficient": 1 }
+    ],
+    "conditionTags": ["electrolysis"],
+    "conservationSignature": { "H": 4, "O": 2 },
+    "equationDisplay": "2H₂O → 2H₂ + O₂",
+    "animationTemplate": "decomposition",
+    "energyChangeLabel": "endothermic",
+    "standardsTags": ["NGSS-MS-PS1-5"]
+  },
+  {
+    "reactionId": "h2o2_decomposition",
+    "ageBand": "11-14",
+    "reactants": [
+      { "moleculeId": "hydrogen_peroxide", "coefficient": 2 }
+    ],
+    "products": [
+      { "moleculeId": "water", "coefficient": 2 },
+      { "moleculeId": "oxygen_gas", "coefficient": 1 }
+    ],
+    "conditionTags": ["catalyst"],
+    "conservationSignature": { "H": 4, "O": 4 },
+    "equationDisplay": "2H₂O₂ → 2H₂O + O₂",
+    "animationTemplate": "decomposition",
+    "energyChangeLabel": "exothermic",
+    "standardsTags": ["NGSS-MS-PS1-5"]
+  }
+]

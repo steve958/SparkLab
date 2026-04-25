@@ -1,26 +1,142 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fafc;
+  --foreground: #1e293b;
+  /* Primary derived from the SparkLab flask logo (emerald green). */
+  --primary: #16a34a;
+  --primary-hover: #15803d;
+  --success: #16a34a;
+  --warning: #ca8a04;
+  --error: #dc2626;
+  --focus-ring: #16a34a;
+
+  /* Element category colors */
+  --element-alkali: #ef4444;
+  --element-alkaline: #f97316;
+  --element-transition: #f59e0b;
+  --element-post-transition: #84cc16;
+  --element-metalloid: #14b8a6;
+  --element-nonmetal: #3b82f6;
+  --element-halogen: #8b5cf6;
+  --element-noble: #06b6d4;
+  --element-unknown: #94a3b8;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Respect device notches / home-indicators when viewport-fit=cover is set. */
+  padding-left: env(safe-area-inset-left, 0);
+  padding-right: env(safe-area-inset-right, 0);
+  padding-top: env(safe-area-inset-top, 0);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  /* Avoid horizontal scroll from tiny rounding differences in flex layouts. */
+  overflow-x: hidden;
+}
+
+/* Tailwind v4 doesn't ship `xs` by default; expose ~480px breakpoint for
+   text labels we want to hide on the very narrowest phones. */
+@media (min-width: 480px) {
+  .xs\:inline { display: inline; }
+}
+
+/* Accessibility: visible focus ring */
+:focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --background: #ffffff;
+    --foreground: #000000;
+    --primary: #0000ee;
+    --focus-ring: #000000;
+  }
+}
+
+/* Touch-friendly sizing */
+.touch-target {
+  min-height: 48px;
+  min-width: 48px;
+}
+
+.touch-target-lg {
+  min-height: 56px;
+  min-width: 56px;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Game canvas container */
+.game-canvas-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  touch-action: none;
+  user-select: none;
+}
+
+/* Atom inventory tray */
+.atom-tray {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.atom-tray::-webkit-scrollbar {
+  height: 6px;
+}
+
+.atom-tray::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
 }

@@ -1,0 +1,125 @@
+{
+  "app": {
+    "name": "SparkLab",
+    "tagline": "Juega con la Química"
+  },
+  "menu": {
+    "play": "Jugar",
+    "settings": "Ajustes",
+    "dashboard": "Adultos",
+    "back": "Atrás"
+  },
+  "profile": {
+    "title": "¿Quién juega?",
+    "new": "Nuevo Jugador",
+    "name_placeholder": "Escribe tu nombre",
+    "age": "Edad",
+    "create": "Crear",
+    "cancel": "Cancelar",
+    "welcome_back": "¡Bienvenido de nuevo, {{name}}!"
+  },
+  "worlds": {
+    "title": "Elige un Mundo",
+    "subtitle": "Elige dónde quieres explorar",
+    "foundations_name": "Fundamentos",
+    "foundations_desc": "Aprende sobre átomos y moléculas simples. Edades 8–10.",
+    "core_name": "Química Fundamental",
+    "core_desc": "Construye enlaces, reacciona y conserva átomos. Edades 11–14."
+  },
+  "missions": {
+    "locked": "Bloqueado",
+    "minutes": "{{count}} min",
+    "star_0": "¡Sigue intentando! Tú puedes.",
+    "star_1": "¡Buen comienzo! Intenta de nuevo para más estrellas.",
+    "star_2": "¡Gran trabajo! Entiendes esto muy bien.",
+    "star_3": "¡Increíble! ¡Eres una estrella de la química!"
+  },
+  "game": {
+    "hint": "Pista",
+    "hide_hint": "Ocultar Pista",
+    "undo": "Deshacer",
+    "redo": "Rehacer",
+    "reset": "Reiniciar",
+    "check": "Verificar",
+    "submit": "Enviar",
+    "exit": "Salir",
+    "atoms_label": "Átomos:",
+    "mission_complete": "¡Misión Completada!",
+    "continue": "Continuar",
+    "view_3d": "Ver 3D",
+    "view_3d_title": "Vista Molecular 3D",
+    "reactants": "Reactivos",
+    "products": "Productos",
+    "conserved": "Equilibrado",
+    "not_conserved": "No Equilibrado"
+  },
+  "feedback": {
+    "valid_bond": "¡Bien! Ese enlace funciona.",
+    "invalid_bond": "Ese enlace no funciona aquí. Piensa en cuántos electrones necesita cada átomo.",
+    "mission_complete_msg": "¡Misión completada! ¡Lo lograste!"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "subtitle": "Personaliza tu experiencia",
+    "sound": "Sonido",
+    "sound_desc": "Reproduce efectos de sonido",
+    "reduced_motion": "Movimiento Reducido",
+    "reduced_motion_desc": "Minimiza las animaciones",
+    "high_contrast": "Alto Contraste",
+    "high_contrast_desc": "Colores y bordes más fuertes",
+    "language": "Idioma",
+    "language_desc": "Español",
+    "no_profile": "Crea un perfil para guardar los ajustes."
+  },
+  "dashboard": {
+    "title": "Panel de Adultos",
+    "pin_prompt": "Introduce el PIN para continuar",
+    "pin_enter": "Entrar",
+    "pin_error": "PIN incorrecto. Inténtalo de nuevo.",
+    "profiles": "Perfiles de Jugadores",
+    "progress": "Progreso",
+    "export": "Exportar Datos",
+    "delete": "Eliminar Todos los Datos",
+    "no_profiles": "Aún no hay perfiles.",
+    "missions_completed": "{{count}} misiones completadas",
+    "stars_earned": "{{count}} estrellas ganadas",
+    "data_management": "Gestión de Datos",
+    "delete_confirm_title": "¿Eliminar todos los datos?",
+    "delete_confirm_text": "Esto eliminará permanentemente todos los perfiles, progreso y ajustes. No se puede deshacer.",
+    "delete_cancel": "Cancelar",
+    "delete_confirm": "Eliminar Todo"
+  },
+  "periodic_table": {
+    "title": "Tabla Periódica",
+    "subtitle": "Explora los 118 elementos",
+    "search": "Buscar elementos...",
+    "filter_all": "Todos",
+    "filter_metals": "Metales",
+    "filter_nonmetals": "No Metales",
+    "filter_noble": "Gases Nobles",
+    "atomic_number": "Núm. Atómico",
+    "atomic_weight": "Peso Atómico",
+    "group": "Grupo",
+    "period": "Periodo",
+    "category": "Categoría",
+    "state": "Estado a TPE",
+    "electrons": "Electrones de Valencia",
+    "fact": "¿Sabías que?"
+  },
+  "cms": {
+    "title": "Estudio de Contenido",
+    "subtitle": "Crea y edita contenido de química",
+    "tab_elements": "Elementos",
+    "tab_molecules": "Moléculas",
+    "tab_missions": "Misiones",
+    "tab_reactions": "Reacciones",
+    "save": "Guardar",
+    "preview": "Vista Previa",
+    "export_json": "Exportar JSON",
+    "import_json": "Importar JSON",
+    "new_element": "Nuevo Elemento",
+    "new_molecule": "Nueva Molécula",
+    "new_mission": "Nueva Misión",
+    "new_reaction": "Nueva Reacción"
+  }
+}

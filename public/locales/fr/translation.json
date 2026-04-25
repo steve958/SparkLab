@@ -1,0 +1,125 @@
+{
+  "app": {
+    "name": "SparkLab",
+    "tagline": "Joue avec la Chimie"
+  },
+  "menu": {
+    "play": "Jouer",
+    "settings": "Paramètres",
+    "dashboard": "Adultes",
+    "back": "Retour"
+  },
+  "profile": {
+    "title": "Qui joue ?",
+    "new": "Nouveau Joueur",
+    "name_placeholder": "Entre ton nom",
+    "age": "Âge",
+    "create": "Créer",
+    "cancel": "Annuler",
+    "welcome_back": "Bon retour, {{name}} !"
+  },
+  "worlds": {
+    "title": "Choisis un Monde",
+    "subtitle": "Choisis où tu veux explorer",
+    "foundations_name": "Fondamentaux",
+    "foundations_desc": "Apprends les atomes et les molécules simples. Âges 8–10.",
+    "core_name": "Chimie Fondamentale",
+    "core_desc": "Construis des liaisons, réagis et conserve les atomes. Âges 11–14."
+  },
+  "missions": {
+    "locked": "Verrouillé",
+    "minutes": "{{count}} min",
+    "star_0": "Continue d'essayer ! Tu peux le faire.",
+    "star_1": "Bon début ! Réessaie pour plus d'étoiles.",
+    "star_2": "Excellent travail ! Tu comprends bien cela.",
+    "star_3": "Incroyable ! Tu es une star de la chimie !"
+  },
+  "game": {
+    "hint": "Indice",
+    "hide_hint": "Cacher l'Indice",
+    "undo": "Annuler",
+    "redo": "Rétablir",
+    "reset": "Réinitialiser",
+    "check": "Vérifier",
+    "submit": "Soumettre",
+    "exit": "Quitter",
+    "atoms_label": "Atomes :",
+    "mission_complete": "Mission Accomplie !",
+    "continue": "Continuer",
+    "view_3d": "Vue 3D",
+    "view_3d_title": "Vue Moléculaire 3D",
+    "reactants": "Réactifs",
+    "products": "Produits",
+    "conserved": "Équilibré",
+    "not_conserved": "Non Équilibré"
+  },
+  "feedback": {
+    "valid_bond": "Bien ! Cette liaison fonctionne.",
+    "invalid_bond": "Cette liaison ne fonctionne pas ici. Pense au nombre d'électrons dont chaque atome a besoin.",
+    "mission_complete_msg": "Mission accomplie ! Tu as réussi !"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Personnalise ton expérience",
+    "sound": "Son",
+    "sound_desc": "Jouer les effets sonores",
+    "reduced_motion": "Mouvement Réduit",
+    "reduced_motion_desc": "Minimiser les animations",
+    "high_contrast": "Contraste Élevé",
+    "high_contrast_desc": "Couleurs et bordures plus fortes",
+    "language": "Langue",
+    "language_desc": "Français",
+    "no_profile": "Crée un profil pour enregistrer les paramètres."
+  },
+  "dashboard": {
+    "title": "Tableau de Bord Adulte",
+    "pin_prompt": "Entre le PIN pour continuer",
+    "pin_enter": "Entrer",
+    "pin_error": "PIN incorrect. Réessaie.",
+    "profiles": "Profils des Joueurs",
+    "progress": "Progrès",
+    "export": "Exporter les Données",
+    "delete": "Supprimer Toutes les Données",
+    "no_profiles": "Aucun profil pour l'instant.",
+    "missions_completed": "{{count}} missions accompl",
+    "stars_earned": "{{count}} étoiles gagnées",
+    "data_management": "Gestion des Données",
+    "delete_confirm_title": "Supprimer toutes les données ?",
+    "delete_confirm_text": "Cela supprimera définitivement tous les profils, progrès et paramètres. Cela ne peut pas être annulé.",
+    "delete_cancel": "Annuler",
+    "delete_confirm": "Tout Supprimer"
+  },
+  "periodic_table": {
+    "title": "Tableau Périodique",
+    "subtitle": "Explore les 118 éléments",
+    "search": "Rechercher des éléments...",
+    "filter_all": "Tous",
+    "filter_metals": "Métaux",
+    "filter_nonmetals": "Non-métaux",
+    "filter_noble": "Gaz Nobles",
+    "atomic_number": "N° Atomique",
+    "atomic_weight": "Masse Atomique",
+    "group": "Groupe",
+    "period": "Période",
+    "category": "Catégorie",
+    "state": "État à TPN",
+    "electrons": "Électrons de Valence",
+    "fact": "Le savais-tu ?"
+  },
+  "cms": {
+    "title": "Studio de Contenu",
+    "subtitle": "Crée et modifie du contenu de chimie",
+    "tab_elements": "Éléments",
+    "tab_molecules": "Molécules",
+    "tab_missions": "Missions",
+    "tab_reactions": "Réactions",
+    "save": "Enregistrer",
+    "preview": "Aperçu",
+    "export_json": "Exporter JSON",
+    "import_json": "Importer JSON",
+    "new_element": "Nouvel Élément",
+    "new_molecule": "Nouvelle Molécule",
+    "new_mission": "Nouvelle Mission",
+    "new_reaction": "Nouvelle Réaction"
+  }
+}
