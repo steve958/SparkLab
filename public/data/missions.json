@@ -73,7 +73,7 @@
     "missionId": "f04_count_particles",
     "worldId": "foundations",
     "title": "Count the Particles",
-    "brief": "A water molecule has atoms inside it. Count how many hydrogen and oxygen atoms you see!",
+    "brief": "A water molecule has 2 hydrogen atoms and 1 oxygen atom. Place exactly that many on the canvas to show the count, then press Check.",
     "objectiveType": "count-atoms",
     "allowedElements": ["H", "O"],
     "allowedMolecules": ["water"],

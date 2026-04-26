@@ -122,6 +122,26 @@ export default function GamePage() {
           showFeedback("Build an atom with the right number of particles.", "error");
         }
       }
+    } else if (mission.objectiveType === "count-atoms") {
+      const targets = mission.successConditions.flatMap((c) =>
+        c.type === "count-atoms" ? [c] : []
+      );
+      const counts = new Map<string, number>();
+      for (const a of scene.atoms) {
+        counts.set(a.elementId, (counts.get(a.elementId) ?? 0) + 1);
+      }
+      const wrong = targets.find(
+        (t) => (counts.get(t.element) ?? 0) !== t.count
+      );
+      if (!wrong) {
+        await handleSuccess("You placed the right number of each atom!");
+      } else {
+        const have = counts.get(wrong.element) ?? 0;
+        showFeedback(
+          `You have ${have} ${wrong.element} atoms — the target is ${wrong.count}.`,
+          "error"
+        );
+      }
     } else if (mission.objectiveType === "run-reaction") {
       const condition = mission.successConditions[0];
       if (condition?.type === "run-reaction") {
