@@ -15,6 +15,7 @@ import {
   Lightbulb,
   CheckCircle,
   ArrowLeft,
+  ArrowRight,
   RotateCcw,
   X,
   Box,
@@ -45,10 +46,39 @@ export default function GameHUD({ content }: GameHUDProps) {
   const dismissHint = useGameStore((s) => s.dismissHint);
   const dismissFeedback = useGameStore((s) => s.dismissFeedback);
   const resetScene = useGameStore((s) => s.resetScene);
+  const initMission = useGameStore((s) => s.initMission);
   const selectedAtomId = useGameStore((s) => s.selectedAtomId);
   const selectedBondId = useGameStore((s) => s.selectedBondId);
   const removeAtom = useGameStore((s) => s.removeAtom);
   const removeBond = useGameStore((s) => s.removeBond);
+
+  const progress = useProgressStore((s) => s.progress);
+  const isMissionUnlocked = useProgressStore((s) => s.isMissionUnlocked);
+
+  // Next unlocked, not-yet-3-starred mission in the current world (forward-only).
+  // null when this is the last available mission and the player should head back
+  // to the world list.
+  const nextMission = useMemo(() => {
+    if (!mission) return null;
+    const sameWorld = content.missions.filter(
+      (m) => m.worldId === mission.worldId
+    );
+    const currentIdx = sameWorld.findIndex(
+      (m) => m.missionId === mission.missionId
+    );
+    if (currentIdx === -1) return null;
+    for (let i = currentIdx + 1; i < sameWorld.length; i++) {
+      const candidate = sameWorld[i];
+      if (!isMissionUnlocked(candidate.missionId, candidate.prerequisites)) {
+        continue;
+      }
+      const stars =
+        progress.find((p) => p.missionId === candidate.missionId)?.stars ?? 0;
+      if (stars >= 3) continue;
+      return candidate;
+    }
+    return null;
+  }, [mission, content.missions, progress, isMissionUnlocked]);
 
   const [show3D, setShow3D] = useState(false);
   const [canvasCenterX, setCanvasCenterX] = useState(400);
@@ -389,12 +419,25 @@ export default function GameHUD({ content }: GameHUDProps) {
                 </svg>
               ))}
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-2">
+              {nextMission && (
+                <button
+                  onClick={() => initMission(nextMission)}
+                  className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover transition-colors flex items-center justify-center gap-2"
+                >
+                  Next mission
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
               <button
-                onClick={() => router.push("/worlds")}
-                className="flex-1 py-3 rounded-xl border border-slate-300 font-medium hover:bg-slate-50 transition-colors"
+                onClick={() =>
+                  router.push(
+                    mission ? `/worlds?world=${mission.worldId}` : "/worlds"
+                  )
+                }
+                className="w-full py-3 rounded-xl border border-slate-300 font-medium hover:bg-slate-50 transition-colors"
               >
-                {t("game.continue")}
+                {nextMission ? "Back to world" : t("game.continue")}
               </button>
             </div>
           </div>
