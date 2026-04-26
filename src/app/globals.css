@@ -3,13 +3,16 @@
 :root {
   --background: #f8fafc;
   --foreground: #1e293b;
-  /* Primary derived from the SparkLab flask logo (emerald green). */
-  --primary: #16a34a;
-  --primary-hover: #15803d;
-  --success: #16a34a;
+  /* Primary derived from the SparkLab flask logo (emerald green).
+     Shifted from green-600 (#16a34a) to green-700 (#15803d) to clear
+     WCAG AA 4.5:1 contrast on white text and on bg-sky-50 backgrounds.
+     See docs/phase1-a11y-audit.md. */
+  --primary: #15803d;
+  --primary-hover: #166534;
+  --success: #15803d;
   --warning: #ca8a04;
   --error: #dc2626;
-  --focus-ring: #16a34a;
+  --focus-ring: #15803d;
 
   /* Element category colors */
   --element-alkali: #ef4444;
@@ -139,4 +142,28 @@ body {
 .atom-tray::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
+}
+
+/* Mission-complete star burst — each star scales in from 0 with a slight
+   bounce, staggered so the burst reads as celebratory rather than instant.
+   Reduced-motion users get the final state with no animation thanks to
+   the global `prefers-reduced-motion` rule above. */
+@keyframes star-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.star-pop {
+  animation: star-pop 360ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: center;
 }

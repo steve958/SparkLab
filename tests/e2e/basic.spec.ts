@@ -15,6 +15,9 @@ test("can create a profile and navigate to worlds", async ({ page }) => {
   await page.fill('input[placeholder="Enter your name"]', "TestPlayer");
   await page.click("text=Create");
 
+  // New profiles see the onboarding intro first; bypass it for this test.
+  await page.getByRole("button", { name: /Skip the tutorial/i }).click();
+
   // Should show main menu
   await expect(page.locator("text=Welcome back, TestPlayer!")).toBeVisible();
 

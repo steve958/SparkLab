@@ -103,7 +103,7 @@ export default function DashboardPage() {
             >
               Enter
             </button>
-            <p className="text-xs text-slate-400 text-center">
+            <p className="text-xs text-slate-600 text-center">
               MVP PIN: 1234
             </p>
           </div>

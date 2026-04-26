@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useTranslation } from "react-i18next";
 import { useProgressStore } from "@/store/progressStore";
 import { Play, Settings, Shield, Table, PenTool, Star } from "lucide-react";
+import AvatarBadge from "./AvatarBadge";
 
 export default function MainMenu() {
   const { t } = useTranslation();
@@ -30,12 +31,13 @@ export default function MainMenu() {
       </div>
 
       {currentProfile && (
-        <div className="text-center">
+        <div className="flex flex-col items-center text-center gap-2">
+          <AvatarBadge profile={currentProfile} size="xl" />
           <p className="text-slate-500">
             {t("profile.welcome_back", { name: currentProfile.name })}
           </p>
           {totalStars > 0 && (
-            <div className="flex items-center justify-center gap-1.5 mt-2 text-yellow-600 font-semibold">
+            <div className="flex items-center justify-center gap-1.5 text-yellow-600 font-semibold">
               <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
               <span>{totalStars} stars earned</span>
             </div>

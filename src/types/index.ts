@@ -227,7 +227,32 @@ export interface HintState {
   hintsUsed: number;
   lastHintTier: number;
   cooldownEnd: number | null;
+  // Per-mission attempt history; cleared on initMission. Drives adaptive
+  // hint content — e.g. repeated "unbonded-atoms" failures escalate the
+  // hint from a generic nudge to a "show-me" demonstration.
+  attempts: AttemptRecord[];
 }
+
+export interface AttemptRecord {
+  timestamp: number;
+  outcome: AttemptOutcome;
+  // Free-form detail the engine can inspect (e.g. specific element symbol,
+  // atom id, or count). Kept loose so analyzers can attach what they need.
+  detail?: string;
+}
+
+export type AttemptOutcome =
+  | "success"
+  | "no-atoms"
+  | "wrong-atom-counts"
+  | "missing-element"
+  | "extra-element"
+  | "unbonded-atoms"
+  | "incomplete-valence"
+  | "wrong-structure"
+  | "unbalanced-reaction"
+  | "wrong-element-built"
+  | "other";
 
 export interface ScoreState {
   stars: number;
@@ -249,6 +274,14 @@ export interface PlayerProfile {
   avatar: string;
   createdAt: number;
   ageBand: AgeBand;
+  // Marked true after the player completes the first-run tutorial. Older
+  // profiles stored before this field existed default to undefined and are
+  // treated as "completed" so we don't re-onboard returning users.
+  onboardingCompleted?: boolean;
+  // Phase 2 avatar customization. Optional so legacy profiles still
+  // render via the AvatarBadge defaults.
+  avatarColor?: string;     // hex from the curated palette
+  avatarAccessory?: string; // lucide icon name; renderer falls back if unknown
 }
 
 export interface MissionProgress {
@@ -258,6 +291,90 @@ export interface MissionProgress {
   completedAt: number | null;
   attempts: number;
   bestIndependenceScore: number;
+}
+
+// A "discovery" is a single artifact written when a player makes
+// something noteworthy — completing a mission, building a recognized
+// molecule in sandbox, etc. The notebook ([/notebook](src/app/notebook))
+// reads these and renders sticker-style entries.
+export interface Discovery {
+  id: string;            // crypto.randomUUID()
+  profileId: string;
+  kind: DiscoveryKind;
+  // Reference to the underlying content. For mission discoveries this is
+  // the missionId; for sandbox creations it's the matched moleculeId
+  // (or "free-form" if the structure doesn't match a known molecule).
+  refId: string;
+  // Free-form display label captured at discovery time so renames in
+  // content don't make old entries unreadable.
+  label: string;
+  // One-line explanation captured at discovery time, ditto.
+  explanation: string;
+  createdAt: number;
+}
+
+export type DiscoveryKind =
+  | "mission-complete"
+  | "sandbox-molecule"
+  | "first-element-built";
+
+// Earned achievements. Definitions live in
+// [public/data/badges.json](public/data/badges.json); player records of
+// which they've earned live in IndexedDB.
+export interface BadgeAward {
+  profileId: string;
+  badgeId: string;       // matches a definition in badges.json
+  earnedAt: number;
+}
+
+export interface BadgeDefinition {
+  badgeId: string;
+  // Title shown on the badge card / toast.
+  title: string;
+  // One-line description of what the player did.
+  description: string;
+  // Lucide icon name (e.g. "Sparkles", "FlaskConical"). The renderer
+  // looks up the icon dynamically; ship a fallback if the name is wrong.
+  icon: string;
+  // Hex color used for the badge background. Falls back to primary green.
+  color?: string;
+  // Trigger condition. The badge engine evaluates these against the
+  // player's progress + discovery history when relevant events fire.
+  trigger: BadgeTrigger;
+}
+
+export type BadgeTrigger =
+  | { kind: "first-mission-complete" }
+  | { kind: "first-molecule"; moleculeId: string }
+  | { kind: "complete-world"; worldId: string }
+  | { kind: "no-hint-clear"; missionId?: string }
+  | { kind: "perfect-mission"; missionId?: string }
+  | { kind: "mission-count"; count: number }
+  | { kind: "elements-discovered"; count: number };
+
+// Mastery checks — per-world pre/post quizlets that bracket each world.
+// Pre-check measures starting knowledge, post-check measures lift; the
+// gap between them is the mastery improvement signal Phase 2 ships
+// against (+10pp target in roadmap.v2).
+export interface MasteryQuestion {
+  question: string;
+  options: string[];
+  correctIndex: number;
+}
+
+export interface WorldMasteryCheck {
+  worldId: string;
+  pre: MasteryQuestion[];
+  post: MasteryQuestion[];
+}
+
+export interface MasteryCheckResult {
+  profileId: string;
+  worldId: string;
+  phase: "pre" | "post";
+  correctCount: number;
+  totalCount: number;
+  takenAt: number;
 }
 
 export interface PlayerSettings {
@@ -294,9 +411,16 @@ export interface HintSet {
 export interface HintTier {
   tier: number;
   textKey: string;
-  action: "highlight-atoms" | "show-bond" | "show-target" | "explain-concept";
+  action: HintAction;
   actionPayload?: unknown;
 }
+
+export type HintAction =
+  | "highlight-atoms"
+  | "show-bond"
+  | "show-target"
+  | "explain-concept"
+  | "show-me";
 
 // ============================================================================
 // Dashboard / Adult

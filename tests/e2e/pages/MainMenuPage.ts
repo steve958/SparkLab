@@ -27,6 +27,14 @@ export class MainMenuPage {
     await this.newPlayerButton.click();
     await this.nameInput.fill(name);
     await this.createButton.click();
+    // New profiles always land on the onboarding intro before MainMenu.
+    // The shared helper auto-skips so existing tests behave the same as
+    // before. Tests that explicitly cover onboarding
+    // (onboarding-flow.spec.ts) call the lower-level steps directly and
+    // don't go through this helper.
+    await this.page
+      .getByRole("button", { name: /Skip the tutorial/i })
+      .click({ timeout: 10000 });
     await this.welcomeMessage.waitFor();
   }
 

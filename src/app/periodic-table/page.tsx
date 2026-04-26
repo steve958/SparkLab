@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { loadContent, type ContentBundle } from "@/data/loader";
 import { getElementImageUrl } from "@/data/element-images";
 import { goBackOr } from "@/lib/navigation";
+import { useProgressStore } from "@/store/progressStore";
 import type { Element } from "@/types";
 import { ArrowLeft, Search, FlaskConical } from "lucide-react";
 
@@ -37,6 +38,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 export default function PeriodicTablePage() {
   const router = useRouter();
   const { t } = useTranslation();
+  const progress = useProgressStore((s) => s.progress);
   const [content, setContent] = useState<ContentBundle | null>(null);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<FilterCategory>("all");
@@ -47,6 +49,25 @@ export default function PeriodicTablePage() {
   }, []);
 
   const elements = content?.elements ?? [];
+
+  // "Discovered" element symbols — every element referenced by a mission
+  // the player has earned at least one star on. Drives the periodic
+  // table light-up: undiscovered elements render desaturated.
+  const discoveredSymbols = useMemo(() => {
+    if (!content) return new Set<string>();
+    const earned = progress.filter((p) => p.stars > 0);
+    const result = new Set<string>();
+    for (const p of earned) {
+      const m = content.missions.find((mm) => mm.missionId === p.missionId);
+      if (!m) continue;
+      for (const cond of m.successConditions) {
+        if (cond.type === "build-atom") result.add(cond.targetElement);
+        if (cond.type === "count-atoms") result.add(cond.element);
+      }
+      for (const el of m.allowedElements) result.add(el);
+    }
+    return result;
+  }, [content, progress]);
 
   const filteredElements = useMemo(() => {
     let result = elements;
@@ -139,13 +160,16 @@ export default function PeriodicTablePage() {
             .sort((a, b) => a.atomicNumber - b.atomicNumber)
             .map((element) => {
               const img = getElementImageUrl(element.symbol);
+              const discovered = discoveredSymbols.has(element.symbol);
               return (
                 <button
                   key={element.symbol}
                   onClick={() => setSelectedElement(element)}
-                  className="aspect-square rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary hover:scale-105 transition-transform shadow-sm"
+                  className={`aspect-square rounded-xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary hover:scale-105 transition-all shadow-sm ${
+                    discovered ? "" : "grayscale opacity-50"
+                  }`}
                   style={{ backgroundColor: CATEGORY_COLORS[element.category] || "#94a3b8" }}
-                  aria-label={`${element.name}, atomic number ${element.atomicNumber}`}
+                  aria-label={`${element.name}, atomic number ${element.atomicNumber}${discovered ? ", discovered" : ", not yet discovered"}`}
                 >
                   {img ? (
                     /* Image is decorative — name + symbol are baked in. */
@@ -187,7 +211,11 @@ export default function PeriodicTablePage() {
                 return (
                   <div key={`${period}-${group}`} className="aspect-square">
                     {element ? (
-                      <PeriodicCell element={element} onSelect={setSelectedElement} />
+                      <PeriodicCell
+                        element={element}
+                        onSelect={setSelectedElement}
+                        discovered={discoveredSymbols.has(element.symbol)}
+                      />
                     ) : (
                       <div className="w-full h-full" />
                     )}
@@ -210,7 +238,11 @@ export default function PeriodicTablePage() {
                       <div className="aspect-square" />
                       {rowElements.map((element) => (
                         <div key={element.symbol} className="aspect-square">
-                          <PeriodicCell element={element} onSelect={setSelectedElement} />
+                          <PeriodicCell
+                            element={element}
+                            onSelect={setSelectedElement}
+                            discovered={discoveredSymbols.has(element.symbol)}
+                          />
                         </div>
                       ))}
                     </Fragment>
@@ -348,16 +380,19 @@ export default function PeriodicTablePage() {
 interface PeriodicCellProps {
   element: Element;
   onSelect: (e: Element) => void;
+  discovered?: boolean;
 }
 
-function PeriodicCell({ element, onSelect }: PeriodicCellProps) {
+function PeriodicCell({ element, onSelect, discovered = true }: PeriodicCellProps) {
   const img = getElementImageUrl(element.symbol);
   return (
     <button
       onClick={() => onSelect(element)}
-      className="w-full h-full rounded-md overflow-hidden flex flex-col items-center justify-center text-white transition-transform hover:scale-110 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary relative"
+      className={`w-full h-full rounded-md overflow-hidden flex flex-col items-center justify-center text-white transition-all hover:scale-110 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary relative ${
+        discovered ? "" : "grayscale opacity-50"
+      }`}
       style={{ backgroundColor: CATEGORY_COLORS[element.category] || "#94a3b8" }}
-      aria-label={`${element.name}, atomic number ${element.atomicNumber}`}
+      aria-label={`${element.name}, atomic number ${element.atomicNumber}${discovered ? ", discovered" : ", not yet discovered"}`}
     >
       {img ? (
         // Card art has the symbol/number/name baked in; the colored backdrop

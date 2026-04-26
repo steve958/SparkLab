@@ -1,0 +1,47 @@
+[
+  {
+    "worldId": "foundations",
+    "pre": [
+      {
+        "question": "What is the smallest particle of an element?",
+        "options": ["A molecule", "An atom", "A bond"],
+        "correctIndex": 1
+      },
+      {
+        "question": "How do atoms join together to make molecules?",
+        "options": [
+          "They share or transfer electrons (bonds)",
+          "They are glued together",
+          "They attract by gravity"
+        ],
+        "correctIndex": 0
+      },
+      {
+        "question": "Which of these is a molecule?",
+        "options": ["H₂O (water)", "An electron", "A proton"],
+        "correctIndex": 0
+      }
+    ],
+    "post": [
+      {
+        "question": "How many hydrogen atoms are in a water molecule?",
+        "options": ["1", "2", "3"],
+        "correctIndex": 1
+      },
+      {
+        "question": "Carbon usually makes how many bonds?",
+        "options": ["1", "2", "4"],
+        "correctIndex": 2
+      },
+      {
+        "question": "What's different about a molecule compared to an atom?",
+        "options": [
+          "A molecule is made of two or more atoms bonded together",
+          "A molecule is bigger than the sun",
+          "A molecule is the same thing as an atom"
+        ],
+        "correctIndex": 0
+      }
+    ]
+  }
+]

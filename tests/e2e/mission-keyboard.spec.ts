@@ -27,6 +27,15 @@ test.describe("Keyboard Mission Completion", () => {
     await page.getByRole("button", { name: "Check" }).focus();
     await page.keyboard.press("Enter");
 
+    // The explanation quiz modal opens; answer it via keyboard before
+    // the mission complete overlay can appear.
+    const quiz = page.getByRole("dialog", { name: /how many protons/i });
+    await expect(quiz).toBeVisible();
+    await quiz.getByRole("button", { name: "1" }).focus();
+    await page.keyboard.press("Enter");
+    await quiz.getByRole("button", { name: "Continue" }).focus();
+    await page.keyboard.press("Enter");
+
     // Verify mission complete overlay appears
     await expect(game.missionCompleteOverlay).toBeVisible({ timeout: 5000 });
   });

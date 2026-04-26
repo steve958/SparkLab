@@ -21,17 +21,20 @@ test.describe("Progression and Unlocking", () => {
     await game.addAtom("H");
     await game.clickCheck();
 
+    // The build-atom mission has an explanation quiz that gates the
+    // mission-complete overlay. Answer it before asserting completion.
+    const quiz = page.getByRole("dialog", { name: /how many protons/i });
+    await expect(quiz).toBeVisible();
+    await quiz.getByRole("button", { name: "1" }).click();
+    await quiz.getByRole("button", { name: "Continue" }).click();
+
     await expect(game.missionCompleteOverlay).toBeVisible({ timeout: 5000 });
 
-    // Click Continue to return to worlds page
-    await page.getByRole("button", { name: "Continue" }).click();
-    await page.waitForURL("/worlds");
-
-    // Verify world progress bar shows progress on the worlds page (Foundations should show 20%)
-    await expect(page.locator("text=20%").first()).toBeVisible();
-
-    // Re-select the world and wait for mission browser
-    await worlds.selectWorld("Foundations");
+    // f02 is unlocked next, so the post-success button is "Back to world"
+    // (it's "Continue" only when there's no next mission). This lands on
+    // /worlds?world=foundations which shows the MissionBrowser directly.
+    await page.getByRole("button", { name: "Back to world" }).click();
+    await page.waitForURL(/\/worlds\?world=foundations/);
     await page.locator("text=Build a Hydrogen Atom").waitFor({ state: "visible" });
 
     // Verify first mission now shows stars

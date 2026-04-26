@@ -5,6 +5,9 @@ import type {
   PlayerSettings,
   SceneState,
   UndoCommand,
+  Discovery,
+  BadgeAward,
+  MasteryCheckResult,
 } from "@/types";
 
 export interface SaveSlot {
@@ -22,6 +25,9 @@ class SparkLabDatabase extends Dexie {
   progress!: Table<MissionProgress>;
   saves!: Table<SaveSlot>;
   settings!: Table<PlayerSettings>;
+  discoveries!: Table<Discovery>;
+  badges!: Table<BadgeAward>;
+  masteryResults!: Table<MasteryCheckResult>;
 
   constructor() {
     super("SparkLabDB");
@@ -30,6 +36,17 @@ class SparkLabDatabase extends Dexie {
       progress: "[profileId+missionId], profileId, missionId, stars, completedAt",
       saves: "[profileId+missionId], profileId, missionId, timestamp",
       settings: "profileId",
+    });
+    // v2 (Phase 2): discoveries (notebook entries) + badges (awards).
+    // Dexie applies upgrades cumulatively; existing v1 stores are kept.
+    this.version(2).stores({
+      discoveries: "id, profileId, kind, createdAt",
+      badges: "[profileId+badgeId], profileId, badgeId, earnedAt",
+    });
+    // v3 (Phase 2): per-world pre/post mastery check results.
+    this.version(3).stores({
+      masteryResults:
+        "[profileId+worldId+phase], profileId, worldId, phase, takenAt",
     });
   }
 }
@@ -47,11 +64,21 @@ export async function createProfile(
   return profile;
 }
 
+export async function updateProfile(
+  profile: PlayerProfile
+): Promise<PlayerProfile> {
+  await db.profiles.put(profile);
+  return profile;
+}
+
 export async function deleteProfile(profileId: string): Promise<void> {
   await db.profiles.delete(profileId);
   await db.progress.where({ profileId }).delete();
   await db.saves.where({ profileId }).delete();
   await db.settings.where({ profileId }).delete();
+  await db.discoveries.where({ profileId }).delete();
+  await db.badges.where({ profileId }).delete();
+  await db.masteryResults.where({ profileId }).delete();
 }
 
 export async function getProgressForProfile(
@@ -95,11 +122,22 @@ export async function saveSettings(settings: PlayerSettings): Promise<void> {
 }
 
 export async function exportAllData(): Promise<Record<string, unknown[]>> {
-  const [profiles, progress, saves, settings] = await Promise.all([
+  const [
+    profiles,
+    progress,
+    saves,
+    settings,
+    discoveries,
+    badges,
+    masteryResults,
+  ] = await Promise.all([
     db.profiles.toArray(),
     db.progress.toArray(),
     db.saves.toArray(),
     db.settings.toArray(),
+    db.discoveries.toArray(),
+    db.badges.toArray(),
+    db.masteryResults.toArray(),
   ]);
 
   return {
@@ -107,6 +145,9 @@ export async function exportAllData(): Promise<Record<string, unknown[]>> {
     progress,
     saves,
     settings,
+    discoveries,
+    badges,
+    masteryResults,
   };
 }
 
@@ -115,4 +156,62 @@ export async function deleteAllData(): Promise<void> {
   await db.progress.clear();
   await db.saves.clear();
   await db.settings.clear();
+  await db.discoveries.clear();
+  await db.badges.clear();
+  await db.masteryResults.clear();
+}
+
+// ============================================================================
+// Discoveries (notebook)
+// ============================================================================
+
+export async function getDiscoveries(profileId: string): Promise<Discovery[]> {
+  return db.discoveries
+    .where({ profileId })
+    .reverse()
+    .sortBy("createdAt");
+}
+
+export async function addDiscovery(discovery: Discovery): Promise<void> {
+  await db.discoveries.put(discovery);
+}
+
+export async function hasDiscovery(
+  profileId: string,
+  kind: Discovery["kind"],
+  refId: string
+): Promise<boolean> {
+  const match = await db.discoveries
+    .where({ profileId })
+    .filter((d) => d.kind === kind && d.refId === refId)
+    .first();
+  return !!match;
+}
+
+// ============================================================================
+// Badges
+// ============================================================================
+
+export async function getBadgeAwards(profileId: string): Promise<BadgeAward[]> {
+  return db.badges.where({ profileId }).toArray();
+}
+
+export async function awardBadge(award: BadgeAward): Promise<void> {
+  await db.badges.put(award);
+}
+
+// ============================================================================
+// Mastery check results
+// ============================================================================
+
+export async function getMasteryResults(
+  profileId: string
+): Promise<MasteryCheckResult[]> {
+  return db.masteryResults.where({ profileId }).toArray();
+}
+
+export async function saveMasteryResult(
+  result: MasteryCheckResult
+): Promise<void> {
+  await db.masteryResults.put(result);
 }

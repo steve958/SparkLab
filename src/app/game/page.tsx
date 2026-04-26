@@ -12,9 +12,12 @@ import { validateReactionMission } from "@/engine/reaction";
 import { validateBond } from "@/engine/bond";
 import { nudgePosition, findNearestAtom } from "@/engine/interaction";
 import { calculateScore } from "@/engine/scoring";
+import { analyzeAttempt } from "@/engine/hints";
+import { evaluateBadges } from "@/engine/badges";
 import GameHUD from "@/components/GameHUD";
 import CanvasAccessibilityOverlay from "@/components/CanvasAccessibilityOverlay";
 import ExplanationQuizModal from "@/components/ExplanationQuizModal";
+import OnboardingCoachmark from "@/components/OnboardingCoachmark";
 import { goBackOr } from "@/lib/navigation";
 import type { ExplanationQuiz, SceneAtom, SceneBond } from "@/types";
 
@@ -24,6 +27,14 @@ export default function GamePage() {
   const router = useRouter();
   const currentProfile = useProgressStore((s) => s.currentProfile);
   const updateProgress = useProgressStore((s) => s.updateProgress);
+  const markOnboardingComplete = useProgressStore(
+    (s) => s.markOnboardingComplete
+  );
+  const addDiscoveryRecord = useProgressStore((s) => s.addDiscoveryRecord);
+  const recordBadgeAward = useProgressStore((s) => s.recordBadgeAward);
+
+  const isOnboarding = currentProfile?.onboardingCompleted === false;
+  const [coachmarkDismissed, setCoachmarkDismissed] = useState(false);
 
   const mission = useGameStore((s) => s.currentMission);
   const scene = useGameStore((s) => s.scene);
@@ -38,6 +49,7 @@ export default function GamePage() {
   const setSelectedAtom = useGameStore((s) => s.setSelectedAtom);
   const showFeedback = useGameStore((s) => s.showFeedback);
   const completeMission = useGameStore((s) => s.completeMission);
+  const recordAttempt = useGameStore((s) => s.recordAttempt);
 
   const [content, setContent] = useState<ContentBundle | null>(null);
   const [contentError, setContentError] = useState<Error | null>(null);
@@ -49,7 +61,7 @@ export default function GamePage() {
 
   const finalizeMission = useCallback(
     async (explanationCorrect: boolean | null, explanationText: string) => {
-      if (!mission) return;
+      if (!mission || !content) return;
       const calc = calculateScore(
         true,
         hintState.hintsUsed,
@@ -69,18 +81,58 @@ export default function GamePage() {
         };
         await saveMissionProgress(progressRecord);
         await updateProgress(progressRecord);
+
+        // First successful mission graduates the player from onboarding.
+        if (currentProfile.onboardingCompleted === false) {
+          await markOnboardingComplete();
+        }
+
+        // Notebook discovery — write a sticker for this mission. The
+        // helper dedupes so replays don't spam the notebook.
+        await addDiscoveryRecord({
+          profileId: currentProfile.id,
+          kind: "mission-complete",
+          refId: mission.missionId,
+          label: mission.title,
+          explanation: explanationText,
+        });
+
+        // Badge evaluation. We re-read progress *after* save so the
+        // evaluator sees the just-completed mission and any prior wins.
+        const matchedMoleculeId =
+          mission.objectiveType === "build-molecule"
+            ? (mission.allowedMolecules[0] ?? null)
+            : null;
+        const storeState = useProgressStore.getState();
+        const earned = evaluateBadges(content.badges, {
+          justCompleted: mission,
+          starsEarned: calc.stars,
+          hintsUsed: hintState.hintsUsed,
+          matchedMoleculeId,
+          allProgress: storeState.progress,
+          allMissions: content.missions,
+          allDiscoveries: storeState.discoveries,
+          alreadyEarned: storeState.badges,
+        });
+        for (const def of earned) {
+          await recordBadgeAward(def.badgeId);
+        }
       }
 
       showFeedback(explanationText, "success");
     },
     [
       mission,
+      content,
       hintState,
       scoreState,
       currentProfile,
+      markOnboardingComplete,
       completeMission,
       showFeedback,
       updateProgress,
+      addDiscoveryRecord,
+      recordBadgeAward,
     ]
   );
 
@@ -98,6 +150,21 @@ export default function GamePage() {
   const checkMission = useCallback(async () => {
     if (!mission || !content) return;
 
+    // Helper: any failed Check is also a recorded attempt so the adaptive
+    // hint engine can see repeat patterns. The outcome is derived from the
+    // current scene against the mission target.
+    const recordFailure = (errorText: string) => {
+      const analysis = analyzeAttempt({
+        mission,
+        atoms: scene.atoms,
+        bonds: scene.bonds,
+        molecules: content.molecules,
+        elements: content.elements,
+      });
+      recordAttempt(analysis.outcome, analysis.detail);
+      showFeedback(errorText, "error");
+    };
+
     if (mission.objectiveType === "build-molecule") {
       const result = validateSceneMolecule(content.molecules, scene.atoms, scene.bonds);
       if (result.matches) {
@@ -108,7 +175,7 @@ export default function GamePage() {
           : "Great job!";
         await handleSuccess(explanation);
       } else {
-        showFeedback(result.explanation, "error");
+        recordFailure(result.explanation);
       }
     } else if (mission.objectiveType === "build-atom") {
       const condition = mission.successConditions[0];
@@ -119,7 +186,7 @@ export default function GamePage() {
         if (atoms.length >= 1) {
           await handleSuccess("You built the atom correctly!");
         } else {
-          showFeedback("Build an atom with the right number of particles.", "error");
+          recordFailure("Build an atom with the right number of particles.");
         }
       }
     } else if (mission.objectiveType === "count-atoms") {
@@ -137,9 +204,8 @@ export default function GamePage() {
         await handleSuccess("You placed the right number of each atom!");
       } else {
         const have = counts.get(wrong.element) ?? 0;
-        showFeedback(
-          `You have ${have} ${wrong.element} atoms — the target is ${wrong.count}.`,
-          "error"
+        recordFailure(
+          `You have ${have} ${wrong.element} atoms — the target is ${wrong.count}.`
         );
       }
     } else if (mission.objectiveType === "run-reaction") {
@@ -173,13 +239,13 @@ export default function GamePage() {
           ) || result.explanation;
           await handleSuccess(explanation);
         } else {
-          showFeedback(result.explanation, "error");
+          recordFailure(result.explanation);
         }
       }
     } else {
       showFeedback("Checking...", "info");
     }
-  }, [mission, content, scene, handleSuccess, showFeedback]);
+  }, [mission, content, scene, handleSuccess, showFeedback, recordAttempt]);
 
   useEffect(() => {
     if (!currentProfile) {
@@ -394,6 +460,11 @@ export default function GamePage() {
               </span>
             </div>
           </div>
+        )}
+
+        {/* Onboarding coachmark — first-run guidance, scene-state-driven. */}
+        {isOnboarding && !coachmarkDismissed && (
+          <OnboardingCoachmark onDismiss={() => setCoachmarkDismissed(true)} />
         )}
 
         {/* Accessibility: hidden DOM overlay for screen readers */}

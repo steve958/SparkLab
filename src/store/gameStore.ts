@@ -7,6 +7,8 @@ import type {
   Mission,
   ScoreState,
   HintState,
+  AttemptOutcome,
+  HintAction,
 } from "@/types";
 import { createInitialScoreState } from "@/engine/scoring";
 import { audio } from "@/lib/audio";
@@ -31,6 +33,8 @@ export interface GameStore {
   // UI
   showHint: boolean;
   hintText: string;
+  hintAction: HintAction | null;
+  hintHighlightAtomIds: string[];
   showExplanation: boolean;
   explanationText: string;
   isMissionComplete: boolean;
@@ -49,8 +53,13 @@ export interface GameStore {
   setHoveredAtom: (atomId: string | null) => void;
   undo: () => void;
   redo: () => void;
-  useHint: (text: string) => void;
+  useHint: (
+    text: string,
+    action?: HintAction,
+    highlightAtomIds?: string[]
+  ) => void;
   dismissHint: () => void;
+  recordAttempt: (outcome: AttemptOutcome, detail?: string) => void;
   showFeedback: (message: string, type: "success" | "error" | "info") => void;
   dismissFeedback: () => void;
   completeMission: (stars: number, explanationCorrect: boolean | null) => void;
@@ -73,12 +82,19 @@ export const useGameStore = create<GameStore>((set) => ({
   hoveredAtomId: null,
   currentMission: null,
   scoreState: createInitialScoreState(),
-  hintState: { hintsUsed: 0, lastHintTier: 0, cooldownEnd: null },
+  hintState: {
+    hintsUsed: 0,
+    lastHintTier: 0,
+    cooldownEnd: null,
+    attempts: [],
+  },
   reactionMode: false,
   undoStack: [],
   redoStack: [],
   showHint: false,
   hintText: "",
+  hintAction: null,
+  hintHighlightAtomIds: [],
   showExplanation: false,
   explanationText: "",
   isMissionComplete: false,
@@ -90,11 +106,18 @@ export const useGameStore = create<GameStore>((set) => ({
       scene: startingScene ?? createEmptyScene(),
       currentMission: mission,
       scoreState: createInitialScoreState(),
-      hintState: { hintsUsed: 0, lastHintTier: 0, cooldownEnd: null },
+      hintState: {
+        hintsUsed: 0,
+        lastHintTier: 0,
+        cooldownEnd: null,
+        attempts: [],
+      },
       undoStack: [],
       redoStack: [],
       showHint: false,
       hintText: "",
+      hintAction: null,
+      hintHighlightAtomIds: [],
       showExplanation: false,
       explanationText: "",
       isMissionComplete: false,
@@ -375,10 +398,12 @@ export const useGameStore = create<GameStore>((set) => ({
       };
     }),
 
-  useHint: (text) =>
+  useHint: (text, action, highlightAtomIds) =>
     set((state) => ({
       showHint: true,
       hintText: text,
+      hintAction: action ?? null,
+      hintHighlightAtomIds: highlightAtomIds ?? [],
       hintState: {
         ...state.hintState,
         hintsUsed: state.hintState.hintsUsed + 1,
@@ -386,7 +411,19 @@ export const useGameStore = create<GameStore>((set) => ({
       },
     })),
 
-  dismissHint: () => set({ showHint: false }),
+  dismissHint: () =>
+    set({ showHint: false, hintAction: null, hintHighlightAtomIds: [] }),
+
+  recordAttempt: (outcome, detail) =>
+    set((state) => ({
+      hintState: {
+        ...state.hintState,
+        attempts: [
+          ...state.hintState.attempts,
+          { timestamp: Date.now(), outcome, detail },
+        ],
+      },
+    })),
 
   showFeedback: (message, type) => {
     if (type === "error") {

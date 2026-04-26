@@ -5,6 +5,11 @@ import { useTranslation } from "react-i18next";
 import { useProgressStore } from "@/store/progressStore";
 import type { PlayerProfile, AgeBand } from "@/types";
 import { UserPlus, Trash2, ArrowRight } from "lucide-react";
+import AvatarBadge from "./AvatarBadge";
+import AvatarBuilder, {
+  DEFAULT_AVATAR_COLOR,
+  DEFAULT_AVATAR_ACCESSORY,
+} from "./AvatarBuilder";
 
 export default function ProfileSelector() {
   const { t } = useTranslation();
@@ -16,6 +21,10 @@ export default function ProfileSelector() {
   const [showCreate, setShowCreate] = useState(false);
   const [name, setName] = useState("");
   const [ageBand, setAgeBand] = useState<AgeBand>("8-10");
+  const [avatarColor, setAvatarColor] = useState<string>(DEFAULT_AVATAR_COLOR);
+  const [avatarAccessory, setAvatarAccessory] = useState<string>(
+    DEFAULT_AVATAR_ACCESSORY
+  );
 
   const handleCreate = async () => {
     if (!name.trim()) return;
@@ -25,11 +34,17 @@ export default function ProfileSelector() {
       avatar: "default",
       createdAt: Date.now(),
       ageBand,
+      // Brand-new profiles always start with the first-run tutorial.
+      onboardingCompleted: false,
+      avatarColor,
+      avatarAccessory,
     };
     await addProfile(profile);
     setCurrentProfile(profile);
     setShowCreate(false);
     setName("");
+    setAvatarColor(DEFAULT_AVATAR_COLOR);
+    setAvatarAccessory(DEFAULT_AVATAR_ACCESSORY);
   };
 
   return (
@@ -50,9 +65,7 @@ export default function ProfileSelector() {
               onClick={() => setCurrentProfile(profile)}
               className="flex items-center gap-3 flex-1 text-left"
             >
-              <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-bold text-lg">
-                {profile.name.charAt(0).toUpperCase()}
-              </div>
+              <AvatarBadge profile={profile} size="md" />
               <div>
                 <div className="font-semibold">{profile.name}</div>
                 <div className="text-sm text-slate-500">
@@ -116,7 +129,20 @@ export default function ProfileSelector() {
               </button>
             ))}
           </div>
-          <div className="flex gap-2 mt-4">
+
+          <div className="mt-5">
+            <AvatarBuilder
+              name={name || "?"}
+              color={avatarColor}
+              accessory={avatarAccessory}
+              onChange={(next) => {
+                setAvatarColor(next.color);
+                setAvatarAccessory(next.accessory);
+              }}
+            />
+          </div>
+
+          <div className="flex gap-2 mt-5">
             <button
               onClick={() => setShowCreate(false)}
               className="flex-1 py-3 rounded-lg border border-slate-300 hover:bg-slate-50 font-medium transition-colors"

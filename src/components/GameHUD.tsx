@@ -7,6 +7,7 @@ import { useGameStore } from "@/store/gameStore";
 import { useProgressStore } from "@/store/progressStore";
 import { audio } from "@/lib/audio";
 import { goBackOr } from "@/lib/navigation";
+import { generateAdaptiveHint } from "@/engine/hints";
 import type { ContentBundle } from "@/data/loader";
 import Molecule3DViewer from "./Molecule3DViewer";
 import AtomLedger from "./AtomLedger";
@@ -36,6 +37,7 @@ export default function GameHUD({ content }: GameHUDProps) {
   const hintState = useGameStore((s) => s.hintState);
   const showHint = useGameStore((s) => s.showHint);
   const hintText = useGameStore((s) => s.hintText);
+  const hintAction = useGameStore((s) => s.hintAction);
   const isMissionComplete = useGameStore((s) => s.isMissionComplete);
   const feedbackMessage = useGameStore((s) => s.feedbackMessage);
   const feedbackType = useGameStore((s) => s.feedbackType);
@@ -85,6 +87,37 @@ export default function GameHUD({ content }: GameHUDProps) {
   const [canvasCenterX, setCanvasCenterX] = useState(400);
   const [showInteractionHint, setShowInteractionHint] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  // Snapshot the player's previous best at mission-init time so the
+  // complete overlay can distinguish first-clear / new-best / replay.
+  // Intentionally not depending on `progress` so this stays the value
+  // at start, not the value after finalizeMission writes the new record.
+  const [previousBestStars, setPreviousBestStars] = useState(0);
+  useEffect(() => {
+    if (!mission) return;
+    const p = progress.find((rec) => rec.missionId === mission.missionId);
+    setPreviousBestStars(p?.stars ?? 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mission?.missionId]);
+
+  // World-mastery progress: how many missions in this world cleared at
+  // 3 stars total. Drives the "Foundations: 3 / 10 perfect" line.
+  const worldMastery = useMemo(() => {
+    if (!mission) return null;
+    const worldMissions = content.missions.filter(
+      (m) => m.worldId === mission.worldId
+    );
+    const perfect = progress.filter(
+      (p) =>
+        p.stars >= 3 && worldMissions.some((m) => m.missionId === p.missionId)
+    ).length;
+    const world = content.worlds.find((w) => w.worldId === mission.worldId);
+    return {
+      worldName: world?.name ?? "",
+      perfect,
+      total: worldMissions.length,
+    };
+  }, [mission, content.missions, content.worlds, progress]);
 
   // Measure canvas width for atom ledger center line
   useEffect(() => {
@@ -142,7 +175,25 @@ export default function GameHUD({ content }: GameHUDProps) {
       dismissHint();
       return;
     }
-    useHint(t("feedback.invalid_bond"));
+    if (!mission) return;
+    const result = generateAdaptiveHint(
+      {
+        mission,
+        atoms: scene.atoms,
+        bonds: scene.bonds,
+        molecules: content.molecules,
+        elements: content.elements,
+      },
+      hintState.hintsUsed,
+      hintState.attempts
+    );
+    useHint(
+      result.text,
+      result.action as Parameters<typeof useHint>[1],
+      Array.isArray(result.actionPayload)
+        ? (result.actionPayload as string[])
+        : []
+    );
   };
 
   const handleCheck = () => {
@@ -324,11 +375,31 @@ export default function GameHUD({ content }: GameHUDProps) {
         </button>
       </div>
 
-      {/* Hint panel */}
+      {/* Hint panel — "show-me" tier gets a stronger visual treatment so
+           the player knows the engine has escalated to direct guidance. */}
       {showHint && (
-        <div className="absolute bottom-[72px] sm:bottom-20 left-2 right-2 sm:left-auto sm:right-4 sm:w-80 max-h-[40vh] overflow-y-auto p-3 sm:p-4 rounded-xl bg-yellow-50 border border-yellow-200 shadow-lg z-10">
+        <div
+          className={`absolute bottom-[72px] sm:bottom-20 left-2 right-2 sm:left-auto sm:right-4 sm:w-80 max-h-[40vh] overflow-y-auto p-3 sm:p-4 rounded-xl shadow-lg z-10 border ${
+            hintAction === "show-me"
+              ? "bg-amber-100 border-amber-300"
+              : "bg-yellow-50 border-yellow-200"
+          }`}
+        >
+          {hintAction === "show-me" && (
+            <p className="text-[11px] font-bold uppercase tracking-wide text-amber-800 mb-1">
+              Show me
+            </p>
+          )}
           <div className="flex items-start justify-between gap-2">
-            <p className="text-sm text-yellow-800">{hintText}</p>
+            <p
+              className={`text-sm ${
+                hintAction === "show-me"
+                  ? "text-amber-900"
+                  : "text-yellow-800"
+              }`}
+            >
+              {hintText}
+            </p>
             <button
               onClick={dismissHint}
               className="p-1 rounded hover:bg-yellow-100 shrink-0"
@@ -403,25 +474,69 @@ export default function GameHUD({ content }: GameHUDProps) {
       {isMissionComplete && (
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
           <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+            {/* Achievement badge: first-clear / new-best / mastered.
+                Hidden when replaying a same-or-worse run. */}
+            {(() => {
+              const earned = scoreState.stars;
+              const before = previousBestStars;
+              if (earned <= 0) return null;
+              if (before === 0) {
+                return (
+                  <div className="inline-block text-[11px] font-bold uppercase tracking-wider bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full mb-3">
+                    First clear!
+                  </div>
+                );
+              }
+              if (earned > before) {
+                return (
+                  <div className="inline-block text-[11px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 px-3 py-1 rounded-full mb-3">
+                    New best
+                  </div>
+                );
+              }
+              if (earned === 3 && before === 3) {
+                return (
+                  <div className="inline-block text-[11px] font-bold uppercase tracking-wider bg-green-100 text-green-800 px-3 py-1 rounded-full mb-3">
+                    Mastered
+                  </div>
+                );
+              }
+              return null;
+            })()}
+
             <h3 className="text-2xl font-bold mb-2">{t("game.mission_complete")}</h3>
             <p className="text-slate-600 mb-6">
               {t(`missions.star_${scoreState.stars}` as const)}
             </p>
-            <div className="flex justify-center gap-2 mb-6">
-              {[1, 2, 3].map((s) => (
+            <div className="flex justify-center gap-2 mb-3">
+              {[1, 2, 3].map((s, idx) => (
                 <svg
                   key={s}
                   className={`w-10 h-10 ${
                     s <= scoreState.stars
-                      ? "text-yellow-400 fill-yellow-400"
+                      ? "text-yellow-400 fill-yellow-400 star-pop"
                       : "text-slate-200"
                   }`}
+                  style={
+                    s <= scoreState.stars
+                      ? { animationDelay: `${idx * 200}ms` }
+                      : undefined
+                  }
                   viewBox="0 0 24 24"
                 >
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
               ))}
             </div>
+
+            {/* World-mastery progress line — only meaningful once a world
+                actually has missions; suppressed for partial worlds. */}
+            {worldMastery && worldMastery.total > 0 && (
+              <p className="text-xs font-medium text-slate-600 mb-6">
+                {worldMastery.worldName}: {worldMastery.perfect} of{" "}
+                {worldMastery.total} missions perfect
+              </p>
+            )}
             <div className="flex flex-col gap-2">
               {nextMission && (
                 <button

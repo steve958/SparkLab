@@ -5,7 +5,7 @@ const OUT = path.resolve(__dirname, '../../shots');
 
 test('logo + theme', async ({ page }) => {
   // Reset profile so we hit a clean state.
-  await page.goto('http://localhost:3000', { waitUntil: 'domcontentloaded' });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
   await page.waitForTimeout(1500);
   await page.evaluate(async () => {
     await new Promise<void>((res) => {

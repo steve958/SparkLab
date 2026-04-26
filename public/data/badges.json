@@ -1,0 +1,130 @@
+[
+  {
+    "badgeId": "first_steps",
+    "title": "First Steps",
+    "description": "You finished your first mission!",
+    "icon": "Sparkles",
+    "color": "#15803d",
+    "trigger": { "kind": "first-mission-complete" }
+  },
+  {
+    "badgeId": "h_atom_smith",
+    "title": "Atom Smith",
+    "description": "Built your first hydrogen atom.",
+    "icon": "Atom",
+    "color": "#3b82f6",
+    "trigger": { "kind": "perfect-mission", "missionId": "f01_build_h_atom" }
+  },
+  {
+    "badgeId": "water_maker",
+    "title": "Water Maker",
+    "description": "Built your first water molecule.",
+    "icon": "Droplets",
+    "color": "#0ea5e9",
+    "trigger": { "kind": "first-molecule", "moleculeId": "water" }
+  },
+  {
+    "badgeId": "methane_chef",
+    "title": "Methane Chef",
+    "description": "You connected carbon's four bonds for the first time.",
+    "icon": "Flame",
+    "color": "#f59e0b",
+    "trigger": { "kind": "first-molecule", "moleculeId": "methane" }
+  },
+  {
+    "badgeId": "co2_breath",
+    "title": "Out of Breath",
+    "description": "You built carbon dioxide — and used your first double bond.",
+    "icon": "Wind",
+    "color": "#64748b",
+    "trigger": { "kind": "first-molecule", "moleculeId": "carbon_dioxide" }
+  },
+  {
+    "badgeId": "salt_crystal",
+    "title": "Salt of the Earth",
+    "description": "Made your first ionic bond — sodium chloride.",
+    "icon": "Diamond",
+    "color": "#a855f7",
+    "trigger": { "kind": "first-molecule", "moleculeId": "sodium_chloride" }
+  },
+  {
+    "badgeId": "ammonia_alchemist",
+    "title": "Ammonia Alchemist",
+    "description": "You shaped a nitrogen atom into ammonia.",
+    "icon": "FlaskConical",
+    "color": "#10b981",
+    "trigger": { "kind": "first-molecule", "moleculeId": "ammonia" }
+  },
+  {
+    "badgeId": "foundations_finished",
+    "title": "Foundations Finished",
+    "description": "You cleared every mission in Foundations.",
+    "icon": "Award",
+    "color": "#3b82f6",
+    "trigger": { "kind": "complete-world", "worldId": "foundations" }
+  },
+  {
+    "badgeId": "core_finished",
+    "title": "Core Cleared",
+    "description": "You cleared every mission in Core Chemistry.",
+    "icon": "Award",
+    "color": "#8b5cf6",
+    "trigger": { "kind": "complete-world", "worldId": "core" }
+  },
+  {
+    "badgeId": "reactions_finished",
+    "title": "Reactions Master",
+    "description": "You cleared every mission in the Reactions Lab.",
+    "icon": "Award",
+    "color": "#ef4444",
+    "trigger": { "kind": "complete-world", "worldId": "reactions" }
+  },
+  {
+    "badgeId": "no_hint_clear",
+    "title": "Solo Scientist",
+    "description": "Cleared a mission without using a hint.",
+    "icon": "Lightbulb",
+    "color": "#eab308",
+    "trigger": { "kind": "no-hint-clear" }
+  },
+  {
+    "badgeId": "perfect_run",
+    "title": "Three Star Stretch",
+    "description": "Earned 3 stars on a mission.",
+    "icon": "Star",
+    "color": "#f59e0b",
+    "trigger": { "kind": "perfect-mission" }
+  },
+  {
+    "badgeId": "five_missions",
+    "title": "Getting Started",
+    "description": "Completed 5 missions.",
+    "icon": "TrendingUp",
+    "color": "#15803d",
+    "trigger": { "kind": "mission-count", "count": 5 }
+  },
+  {
+    "badgeId": "ten_missions",
+    "title": "Lab Regular",
+    "description": "Completed 10 missions.",
+    "icon": "TrendingUp",
+    "color": "#15803d",
+    "trigger": { "kind": "mission-count", "count": 10 }
+  },
+  {
+    "badgeId": "twenty_missions",
+    "title": "Frequent Flyer",
+    "description": "Completed 20 missions — you really like this place.",
+    "icon": "TrendingUp",
+    "color": "#15803d",
+    "trigger": { "kind": "mission-count", "count": 20 }
+  },
+  {
+    "badgeId": "elements_5",
+    "title": "Element Collector",
+    "description": "Built atoms from 5 different elements.",
+    "icon": "FlaskRound",
+    "color": "#0ea5e9",
+    "trigger": { "kind": "elements-discovered", "count": 5 }
+  }
+]

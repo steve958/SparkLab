@@ -6,13 +6,8 @@ import { loadContent, type ContentBundle } from "@/data/loader";
 import { useProgressStore } from "@/store/progressStore";
 import { goBackOr } from "@/lib/navigation";
 import MissionBrowser from "@/components/MissionBrowser";
-import { ArrowLeft, Star, FlaskConical, FlaskRound, Flame } from "lucide-react";
-
-const WORLD_ICON: Record<string, typeof FlaskConical> = {
-  foundations: FlaskRound,
-  core: FlaskConical,
-  reactions: Flame,
-};
+import WorldMap from "@/components/WorldMap";
+import { ArrowLeft } from "lucide-react";
 
 export default function WorldsPageContent() {
   const router = useRouter();
@@ -67,11 +62,11 @@ export default function WorldsPageContent() {
     );
   }
 
-  // Show world selection. Top-aligned + scrollable so the page never clips
-  // when the worlds list grows taller than the viewport (e.g. small phones).
+  // Schematic world map. Per Phase 1 design decision Q2: clean schematic,
+  // no illustrated art. Implementation in components/WorldMap.tsx.
   return (
     <main className="flex-1 flex flex-col items-center px-3 sm:px-4 py-4 sm:py-6 sm:justify-center overflow-y-auto">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-3xl">
         <button
           onClick={() => goBackOr(router, "/")}
           className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-3 sm:mb-6 touch-target"
@@ -80,75 +75,11 @@ export default function WorldsPageContent() {
           Back
         </button>
 
-        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-1 sm:mb-2">Choose a World</h1>
-        <p className="text-slate-600 text-center text-sm sm:text-base mb-4 sm:mb-8">
-          Pick where you want to explore
-        </p>
-
-        <div className="grid gap-3 sm:gap-4">
-          {content.worlds.map((world) => {
-            // MVP: all worlds are unlocked; mission-level gating is the primary progression
-            const isUnlocked = true;
-            const worldMissions = content.missions.filter(
-              (m) => m.worldId === world.worldId
-            );
-            const worldProgress = progress.filter((p) =>
-              worldMissions.some((m) => m.missionId === p.missionId)
-            );
-            const completedCount = worldProgress.filter((p) => p.stars > 0).length;
-            const totalStars = worldProgress.reduce((sum, p) => sum + p.stars, 0);
-            const maxStars = worldMissions.length * 3;
-            const progressPercent =
-              worldMissions.length > 0
-                ? Math.round((completedCount / worldMissions.length) * 100)
-                : 0;
-
-            return (
-              <button
-                key={world.worldId}
-                onClick={() =>
-                  isUnlocked && router.push(`/worlds?world=${world.worldId}`)
-                }
-                disabled={!isUnlocked}
-                className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-5 rounded-xl border-2 text-left transition-all ${
-                  isUnlocked
-                    ? "border-slate-200 bg-white hover:border-primary hover:shadow-md"
-                    : "border-slate-100 bg-slate-50 opacity-50 cursor-not-allowed"
-                }`}
-              >
-                <div
-                  className="w-11 h-11 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center text-white shrink-0"
-                  style={{ backgroundColor: world.themeColor }}
-                >
-                  {(() => {
-                    const Icon = WORLD_ICON[world.worldId] ?? FlaskConical;
-                    return <Icon className="w-6 h-6 sm:w-7 sm:h-7" />;
-                  })()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h2 className="font-bold text-base sm:text-lg leading-tight">{world.name}</h2>
-                  <p className="text-xs sm:text-sm text-slate-500 line-clamp-2">{world.description}</p>
-                  <div className="flex items-center gap-2 sm:gap-3 mt-1.5 sm:mt-2">
-                    {/* Progress bar */}
-                    <div className="flex-1 h-2 bg-slate-100 rounded-full overflow-hidden min-w-0">
-                      <div
-                        className="h-full rounded-full transition-all"
-                        style={{
-                          width: `${progressPercent}%`,
-                          backgroundColor: world.themeColor,
-                        }}
-                      />
-                    </div>
-                    <span className="flex items-center gap-1 text-[10px] sm:text-xs font-medium text-slate-500 shrink-0">
-                      <Star className="w-3 h-3 text-yellow-400 fill-yellow-400" />
-                      {totalStars}/{maxStars}
-                    </span>
-                  </div>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        <WorldMap
+          worlds={content.worlds}
+          missions={content.missions}
+          progress={progress}
+        />
       </div>
     </main>
   );

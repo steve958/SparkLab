@@ -67,6 +67,8 @@ function bundle(parts: Partial<{
   missions: Mission[];
   worlds: World[];
   strings: LocalizedString[];
+  badges: unknown[];
+  masteryChecks: unknown[];
 }> = {}) {
   return {
     elements: parts.elements ?? [elementSeed()],
@@ -76,6 +78,8 @@ function bundle(parts: Partial<{
     missions: parts.missions ?? [],
     worlds: parts.worlds ?? [{ worldId: "w1" } as unknown as World],
     strings: parts.strings ?? [],
+    badges: parts.badges ?? [],
+    masteryChecks: parts.masteryChecks ?? [],
   };
 }
 
@@ -88,6 +92,8 @@ function stubFetch(b: ReturnType<typeof bundle>) {
     "/data/missions.json": b.missions,
     "/data/worlds.json": b.worlds,
     "/data/strings.json": b.strings,
+    "/data/badges.json": b.badges,
+    "/data/mastery_checks.json": b.masteryChecks,
   };
   globalThis.fetch = (async (input: RequestInfo | URL) => {
     const url = typeof input === "string" ? input : input.toString();
@@ -120,7 +126,7 @@ describe("loader / validateBundle", () => {
 
     await loadContent();
     await loadContent();
-    expect(calls).toBe(7); // one per data file, only on the first call
+    expect(calls).toBe(9); // one per data file, only on the first call
   });
 
   it("rejects when two elements share a symbol", async () => {

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import I18nProvider from "@/components/I18nProvider";
+import ProfileBootstrap from "@/components/ProfileBootstrap";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,11 +33,12 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
+  // No maximumScale — disabling user zoom violates WCAG 1.4.4. Pinch-to-zoom
+  // is essential for low-vision users on mobile.
   // viewport-fit=cover lets the app draw under iOS notches; we then opt back
   // in via env(safe-area-inset-*) padding on body in globals.css.
   viewportFit: "cover",
-  themeColor: "#16a34a",
+  themeColor: "#15803d",
 };
 
 export default function RootLayout({
@@ -63,7 +65,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
-        <I18nProvider>{children}</I18nProvider>
+        <I18nProvider>
+          <ProfileBootstrap>{children}</ProfileBootstrap>
+        </I18nProvider>
       </body>
     </html>
   );

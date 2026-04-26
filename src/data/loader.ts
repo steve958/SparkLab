@@ -6,6 +6,8 @@ import type {
   Mission,
   World,
   LocalizedString,
+  BadgeDefinition,
+  WorldMasteryCheck,
 } from "@/types";
 
 export interface ContentBundle {
@@ -16,6 +18,8 @@ export interface ContentBundle {
   missions: Mission[];
   worlds: World[];
   strings: LocalizedString[];
+  badges: BadgeDefinition[];
+  masteryChecks: WorldMasteryCheck[];
 }
 
 let cache: ContentBundle | null = null;
@@ -23,26 +27,39 @@ let cache: ContentBundle | null = null;
 export async function loadContent(): Promise<ContentBundle> {
   if (cache) return cache;
 
-  const [elements, bondRules, molecules, reactions, missions, worlds, strings] =
-    await Promise.all([
-      fetch("/data/elements.json").then((r) => r.json() as Promise<Element[]>),
-      fetch("/data/bond_rules.json").then(
-        (r) => r.json() as Promise<BondRule[]>
-      ),
-      fetch("/data/molecules.json").then(
-        (r) => r.json() as Promise<Molecule[]>
-      ),
-      fetch("/data/reactions.json").then(
-        (r) => r.json() as Promise<Reaction[]>
-      ),
-      fetch("/data/missions.json").then(
-        (r) => r.json() as Promise<Mission[]>
-      ),
-      fetch("/data/worlds.json").then((r) => r.json() as Promise<World[]>),
-      fetch("/data/strings.json").then(
-        (r) => r.json() as Promise<LocalizedString[]>
-      ),
-    ]);
+  const [
+    elements,
+    bondRules,
+    molecules,
+    reactions,
+    missions,
+    worlds,
+    strings,
+    badges,
+    masteryChecks,
+  ] = await Promise.all([
+    fetch("/data/elements.json").then((r) => r.json() as Promise<Element[]>),
+    fetch("/data/bond_rules.json").then(
+      (r) => r.json() as Promise<BondRule[]>
+    ),
+    fetch("/data/molecules.json").then(
+      (r) => r.json() as Promise<Molecule[]>
+    ),
+    fetch("/data/reactions.json").then(
+      (r) => r.json() as Promise<Reaction[]>
+    ),
+    fetch("/data/missions.json").then((r) => r.json() as Promise<Mission[]>),
+    fetch("/data/worlds.json").then((r) => r.json() as Promise<World[]>),
+    fetch("/data/strings.json").then(
+      (r) => r.json() as Promise<LocalizedString[]>
+    ),
+    fetch("/data/badges.json").then(
+      (r) => r.json() as Promise<BadgeDefinition[]>
+    ),
+    fetch("/data/mastery_checks.json").then(
+      (r) => r.json() as Promise<WorldMasteryCheck[]>
+    ),
+  ]);
 
   const bundle: ContentBundle = {
     elements,
@@ -52,6 +69,8 @@ export async function loadContent(): Promise<ContentBundle> {
     missions,
     worlds,
     strings,
+    badges,
+    masteryChecks,
   };
 
   validateBundle(bundle);

@@ -1,12 +1,22 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useProgressStore } from "@/store/progressStore";
 import { useGameStore } from "@/store/gameStore";
 import { goBackOr } from "@/lib/navigation";
 import type { Mission } from "@/types";
 import type { ContentBundle } from "@/data/loader";
-import { Star, Lock, Clock, ArrowLeft, CheckCircle, RotateCcw, ArrowRight } from "lucide-react";
+import {
+  Star,
+  Lock,
+  Clock,
+  ArrowLeft,
+  CheckCircle,
+  ArrowRight,
+  GraduationCap,
+} from "lucide-react";
+import MasteryCheckModal from "./MasteryCheckModal";
 
 interface MissionBrowserProps {
   content: ContentBundle;
@@ -19,7 +29,13 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
   const missions = content.missions.filter((m) => m.worldId === worldId);
   const progress = useProgressStore((s) => s.progress);
   const isMissionUnlocked = useProgressStore((s) => s.isMissionUnlocked);
+  const masteryResults = useProgressStore((s) => s.masteryResults);
+  const recordMasteryResult = useProgressStore((s) => s.recordMasteryResult);
   const initMission = useGameStore((s) => s.initMission);
+
+  const [masteryModalPhase, setMasteryModalPhase] = useState<
+    "pre" | "post" | null
+  >(null);
 
   if (!world) {
     return (
@@ -48,6 +64,29 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
     return unlocked && (mp?.stars ?? 0) === 0;
   })?.missionId;
 
+  // Mastery-check status: which phase (if any) is available right now.
+  const masteryCheck = content.masteryChecks.find(
+    (mc) => mc.worldId === worldId
+  );
+  const preTaken = masteryResults.some(
+    (r) => r.worldId === worldId && r.phase === "pre"
+  );
+  const postTaken = masteryResults.some(
+    (r) => r.worldId === worldId && r.phase === "post"
+  );
+  const completedCount = missions.filter((m) => {
+    const mp = progress.find((p) => p.missionId === m.missionId);
+    return (mp?.stars ?? 0) > 0;
+  }).length;
+  const worldMastered =
+    missions.length > 0 && completedCount === missions.length;
+  const preResult = masteryResults.find(
+    (r) => r.worldId === worldId && r.phase === "pre"
+  );
+  const postResult = masteryResults.find(
+    (r) => r.worldId === worldId && r.phase === "post"
+  );
+
   return (
     <div className="max-w-3xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
       <button
@@ -64,6 +103,96 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
         </h1>
         <p className="text-sm sm:text-base text-slate-600 mt-1">{world.description}</p>
       </div>
+
+      {/* Mastery check entry point. Pre-check is offered before the
+          player has earned any stars; post-check unlocks once the world
+          is mastered. The (pre, post) score pair is the +pp lift signal
+          the v2 roadmap measures against. */}
+      {masteryCheck && (
+        <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl border-2 border-amber-200 bg-amber-50/60 flex items-start gap-3">
+          <GraduationCap className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+          <div className="flex-1 min-w-0">
+            {!preTaken && completedCount === 0 && (
+              <>
+                <p className="text-sm font-semibold text-amber-900">
+                  Quick check before you start
+                </p>
+                <p className="text-xs text-amber-800 mt-0.5">
+                  3 questions — see what you already know.
+                </p>
+              </>
+            )}
+            {preTaken && !worldMastered && (
+              <>
+                <p className="text-sm font-semibold text-amber-900">
+                  Pre-check done · {preResult?.correctCount ?? 0}/
+                  {preResult?.totalCount ?? 0}
+                </p>
+                <p className="text-xs text-amber-800 mt-0.5">
+                  Finish every mission to unlock the post-check.
+                </p>
+              </>
+            )}
+            {worldMastered && !postTaken && (
+              <>
+                <p className="text-sm font-semibold text-amber-900">
+                  Post-check unlocked
+                </p>
+                <p className="text-xs text-amber-800 mt-0.5">
+                  Pre: {preResult?.correctCount ?? 0}/
+                  {preResult?.totalCount ?? 0} — see how much you&apos;ve
+                  learned.
+                </p>
+              </>
+            )}
+            {worldMastered && postTaken && preResult && postResult && (
+              <>
+                <p className="text-sm font-semibold text-amber-900">
+                  Mastery: {preResult.correctCount}/{preResult.totalCount} →{" "}
+                  {postResult.correctCount}/{postResult.totalCount}
+                </p>
+                <p className="text-xs text-amber-800 mt-0.5">
+                  Nice work — that&apos;s real chemistry learning.
+                </p>
+              </>
+            )}
+          </div>
+          {!preTaken && completedCount === 0 && (
+            <button
+              onClick={() => setMasteryModalPhase("pre")}
+              className="px-3 py-1.5 rounded-lg bg-amber-700 text-white text-sm font-semibold hover:bg-amber-800 transition-colors shrink-0"
+            >
+              Take it
+            </button>
+          )}
+          {worldMastered && !postTaken && (
+            <button
+              onClick={() => setMasteryModalPhase("post")}
+              className="px-3 py-1.5 rounded-lg bg-amber-700 text-white text-sm font-semibold hover:bg-amber-800 transition-colors shrink-0"
+            >
+              Take it
+            </button>
+          )}
+        </div>
+      )}
+
+      {masteryCheck && masteryModalPhase && (
+        <MasteryCheckModal
+          worldName={world.name}
+          phase={masteryModalPhase}
+          questions={masteryCheck[masteryModalPhase]}
+          onCancel={() => setMasteryModalPhase(null)}
+          onFinish={async (correctCount) => {
+            await recordMasteryResult({
+              worldId,
+              phase: masteryModalPhase,
+              correctCount,
+              totalCount: masteryCheck[masteryModalPhase].length,
+            });
+            setMasteryModalPhase(null);
+          }}
+        />
+      )}
 
       <div className="grid gap-3 sm:gap-4">
         {missions.map((mission, index) => {
@@ -141,7 +270,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
                 <p className="text-xs sm:text-sm text-slate-500 line-clamp-1 sm:line-clamp-1">
                   {mission.brief}
                 </p>
-                <div className="flex items-center gap-2 sm:gap-3 mt-1 text-[11px] sm:text-xs text-slate-400">
+                <div className="flex items-center gap-2 sm:gap-3 mt-1 text-[11px] sm:text-xs text-slate-600">
                   <span className="flex items-center gap-1 shrink-0">
                     <Clock className="w-3 h-3" />
                     {mission.estimatedMinutes} min
