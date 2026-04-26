@@ -1,4 +1,4 @@
-const CACHE_NAME = "sparklab-v1";
+const CACHE_NAME = "sparklab-v2";
 const STATIC_ASSETS = [
   "/",
   "/worlds",
@@ -6,13 +6,6 @@ const STATIC_ASSETS = [
   "/settings",
   "/dashboard",
   "/manifest.json",
-  "/data/elements.json",
-  "/data/molecules.json",
-  "/data/bond_rules.json",
-  "/data/reactions.json",
-  "/data/missions.json",
-  "/data/worlds.json",
-  "/data/strings.json",
 ];
 
 self.addEventListener("install", (event) => {
@@ -38,6 +31,23 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  const url = new URL(event.request.url);
+
+  // Network-first for content JSON so updates aren't gated on a new SW.
+  if (url.pathname.startsWith("/data/")) {
+    event.respondWith(
+      fetch(event.request)
+        .then((res) => {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          return res;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
+
+  // Cache-first for everything else (offline-capable shell).
   event.respondWith(
     caches.match(event.request).then((response) => {
       return (
