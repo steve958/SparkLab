@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { loadContent, type ContentBundle } from "@/data/loader";
 import { useProgressStore } from "@/store/progressStore";
+import { goBackOr } from "@/lib/navigation";
 import MissionBrowser from "@/components/MissionBrowser";
 import { ArrowLeft, Star, FlaskConical, FlaskRound, Flame } from "lucide-react";
 
@@ -25,7 +26,7 @@ export default function WorldsPageContent() {
 
   useEffect(() => {
     if (!currentProfile) {
-      router.push("/");
+      router.replace("/");
       return;
     }
     loadContent()
@@ -72,7 +73,7 @@ export default function WorldsPageContent() {
     <main className="flex-1 flex flex-col items-center px-3 sm:px-4 py-4 sm:py-6 sm:justify-center overflow-y-auto">
       <div className="w-full max-w-md">
         <button
-          onClick={() => router.push("/")}
+          onClick={() => goBackOr(router, "/")}
           className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-3 sm:mb-6 touch-target"
         >
           <ArrowLeft className="w-5 h-5" />

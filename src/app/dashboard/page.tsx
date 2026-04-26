@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useProgressStore } from "@/store/progressStore";
 import { exportAllData, deleteAllData } from "@/lib/db";
+import { goBackOr } from "@/lib/navigation";
 import { Shield, ArrowLeft, Download, Trash2, Users, BookOpen } from "lucide-react";
 
 export default function DashboardPage() {
@@ -60,7 +61,7 @@ export default function DashboardPage() {
     return (
       <main className="flex-1 flex flex-col items-center justify-center p-4">
         <button
-          onClick={() => router.push("/")}
+          onClick={() => goBackOr(router, "/")}
           className="absolute top-4 left-4 flex items-center gap-2 text-slate-500 hover:text-foreground touch-target"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -115,7 +116,7 @@ export default function DashboardPage() {
     <main className="flex-1 max-w-3xl mx-auto w-full p-4">
       <div className="flex items-center justify-between mb-6">
         <button
-          onClick={() => router.push("/")}
+          onClick={() => goBackOr(router, "/")}
           className="flex items-center gap-2 text-slate-500 hover:text-foreground touch-target"
         >
           <ArrowLeft className="w-5 h-5" />

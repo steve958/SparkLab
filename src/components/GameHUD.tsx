@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useGameStore } from "@/store/gameStore";
 import { useProgressStore } from "@/store/progressStore";
 import { audio } from "@/lib/audio";
+import { goBackOr } from "@/lib/navigation";
 import type { ContentBundle } from "@/data/loader";
 import Molecule3DViewer from "./Molecule3DViewer";
 import AtomLedger from "./AtomLedger";
@@ -156,7 +157,9 @@ export default function GameHUD({ content }: GameHUDProps) {
       <div className="flex items-center justify-between gap-2 px-2 sm:px-3 py-2 bg-white border-b border-slate-200">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
           <button
-            onClick={() => router.push(`/worlds?world=${mission.worldId}`)}
+            onClick={() =>
+              goBackOr(router, `/worlds?world=${mission.worldId}`)
+            }
             className="p-2 rounded-lg hover:bg-slate-100 touch-target shrink-0"
             aria-label="Back"
           >
@@ -431,7 +434,8 @@ export default function GameHUD({ content }: GameHUDProps) {
               )}
               <button
                 onClick={() =>
-                  router.push(
+                  goBackOr(
+                    router,
                     mission ? `/worlds?world=${mission.worldId}` : "/worlds"
                   )
                 }

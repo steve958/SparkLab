@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useProgressStore } from "@/store/progressStore";
 import { useGameStore } from "@/store/gameStore";
+import { goBackOr } from "@/lib/navigation";
 import type { Mission } from "@/types";
 import type { ContentBundle } from "@/data/loader";
 import { Star, Lock, Clock, ArrowLeft, CheckCircle, RotateCcw, ArrowRight } from "lucide-react";
@@ -25,7 +26,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
       <div className="p-8 text-center">
         <p className="text-slate-500">World not found.</p>
         <button
-          onClick={() => router.push("/worlds")}
+          onClick={() => goBackOr(router, "/worlds")}
           className="mt-4 text-primary hover:underline"
         >
           Back to Worlds
@@ -50,7 +51,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
   return (
     <div className="max-w-3xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
       <button
-        onClick={() => router.push("/worlds")}
+        onClick={() => goBackOr(router, "/worlds")}
         className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-3 sm:mb-6 touch-target"
       >
         <ArrowLeft className="w-5 h-5" />

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { loadContent, type ContentBundle } from "@/data/loader";
 import { getElementImageUrl } from "@/data/element-images";
+import { goBackOr } from "@/lib/navigation";
 import type { Element } from "@/types";
 import { ArrowLeft, Search, FlaskConical } from "lucide-react";
 
@@ -85,7 +86,7 @@ export default function PeriodicTablePage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => router.push("/")}
+            onClick={() => goBackOr(router, "/")}
             className="p-2 rounded-lg hover:bg-slate-100 touch-target"
             aria-label={t("menu.back")}
           >

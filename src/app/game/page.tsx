@@ -15,6 +15,7 @@ import { calculateScore } from "@/engine/scoring";
 import GameHUD from "@/components/GameHUD";
 import CanvasAccessibilityOverlay from "@/components/CanvasAccessibilityOverlay";
 import ExplanationQuizModal from "@/components/ExplanationQuizModal";
+import { goBackOr } from "@/lib/navigation";
 import type { ExplanationQuiz, SceneAtom, SceneBond } from "@/types";
 
 const PixiApp = dynamic(() => import("@/game/PixiApp"), { ssr: false });
@@ -162,7 +163,7 @@ export default function GamePage() {
 
   useEffect(() => {
     if (!currentProfile) {
-      router.push("/");
+      router.replace("/");
       return;
     }
     let cancelled = false;
@@ -328,7 +329,7 @@ export default function GamePage() {
             Retry
           </button>
           <button
-            onClick={() => router.push("/")}
+            onClick={() => goBackOr(router, "/")}
             className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50"
           >
             Back to Home
@@ -342,7 +343,7 @@ export default function GamePage() {
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <p className="text-slate-500">No mission selected.</p>
         <button
-          onClick={() => router.push("/worlds")}
+          onClick={() => goBackOr(router, "/worlds")}
           className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
         >
           Choose a Mission

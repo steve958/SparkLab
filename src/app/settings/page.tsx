@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useProgressStore } from "@/store/progressStore";
 import { saveSettings } from "@/lib/db";
 import { audio } from "@/lib/audio";
+import { goBackOr } from "@/lib/navigation";
 import {
   ArrowLeft,
   Volume2,
@@ -51,7 +52,7 @@ export default function SettingsPage() {
   return (
     <main className="flex-1 max-w-md mx-auto w-full p-4">
       <button
-        onClick={() => router.push("/")}
+        onClick={() => goBackOr(router, "/")}
         className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-6 touch-target"
       >
         <ArrowLeft className="w-5 h-5" />

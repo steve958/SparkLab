@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import { useProgressStore } from "@/store/progressStore";
+import { goBackOr } from "@/lib/navigation";
 import {
   ArrowLeft,
   Save,
@@ -36,7 +37,7 @@ export default function CMSPage() {
     return (
       <main className="flex-1 flex flex-col items-center justify-center p-4">
         <button
-          onClick={() => router.push("/")}
+          onClick={() => goBackOr(router, "/")}
           className="absolute top-4 left-4 flex items-center gap-2 text-slate-500 hover:text-foreground touch-target"
         >
           <ArrowLeft className="w-5 h-5" />
@@ -89,7 +90,7 @@ export default function CMSPage() {
     <main className="flex-1 max-w-5xl mx-auto w-full p-4">
       <div className="flex items-center justify-between mb-6">
         <button
-          onClick={() => router.push("/")}
+          onClick={() => goBackOr(router, "/")}
           className="flex items-center gap-2 text-slate-500 hover:text-foreground touch-target"
         >
           <ArrowLeft className="w-5 h-5" />

@@ -1,4 +1,4 @@
-const CACHE_NAME = "sparklab-v3";
+const CACHE_NAME = "sparklab-v4";
 const STATIC_ASSETS = [
   "/",
   "/worlds",
