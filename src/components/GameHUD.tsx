@@ -8,6 +8,7 @@ import { useProgressStore } from "@/store/progressStore";
 import { audio } from "@/lib/audio";
 import { goBackOr } from "@/lib/navigation";
 import { generateAdaptiveHint } from "@/engine/hints";
+import { recordEvent } from "@/lib/telemetry";
 import type { ContentBundle } from "@/data/loader";
 import Molecule3DViewer from "./Molecule3DViewer";
 import AtomLedger from "./AtomLedger";
@@ -56,6 +57,7 @@ export default function GameHUD({ content }: GameHUDProps) {
   const removeBond = useGameStore((s) => s.removeBond);
 
   const progress = useProgressStore((s) => s.progress);
+  const currentProfileId = useProgressStore((s) => s.currentProfile?.id);
   const isMissionUnlocked = useProgressStore((s) => s.isMissionUnlocked);
 
   // Next unlocked, not-yet-3-starred mission in the current world (forward-only).
@@ -194,6 +196,19 @@ export default function GameHUD({ content }: GameHUDProps) {
         ? (result.actionPayload as string[])
         : []
     );
+    if (currentProfileId) {
+      const recentOutcome =
+        hintState.attempts.length > 0
+          ? hintState.attempts[hintState.attempts.length - 1].outcome
+          : ("no-attempt-yet" as const);
+      void recordEvent({
+        profileId: currentProfileId,
+        kind: "hint_used",
+        missionId: mission.missionId,
+        tier: result.tier,
+        outcome: recentOutcome,
+      }).catch(() => {});
+    }
   };
 
   const handleCheck = () => {

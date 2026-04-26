@@ -6,6 +6,7 @@ import { useProgressStore } from "@/store/progressStore";
 import { saveSettings } from "@/lib/db";
 import { audio } from "@/lib/audio";
 import { goBackOr } from "@/lib/navigation";
+import Link from "next/link";
 import {
   ArrowLeft,
   Volume2,
@@ -13,6 +14,7 @@ import {
   Monitor,
   Eye,
   Globe,
+  ShieldCheck,
 } from "lucide-react";
 
 const LANGUAGES = [
@@ -178,6 +180,20 @@ export default function SettingsPage() {
             ))}
           </div>
         </div>
+
+        {/* Privacy notice link — both kid and parent views live at /privacy. */}
+        <Link
+          href="/privacy"
+          className="flex items-center gap-3 mt-3 p-4 rounded-2xl border-2 border-slate-200 bg-white hover:border-slate-300 transition-colors touch-target-lg"
+        >
+          <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
+          <div className="flex-1 min-w-0">
+            <div className="font-medium">Privacy notice</div>
+            <div className="text-sm text-slate-600">
+              What SparkLab knows about you (and what it doesn&apos;t).
+            </div>
+          </div>
+        </Link>
       </div>
     </main>
   );

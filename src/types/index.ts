@@ -377,6 +377,88 @@ export interface MasteryCheckResult {
   takenAt: number;
 }
 
+// Telemetry — privacy-reviewed event schema. No free-text fields.
+// Stored in IndexedDB only; rolling 90-day retention. Powers the
+// parent-dashboard analytics view. See compliance/posture.md.
+export type TelemetryEventKind =
+  | "mission_start"
+  | "mission_complete"
+  | "hint_used"
+  | "mastery_check"
+  | "sandbox_save";
+
+export interface TelemetryEventBase {
+  // Auto-generated id so we can index and delete in batches.
+  id: string;
+  // Profile that emitted the event. Stays inside this device.
+  profileId: string;
+  kind: TelemetryEventKind;
+  ts: number;
+}
+
+// Distributive Omit so callers can pass a single variant minus the
+// auto-filled `id` and `ts` without TS collapsing the union down to
+// common keys (which would lose worldId / missionId / etc.).
+export type TelemetryEventInput = TelemetryEvent extends infer E
+  ? E extends TelemetryEventBase
+    ? Omit<E, "id" | "ts">
+    : never
+  : never;
+
+export type TelemetryEvent =
+  | (TelemetryEventBase & {
+      kind: "mission_start";
+      missionId: string;
+      worldId: string;
+      ageBand: AgeBand;
+    })
+  | (TelemetryEventBase & {
+      kind: "mission_complete";
+      missionId: string;
+      worldId: string;
+      ageBand: AgeBand;
+      stars: number;
+      hintsUsed: number;
+      attempts: number;
+      durationMs: number;
+    })
+  | (TelemetryEventBase & {
+      kind: "hint_used";
+      missionId: string;
+      tier: number;
+      outcome: AttemptOutcome | "no-attempt-yet";
+    })
+  | (TelemetryEventBase & {
+      kind: "mastery_check";
+      worldId: string;
+      phase: "pre" | "post";
+      correctCount: number;
+      totalCount: number;
+    })
+  | (TelemetryEventBase & {
+      kind: "sandbox_save";
+      // null when the structure didn't match a known molecule.
+      moleculeId: string | null;
+      atomCount: number;
+    });
+
+// Parent account — gated entry to the dashboard, password-protected
+// data-export/delete, and the future cloud-sync opt-in. Local-only;
+// see [compliance/posture.md](../../compliance/posture.md).
+export interface ParentAccount {
+  // Email lower-cased and trimmed; used as the Dexie key.
+  email: string;
+  // base64-encoded PBKDF2 derived key.
+  passwordHash: string;
+  // base64-encoded random salt unique to this account.
+  salt: string;
+  // PBKDF2 iteration count captured at creation so we can rehash on
+  // upgrade without invalidating existing accounts.
+  iterations: number;
+  createdAt: number;
+  lastLoginAt: number | null;
+}
+
 export interface PlayerSettings {
   profileId: string;
   reducedMotion: boolean;
@@ -428,7 +510,11 @@ export type HintAction =
 
 export interface AdultSession {
   type: "parent" | "teacher";
-  pin: string;
+  // Email of the authenticated parent. Older `pin` field retained as an
+  // optional for back-compat with legacy Phase 1 sessions and dropped on
+  // next login.
+  email?: string;
+  pin?: string;
   createdAt: number;
   expiresAt: number;
 }

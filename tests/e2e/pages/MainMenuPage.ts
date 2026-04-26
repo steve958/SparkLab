@@ -13,7 +13,11 @@ export class MainMenuPage {
     this.newPlayerButton = page.locator("text=New Player");
     this.nameInput = page.locator('input[placeholder="Enter your name"]');
     this.createButton = page.locator("text=Create");
-    this.playButton = page.getByRole("link", { name: "Play" });
+    // Lab hub has two links that include the word "Play" (current-quest
+    // card and the action grid). We target the worlds-route link
+    // specifically so the test isn't sensitive to the current-quest
+    // race.
+    this.playButton = page.locator('a[href="/worlds"]').first();
     this.welcomeMessage = page.locator("text=Welcome back");
   }
 

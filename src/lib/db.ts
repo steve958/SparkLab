@@ -8,6 +8,8 @@ import type {
   Discovery,
   BadgeAward,
   MasteryCheckResult,
+  ParentAccount,
+  TelemetryEvent,
 } from "@/types";
 
 export interface SaveSlot {
@@ -28,6 +30,8 @@ class SparkLabDatabase extends Dexie {
   discoveries!: Table<Discovery>;
   badges!: Table<BadgeAward>;
   masteryResults!: Table<MasteryCheckResult>;
+  parents!: Table<ParentAccount>;
+  telemetry!: Table<TelemetryEvent>;
 
   constructor() {
     super("SparkLabDB");
@@ -47,6 +51,14 @@ class SparkLabDatabase extends Dexie {
     this.version(3).stores({
       masteryResults:
         "[profileId+worldId+phase], profileId, worldId, phase, takenAt",
+    });
+    // v4 (Phase 3): parent accounts for the new dashboard auth.
+    this.version(4).stores({
+      parents: "email, createdAt, lastLoginAt",
+    });
+    // v5 (Phase 3): telemetry events with rolling 90-day retention.
+    this.version(5).stores({
+      telemetry: "id, profileId, kind, ts",
     });
   }
 }
@@ -79,6 +91,7 @@ export async function deleteProfile(profileId: string): Promise<void> {
   await db.discoveries.where({ profileId }).delete();
   await db.badges.where({ profileId }).delete();
   await db.masteryResults.where({ profileId }).delete();
+  await db.telemetry.where({ profileId }).delete();
 }
 
 export async function getProgressForProfile(
@@ -159,6 +172,8 @@ export async function deleteAllData(): Promise<void> {
   await db.discoveries.clear();
   await db.badges.clear();
   await db.masteryResults.clear();
+  await db.parents.clear();
+  await db.telemetry.clear();
 }
 
 // ============================================================================

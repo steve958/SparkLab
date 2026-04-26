@@ -29,20 +29,50 @@ test("can create a profile and navigate to worlds", async ({ page }) => {
   await expect(page.locator("text=Choose a World")).toBeVisible();
 });
 
-test("dashboard requires PIN", async ({ page }) => {
+test("dashboard requires a parent account", async ({ page }) => {
+  // Reset state so we hit the create-account branch.
+  await page.goto("/", { waitUntil: "domcontentloaded" });
+  await page.evaluate(
+    () =>
+      new Promise<void>((res) => {
+        const r = indexedDB.deleteDatabase("SparkLabDB");
+        r.onsuccess = r.onerror = r.onblocked = () => res();
+      })
+  );
+  await page.evaluate(() =>
+    window.localStorage.removeItem("sparklab_selected_profile")
+  );
   await page.goto("/dashboard");
   await page.waitForLoadState("networkidle");
   await expect(page.locator("text=Grown-up Dashboard")).toBeVisible();
 
-  // Enter wrong PIN
-  const pinInput = page.locator('input[inputmode="numeric"]');
-  await pinInput.waitFor({ state: "visible" });
-  await pinInput.fill("0000");
-  await page.getByRole("button", { name: "Enter" }).click();
-  await expect(page.locator("text=Incorrect PIN")).toBeVisible({ timeout: 10000 });
+  // First-run: create-account form is shown.
+  await page.locator('input[type="email"]').fill("parent@example.com");
+  await page.locator('input[type="password"]').fill("longenough123");
+  await page.getByRole("button", { name: /create account/i }).click();
 
-  // Enter correct PIN
-  await pinInput.fill("1234");
-  await page.getByRole("button", { name: "Enter" }).click();
-  await expect(page.locator("text=Player Profiles")).toBeVisible({ timeout: 10000 });
+  // Now signed in.
+  await expect(page.getByText(/Signed in as parent@example.com/)).toBeVisible({
+    timeout: 10000,
+  });
+  await expect(page.locator("text=Player Profiles")).toBeVisible();
+
+  // Sign out and verify the next visit shows the sign-in form.
+  await page.getByRole("button", { name: /sign out/i }).click();
+  await expect(
+    page.getByRole("button", { name: /sign in/i })
+  ).toBeVisible();
+
+  // Wrong password is rejected.
+  await page.locator('input[type="email"]').fill("parent@example.com");
+  await page.locator('input[type="password"]').fill("wrongpassword");
+  await page.getByRole("button", { name: /sign in/i }).click();
+  await expect(page.getByRole("alert")).toBeVisible({ timeout: 10000 });
+
+  // Right password lets us back in.
+  await page.locator('input[type="password"]').fill("longenough123");
+  await page.getByRole("button", { name: /sign in/i }).click();
+  await expect(page.locator("text=Player Profiles")).toBeVisible({
+    timeout: 10000,
+  });
 });

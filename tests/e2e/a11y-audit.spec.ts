@@ -85,6 +85,7 @@ test.describe.skip("A11y audit (Phase 1) @a11y", () => {
       "/notebook",
       "/badges",
       "/sandbox",
+      "/privacy",
     ]) {
       await page.goto(path, { waitUntil: "load" });
       // Give the spinner time to resolve and for content to hydrate.

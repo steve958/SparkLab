@@ -7,6 +7,7 @@ import { useGameStore } from "@/store/gameStore";
 import { useProgressStore } from "@/store/progressStore";
 import { loadContent, type ContentBundle } from "@/data/loader";
 import { validateSceneMolecule } from "@/engine/molecule";
+import { recordEvent } from "@/lib/telemetry";
 import { goBackOr } from "@/lib/navigation";
 import CanvasAccessibilityOverlay from "@/components/CanvasAccessibilityOverlay";
 import { ArrowLeft, Beaker, Save, RotateCcw, X } from "lucide-react";
@@ -95,6 +96,12 @@ export default function SandboxPage() {
         label: molecule?.displayName ?? result.matchedMoleculeId,
         explanation: result.explanation,
       });
+      void recordEvent({
+        profileId: currentProfile.id,
+        kind: "sandbox_save",
+        moleculeId: result.matchedMoleculeId,
+        atomCount: scene.atoms.length,
+      }).catch(() => {});
       setFeedback({
         text: recorded
           ? `Saved ${molecule?.displayName ?? "your creation"} to the notebook!`
@@ -102,6 +109,12 @@ export default function SandboxPage() {
         tone: "success",
       });
     } else {
+      void recordEvent({
+        profileId: currentProfile.id,
+        kind: "sandbox_save",
+        moleculeId: null,
+        atomCount: scene.atoms.length,
+      }).catch(() => {});
       setFeedback({
         text: "We don't recognize this molecule yet — keep experimenting!",
         tone: "info",

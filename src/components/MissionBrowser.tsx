@@ -17,6 +17,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import MasteryCheckModal from "./MasteryCheckModal";
+import { recordEvent } from "@/lib/telemetry";
 
 interface MissionBrowserProps {
   content: ContentBundle;
@@ -31,6 +32,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
   const isMissionUnlocked = useProgressStore((s) => s.isMissionUnlocked);
   const masteryResults = useProgressStore((s) => s.masteryResults);
   const recordMasteryResult = useProgressStore((s) => s.recordMasteryResult);
+  const currentProfileId = useProgressStore((s) => s.currentProfile?.id);
   const initMission = useGameStore((s) => s.initMission);
 
   const [masteryModalPhase, setMasteryModalPhase] = useState<
@@ -183,12 +185,23 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
           questions={masteryCheck[masteryModalPhase]}
           onCancel={() => setMasteryModalPhase(null)}
           onFinish={async (correctCount) => {
+            const totalCount = masteryCheck[masteryModalPhase].length;
             await recordMasteryResult({
               worldId,
               phase: masteryModalPhase,
               correctCount,
-              totalCount: masteryCheck[masteryModalPhase].length,
+              totalCount,
             });
+            if (currentProfileId) {
+              void recordEvent({
+                profileId: currentProfileId,
+                kind: "mastery_check",
+                worldId,
+                phase: masteryModalPhase,
+                correctCount,
+                totalCount,
+              }).catch(() => {});
+            }
             setMasteryModalPhase(null);
           }}
         />

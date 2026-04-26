@@ -14,6 +14,7 @@ import { nudgePosition, findNearestAtom } from "@/engine/interaction";
 import { calculateScore } from "@/engine/scoring";
 import { analyzeAttempt } from "@/engine/hints";
 import { evaluateBadges } from "@/engine/badges";
+import { recordEvent } from "@/lib/telemetry";
 import GameHUD from "@/components/GameHUD";
 import CanvasAccessibilityOverlay from "@/components/CanvasAccessibilityOverlay";
 import ExplanationQuizModal from "@/components/ExplanationQuizModal";
@@ -117,6 +118,21 @@ export default function GamePage() {
         for (const def of earned) {
           await recordBadgeAward(def.badgeId);
         }
+
+        // Telemetry: privacy-reviewed event for mastery / engagement.
+        // No free-text; everything in this payload is a known scalar.
+        const startedAt = scoreState.startTime || Date.now();
+        await recordEvent({
+          profileId: currentProfile.id,
+          kind: "mission_complete",
+          missionId: mission.missionId,
+          worldId: mission.worldId,
+          ageBand: mission.ageBand,
+          stars: calc.stars,
+          hintsUsed: hintState.hintsUsed,
+          attempts: scoreState.attempts + 1,
+          durationMs: Math.max(0, Date.now() - startedAt),
+        }).catch(() => {});
       }
 
       showFeedback(explanationText, "success");
@@ -318,6 +334,19 @@ export default function GamePage() {
     return () =>
       window.removeEventListener("sparklab-add-atom", handler as EventListener);
   }, [addAtom, content]);
+
+  // Telemetry: fire mission_start when a mission becomes active. We
+  // gate on currentProfile so anonymous /game visits don't emit.
+  useEffect(() => {
+    if (!mission || !currentProfile) return;
+    void recordEvent({
+      profileId: currentProfile.id,
+      kind: "mission_start",
+      missionId: mission.missionId,
+      worldId: mission.worldId,
+      ageBand: mission.ageBand,
+    }).catch(() => {});
+  }, [mission?.missionId, currentProfile?.id]);
 
   // Autosave
   useEffect(() => {
