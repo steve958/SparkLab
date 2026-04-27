@@ -149,7 +149,9 @@ function chargeLabel(charge: number): string {
 
 /** Render charge labels on every atom carrying a non-zero formal
  *  charge from ionic bonding. Container is rebuilt every render — fine
- *  because this only fires on scene state change, not per frame. */
+ *  because this only fires on scene state change, not per frame. Each
+ *  label is a colored pill (background circle + bold text) so it reads
+ *  against any atom color and at any zoom. */
 function drawAtomCharges(
   container: Container,
   scene: SceneState,
@@ -170,42 +172,68 @@ function drawAtomCharges(
     if (!element) continue;
     const radius = getAtomRadius(element);
 
+    // Wrapper container so the pill background and the text move
+    // together as a unit.
+    const pill = new Container();
+    // Position: outside the upper-right of the atom body, far enough
+    // out that the charge sits clear of the body, the rim, the
+    // valence dots (cardinal directions), and the stability ring.
+    pill.x = atom.x + radius + 4;
+    pill.y = atom.y - radius - 2;
+
+    const text = chargeLabel(charge);
+    const fontSize = 22;
+    const isPositive = charge > 0;
+
     const label = new Text({
-      text: chargeLabel(charge),
+      text,
       style: {
-        fontSize: 14,
-        fontWeight: "bold",
-        // Positive (electron-poor) reads warm; negative (electron-
-        // rich) reads cool. The chemistry vocabulary "cation/anion"
-        // gets visual reinforcement before the kid learns the words.
-        fill: charge > 0 ? 0xdc2626 : 0x1d4ed8,
+        fontSize,
+        fontWeight: "900",
+        fill: 0xffffff,
         align: "center",
-        dropShadow: {
-          color: 0xffffff,
-          alpha: 0.9,
-          distance: 0,
-          blur: 4,
-          angle: 0,
-        },
       },
     });
     label.anchor.set(0.5);
-    // Top-right corner of the atom — sits clear of bonds (which run
-    // through the atom centerline) and clear of the lone-pair dots
-    // (which sit at the cardinal directions).
-    label.x = atom.x + radius * 0.78;
-    label.y = atom.y - radius * 0.78;
-    container.addChild(label);
+
+    // Pill background — sized to the text with a small inset.
+    const padX = 8;
+    const padY = 3;
+    const bgW = label.width + padX * 2;
+    const bgH = label.height + padY * 2;
+    const bg = new Graphics();
+    bg.roundRect(-bgW / 2, -bgH / 2, bgW, bgH, bgH / 2);
+    // Positive (cation, electron-poor) = warm red; negative (anion,
+    // electron-rich) = cool blue. Vocabulary reinforcement before the
+    // words are even introduced.
+    bg.fill({ color: isPositive ? 0xdc2626 : 0x2563eb, alpha: 1 });
+    bg.stroke({
+      width: 2,
+      color: isPositive ? 0x991b1b : 0x1e3a8a,
+      alpha: 1,
+    });
+
+    pill.addChild(bg, label);
+    container.addChild(pill);
   }
 }
 
-/** Render Lewis-style lone-pair dots around each atom. Lone pairs only —
- *  shared electrons are already shown by drawSharedElectrons in the
- *  bond region, so adding them here would double-count. */
+/** Render Lewis-style lone-pair dots around each atom + a subtle
+ *  octet-stability ring when the atom has reached a stable
+ *  configuration. Shared electrons are already shown by
+ *  drawSharedElectrons in the bond region, so they don't appear here.
+ *
+ *  Ionic vs covalent matters for the count: covalent bonds *share*
+ *  electrons (count toward the atom's shell at full bond order × 2),
+ *  while ionic bonds *transfer* electrons (the atom either lost or
+ *  gained valence electrons cleanly). This function separates the
+ *  two so a Cl⁻ shows its full 8 valence electrons and a Na⁺ shows 0.
+ */
 function drawValenceDots(
   g: Graphics,
   scene: SceneState,
-  elements: Element[]
+  elements: Element[],
+  bondRules: import("@/types").BondRule[]
 ) {
   g.clear();
   for (const atom of scene.atoms) {
@@ -214,30 +242,57 @@ function drawValenceDots(
     const valence = element.valenceElectronsMainGroup;
     if (valence <= 0) continue;
 
-    // Each bond contributes its order to the count of "this atom's
-    // electrons currently in bonds" (single = 1, double = 2, triple = 3,
-    // ionic = 1 — Na donates 1 to Cl).
-    let bonded = 0;
+    // Ionic transfers shift this atom's effective valence: positive
+    // charge = lost electrons, negative = gained.
+    const ionicCharge = computeAtomCharge(atom, scene, bondRules);
+
+    // Sum bond orders for *covalent* bonds only.
+    let bondedCovalent = 0;
     for (const b of scene.bonds) {
       if (b.atomAId !== atom.id && b.atomBId !== atom.id) continue;
+      if (b.bondType === "ionic") continue;
       switch (b.bondType) {
         case "covalent-double":
-          bonded += 2;
+          bondedCovalent += 2;
           break;
         case "covalent-triple":
-          bonded += 3;
+          bondedCovalent += 3;
           break;
         case "covalent-single":
-        case "ionic":
         default:
-          bonded += 1;
+          bondedCovalent += 1;
           break;
       }
     }
-    const lone = Math.max(0, valence - bonded);
-    if (lone === 0) continue;
+
+    // Effective valence after ionic transfers — Cl⁻ (charge=-1) gains
+    // an electron so its effective valence is 8; Na⁺ (charge=+1)
+    // loses one so its effective valence is 0.
+    const effectiveValence = valence - ionicCharge;
+    const lone = Math.max(0, effectiveValence - bondedCovalent);
+
+    // Octet rule: 8 valence electrons in shell for most atoms, 2 for
+    // H/He (duet rule). Total shell = 2 * covalent_bond_order + lone
+    // (each shared pair counts twice — once for each atom). Ions are
+    // always considered stable: they reached noble-gas configuration
+    // by transfer rather than by sharing.
+    const octetTarget =
+      element.symbol === "H" || element.symbol === "He" ? 2 : 8;
+    const totalShell = 2 * bondedCovalent + lone;
+    const isStable = ionicCharge !== 0 || totalShell === octetTarget;
 
     const radius = getAtomRadius(element);
+
+    // Stability ring — thin outer outline in brand-aligned green so
+    // the pedagogical signal "this atom is stable" is visible without
+    // competing with the selection halo.
+    if (isStable) {
+      g.circle(atom.x, atom.y, radius + 3);
+      g.stroke({ width: 1.5, color: 0x16a34a, alpha: 0.55 });
+    }
+
+    if (lone === 0) continue;
+
     const positions = valenceDotPositions(lone, radius);
     for (const p of positions) {
       const dx = atom.x + p.x;
@@ -705,7 +760,12 @@ export default function PixiApp({ content }: PixiAppProps) {
     // Static (no animation), so it lives in this scene-driven effect
     // rather than in the per-frame Ticker like the shared electrons.
     if (valenceRef.current) {
-      drawValenceDots(valenceRef.current, scene, content.elements);
+      drawValenceDots(
+        valenceRef.current,
+        scene,
+        content.elements,
+        content.bondRules
+      );
     }
     // Charge-label pass: only ionic atoms get a label, and the value
     // depends on which ionic bonds the atom is in, so this also
