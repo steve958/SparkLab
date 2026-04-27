@@ -427,8 +427,8 @@ function drawAtomCharges(
 
 /** Render Lewis-style lone-pair dots around each atom + a subtle
  *  octet-stability ring when the atom has reached a stable
- *  configuration. Shared electrons are already shown by
- *  drawSharedElectrons in the bond region, so they don't appear here.
+ *  configuration. Shared electrons are visualized by drawBondFlow
+ *  (zoom-in only) in the bond region, so they don't appear here.
  *
  *  Ionic vs covalent matters for the count: covalent bonds *share*
  *  electrons (count toward the atom's shell at full bond order × 2),
@@ -509,101 +509,6 @@ function drawValenceDots(
       g.circle(dx, dy, 2.5);
       g.fill({ color: 0xffffff, alpha: 1 });
       g.stroke({ width: 0.8, color: 0x334155, alpha: 0.7 });
-    }
-  }
-}
-
-function drawSharedElectrons(
-  g: Graphics,
-  scene: SceneState,
-  elements: Element[],
-  timeSec: number,
-  zoom: number,
-  reduceMotion: boolean
-) {
-  g.clear();
-  // The simple swinging-dots view crossfades OUT as zoom rises into
-  // the Bohr window — the more detailed drawBondFlow layer takes over
-  // there, so we'd otherwise see two distinct visualizations of the
-  // same electrons in the same place. Both ride the same bohrFade
-  // curve as the nucleus + shell layers for a single coherent crossfade.
-  const fade = 1 - bohrFade(zoom);
-  if (fade <= 0) return;
-  g.alpha = fade;
-  const swingPeriod = 2.0; // seconds for one full back-and-forth
-  const phaseRate = (Math.PI * 2) / swingPeriod;
-
-  for (const bond of scene.bonds) {
-    if (bond.bondType === "ionic") continue;
-    const atomA = scene.atoms.find((a) => a.id === bond.atomAId);
-    const atomB = scene.atoms.find((a) => a.id === bond.atomBId);
-    if (!atomA || !atomB) continue;
-
-    const elementA = elements.find((e) => e.symbol === atomA.elementId);
-    const elementB = elements.find((e) => e.symbol === atomB.elementId);
-    const rA = elementA ? getAtomRadius(elementA) : ATOM_RADIUS;
-    const rB = elementB ? getAtomRadius(elementB) : ATOM_RADIUS;
-
-    const dx = atomB.x - atomA.x;
-    const dy = atomB.y - atomA.y;
-    const dist = Math.sqrt(dx * dx + dy * dy);
-    // Visible portion = full distance minus each atom's actual radius.
-    // Skip if atoms overlap or the gap is too narrow for dots.
-    const visible = dist - rA - rB;
-    if (visible < 24) continue;
-
-    const ux = dx / dist;
-    const uy = dy / dist;
-    const px = -uy;
-    const py = ux;
-
-    // Midpoint of the *visible* bond, which shifts toward the smaller
-    // atom when the two endpoints have different radii.
-    const cx = atomA.x + ux * (rA + visible / 2);
-    const cy = atomA.y + uy * (rA + visible / 2);
-
-    const pairs =
-      bond.bondType === "covalent-triple"
-        ? 3
-        : bond.bondType === "covalent-double"
-          ? 2
-          : 1;
-    // Perpendicular spacing has to match the parallel-line spacing in
-    // bond-graphics.ts so the dots ride on the actual bond strokes.
-    const perpSpacing = pairs === 3 ? 7 : pairs === 2 ? 5 : 0;
-
-    // Amplitude: at most 25% of the visible bond, capped so dots don't
-    // crash through the atoms even on long bonds.
-    const amplitude = Math.min(visible * 0.18, 14);
-    // Half-distance between the two dots in a pair at rest.
-    const restGap = Math.min(visible * 0.18, 11);
-
-    for (let p = 0; p < pairs; p++) {
-      // Pair offset: -1, 0, +1 (or just 0 for single, -0.5/+0.5 for double).
-      const lane = pairs === 1 ? 0 : p - (pairs - 1) / 2;
-      const offX = px * perpSpacing * lane;
-      const offY = py * perpSpacing * lane;
-
-      // Phase per pair so multiple pairs don't oscillate in lockstep.
-      const phase = reduceMotion ? 0 : timeSec * phaseRate + p * 0.7;
-      const swing = reduceMotion ? 0 : Math.sin(phase) * amplitude;
-
-      // Two dots per pair. Dot 0 sits left-of-center, dot 1 right-of-
-      // center; they swing in opposite directions so the pair visibly
-      // "exchanges" through the midpoint each cycle.
-      for (let d = 0; d < 2; d++) {
-        const dirSign = d === 0 ? -1 : 1;
-        const along = dirSign * (restGap + swing * dirSign);
-        const ex = cx + offX + ux * along;
-        const ey = cy + offY + uy * along;
-
-        // Soft white halo for "glow"
-        g.circle(ex, ey, 5);
-        g.fill({ color: 0xffffff, alpha: 0.45 });
-        // Bright core
-        g.circle(ex, ey, 2.4);
-        g.fill({ color: 0xffffff, alpha: 1 });
-      }
     }
   }
 }
@@ -768,7 +673,6 @@ export default function PixiApp({ content }: PixiAppProps) {
   const atomsContainerRef = useRef<Container | null>(null);
   const bondsContainerRef = useRef<Container | null>(null);
   const effectsContainerRef = useRef<Container | null>(null);
-  const electronsRef = useRef<Graphics | null>(null);
   const electronsTickerRef = useRef<((ticker: { deltaMS: number }) => void) | null>(null);
   const valenceRef = useRef<Graphics | null>(null);
   // Charge labels need Text children, so the charges layer is a
@@ -871,18 +775,12 @@ export default function PixiApp({ content }: PixiAppProps) {
       sceneContainer.addChild(bondsContainer);
       bondsContainerRef.current = bondsContainer;
 
-      // Shared-electron dots layer — rendered above bond strokes but
-      // below atoms so the dots ride on top of the bond and tuck
-      // visually into each atom. Animated via the Pixi Ticker below.
-      const electronsG = new Graphics();
-      electronsG.zIndex = 1.5;
-      sceneContainer.addChild(electronsG);
-      electronsRef.current = electronsG;
-
-      // Bond-flow layer — the zoomed-in "look inside the bond" detail
-      // (electrons traveling along bonds). Sits just above the
-      // shared-electron dots so when the two crossfade, the new layer
-      // visually replaces the old without z-fighting.
+      // Bond-flow layer — the zoomed-in "look inside the bond" detail.
+      // Animated electrons travel along each bond (covalent: pairs
+      // looping between atoms; ionic: one-way donor → acceptor) and
+      // fade in via bohrFade once the player zooms past
+      // NUCLEUS_FADE_START. Sits above bonds and below atoms so the
+      // electrons read as moving on the bond surface.
       const bondFlowG = new Graphics();
       bondFlowG.zIndex = 1.55;
       sceneContainer.addChild(bondFlowG);
@@ -944,20 +842,9 @@ export default function PixiApp({ content }: PixiAppProps) {
         const scene = useGameStore.getState().scene;
         const tSec = performance.now() / 1000;
 
-        if (electronsRef.current) {
-          drawSharedElectrons(
-            electronsRef.current,
-            scene,
-            content.elements,
-            tSec,
-            zoomRef.current,
-            reduceMotion
-          );
-        }
-        // Bond-flow electrons — the zoomed-in detail counterpart to
-        // the swinging dots. Crossfades in via bohrFade as the
-        // swinging dots fade out, so the bond visualization gets more
-        // detailed as the player zooms in.
+        // Bond-flow electrons — the zoom-in "look inside the bond"
+        // animation. Empty at normal zoom; fades in via bohrFade once
+        // the player zooms past NUCLEUS_FADE_START.
         if (bondFlowRef.current) {
           drawBondFlow(
             bondFlowRef.current,
@@ -1104,19 +991,9 @@ export default function PixiApp({ content }: PixiAppProps) {
               reduceMotion
             );
           }
-          // Bond-electron layers also crossfade through this window —
-          // refresh both so the alpha tracks pinch motion smoothly
+          // Bond-flow layer also crossfades through this window —
+          // refresh so the alpha tracks pinch motion smoothly
           // between ticker frames.
-          if (electronsRef.current) {
-            drawSharedElectrons(
-              electronsRef.current,
-              scene,
-              content.elements,
-              tSec,
-              newZoom,
-              reduceMotion
-            );
-          }
           if (bondFlowRef.current) {
             drawBondFlow(
               bondFlowRef.current,
@@ -1265,16 +1142,6 @@ export default function PixiApp({ content }: PixiAppProps) {
               reduceMotion
             );
           }
-          if (electronsRef.current) {
-            drawSharedElectrons(
-              electronsRef.current,
-              scene,
-              content.elements,
-              tSec,
-              newZoom,
-              reduceMotion
-            );
-          }
           if (bondFlowRef.current) {
             drawBondFlow(
               bondFlowRef.current,
@@ -1313,7 +1180,6 @@ export default function PixiApp({ content }: PixiAppProps) {
         }
         electronsTickerRef.current = null;
       }
-      electronsRef.current = null;
       valenceRef.current = null;
       chargesRef.current = null;
       nucleiRef.current = null;
