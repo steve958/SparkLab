@@ -95,7 +95,6 @@ export function drawAtomBody(
 
 export interface AtomSpriteHandlers {
   onPointerDown: (e: FederatedPointerEvent, atomId: string) => void;
-  onHover: (e: FederatedPointerEvent, atomId: string, element: Element) => void;
   onContextMenu: (e: FederatedPointerEvent, atomId: string) => void;
 }
 
@@ -189,10 +188,11 @@ export function createAtomSprite(
     }
     handlers.onPointerDown(e, atom.id);
   });
-  container.on("pointerover", (e: FederatedPointerEvent) => {
+  // Hover feedback is purely visual now — no more "Oxygen (8)" tooltip.
+  // The atom is its own label (color + symbol + name underneath).
+  container.on("pointerover", () => {
     hoverHalo.alpha = 1;
     container.scale.set(1.06);
-    handlers.onHover(e, atom.id, element);
   });
   container.on("pointerout", () => {
     hoverHalo.alpha = 0;

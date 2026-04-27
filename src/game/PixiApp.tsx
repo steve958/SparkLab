@@ -53,6 +53,91 @@ function bondLabel(bondType: string): string {
 // *transfer*, not sharing, and the violet dashed style already conveys
 // the difference; adding shared-electron dots would mislabel the
 // chemistry.
+// Zoom threshold above which the atom reveals its nucleus (Bohr-style
+// "look inside the atom" view). Below this, atoms render as their
+// normal chemistry symbols only.
+const NUCLEUS_ZOOM_THRESHOLD = 1.8;
+
+/** Pack `count` little dots inside a circle of `radius` using a
+ *  sunflower (Vogel) spiral so the nucleus looks dense and varied
+ *  rather than gridded. Returns positions in atom-local coordinates. */
+function nucleonPositions(
+  count: number,
+  radius: number
+): Array<{ x: number; y: number }> {
+  if (count <= 0) return [];
+  const positions: Array<{ x: number; y: number }> = [];
+  const goldenAngle = Math.PI * (3 - Math.sqrt(5));
+  for (let i = 0; i < count; i++) {
+    const angle = i * goldenAngle;
+    // sqrt distribution gives uniform area density; 0.85 multiplier
+    // keeps dots away from the very edge of the nucleus.
+    const r = radius * 0.85 * Math.sqrt((i + 0.5) / count);
+    positions.push({
+      x: Math.cos(angle) * r,
+      y: Math.sin(angle) * r,
+    });
+  }
+  return positions;
+}
+
+/** Draw the nucleus contents for every atom: protons (red) packed
+ *  first, then neutrons (slate) filling the rest of the spiral. Only
+ *  invoked when zoom is past NUCLEUS_ZOOM_THRESHOLD; below that this
+ *  layer is cleared empty. */
+function drawNuclei(
+  g: Graphics,
+  scene: SceneState,
+  elements: Element[],
+  zoom: number
+) {
+  g.clear();
+  if (zoom < NUCLEUS_ZOOM_THRESHOLD) return;
+
+  for (const atom of scene.atoms) {
+    const element = elements.find((e) => e.symbol === atom.elementId);
+    if (!element) continue;
+    const protons = element.atomicNumber;
+    const neutrons = Math.max(
+      0,
+      Math.round(element.standardAtomicWeight) - protons
+    );
+    const total = protons + neutrons;
+    if (total <= 0) continue;
+
+    const atomRadius = getAtomRadius(element);
+    // Nucleus radius scales with atom radius but has a floor so even
+    // tiny atoms (period 1) get enough room to read the dots.
+    const nucleusRadius = Math.max(atomRadius * 0.42, 12);
+
+    // Soft fill behind the dots so the nucleus reads as a region, not
+    // a cloud of unrelated dots.
+    g.circle(atom.x, atom.y, nucleusRadius + 2);
+    g.fill({ color: 0x0f172a, alpha: 0.18 });
+
+    const positions = nucleonPositions(total, nucleusRadius);
+    // Per-dot radius scales with how many we need to pack — bigger
+    // dots when there are few, smaller when many. Floor at 1.4 so
+    // even high-Z elements stay visible.
+    const dotR = Math.max(1.4, nucleusRadius / Math.sqrt(total + 1) * 0.85);
+
+    for (let i = 0; i < total; i++) {
+      const p = positions[i];
+      const isProton = i < protons;
+      g.circle(atom.x + p.x, atom.y + p.y, dotR);
+      g.fill({
+        color: isProton ? 0xef4444 : 0x94a3b8,
+        alpha: 1,
+      });
+      g.stroke({
+        width: 0.4,
+        color: isProton ? 0x991b1b : 0x475569,
+        alpha: 1,
+      });
+    }
+  }
+}
+
 // Standard Lewis-dot layout: number of dots on each side (N, E, S, W),
 // filling singles before pairs. Indexed by total dot count 0..8.
 const VALENCE_LAYOUTS: Record<number, [number, number, number, number]> = {
@@ -409,6 +494,8 @@ export default function PixiApp({ content }: PixiAppProps) {
   // Charge labels need Text children, so the charges layer is a
   // Container (not a Graphics that we can g.clear()).
   const chargesRef = useRef<Container | null>(null);
+  // Nucleus detail (protons + neutrons) — only drawn when zoom >= 1.8x.
+  const nucleiRef = useRef<Graphics | null>(null);
   const atomSpritesRef = useRef<Map<string, Container>>(new Map());
   const bondGraphicsRef = useRef<Map<string, Graphics>>(new Map());
   const draggingRef = useRef<{ atomId: string; offsetX: number; offsetY: number } | null>(null);
@@ -506,6 +593,14 @@ export default function PixiApp({ content }: PixiAppProps) {
       sceneContainer.addChild(chargesContainer);
       chargesRef.current = chargesContainer;
 
+      // Nucleus detail layer. zIndex 2.4 so it sits between atom body
+      // (2) and charges/valence (2.5+). Only populated when zoom is
+      // high enough to read the protons + neutrons.
+      const nucleiG = new Graphics();
+      nucleiG.zIndex = 2.4;
+      sceneContainer.addChild(nucleiG);
+      nucleiRef.current = nucleiG;
+
       const effectsContainer = new Container();
       effectsContainer.zIndex = 3;
       sceneContainer.addChild(effectsContainer);
@@ -538,18 +633,53 @@ export default function PixiApp({ content }: PixiAppProps) {
       app.stage.eventMode = "static";
       app.stage.hitArea = app.screen;
 
-      // Background click/tap: clear selection. Atoms move only via drag
-      // (handleAtomPointerDown) or keyboard arrows (in game/page.tsx).
-      // Click-to-move was a misclick trap — players who wanted to
-      // deselect ended up teleporting the selected atom across the
-      // canvas.
+      // Background drag pans the view; a quick tap clears selection.
+      // Atoms still move only via their own drag handler. Same drag-
+      // detection pattern used for atom drag: if pointer travels > 5px
+      // before pointerup, treat as pan; else as a tap.
       app.stage.on("pointerdown", (e: FederatedPointerEvent) => {
-        if (e.target === app.stage) {
-          const state = useGameStore.getState();
-          if (state.selectedBondId) setSelectedBond(null);
-          if (state.selectedAtomId) setSelectedAtom(null);
-          dismissContextMenu();
-        }
+        if (e.target !== app.stage) return;
+
+        const startX = e.globalX;
+        const startY = e.globalY;
+        const startPanX = panRef.current.x;
+        const startPanY = panRef.current.y;
+        let isPanning = false;
+        const previousCursor = pixiCanvas.style.cursor;
+
+        const onMove = (ev: FederatedPointerEvent) => {
+          const dx = ev.globalX - startX;
+          const dy = ev.globalY - startY;
+          if (!isPanning && Math.sqrt(dx * dx + dy * dy) > 5) {
+            isPanning = true;
+            pixiCanvas.style.cursor = "grabbing";
+          }
+          if (isPanning) {
+            panRef.current.x = startPanX + dx;
+            panRef.current.y = startPanY + dy;
+            sceneContainer.x = panRef.current.x;
+            sceneContainer.y = panRef.current.y;
+          }
+        };
+
+        const onUp = () => {
+          if (!isPanning) {
+            // Quick tap on the background — preserve the original
+            // clear-selection behavior.
+            const state = useGameStore.getState();
+            if (state.selectedBondId) setSelectedBond(null);
+            if (state.selectedAtomId) setSelectedAtom(null);
+            dismissContextMenu();
+          }
+          pixiCanvas.style.cursor = previousCursor;
+          app.stage.off("globalpointermove", onMove);
+          app.stage.off("pointerup", onUp);
+          app.stage.off("pointerupoutside", onUp);
+        };
+
+        app.stage.on("globalpointermove", onMove);
+        app.stage.on("pointerup", onUp);
+        app.stage.on("pointerupoutside", onUp);
       });
 
       // Global pointer move for hover cues — coalesce to one update per animation
@@ -565,15 +695,50 @@ export default function PixiApp({ content }: PixiAppProps) {
         });
       });
 
-      // Zoom with mouse wheel
-      pixiCanvas.addEventListener("wheel", (e) => {
-        e.preventDefault();
-        const zoomSpeed = 0.001;
-        zoomRef.current = Math.max(0.5, Math.min(3, zoomRef.current - e.deltaY * zoomSpeed));
-        sceneContainer.scale.set(zoomRef.current);
-        sceneContainer.x = panRef.current.x;
-        sceneContainer.y = panRef.current.y;
-      }, { passive: false });
+      // Zoom with mouse wheel — anchored to the cursor position so the
+      // scene point under the pointer stays fixed during zoom (much
+      // nicer feel once the player has panned somewhere).
+      pixiCanvas.addEventListener(
+        "wheel",
+        (e) => {
+          e.preventDefault();
+          const oldZoom = zoomRef.current;
+          const zoomSpeed = 0.001;
+          const newZoom = Math.max(
+            0.5,
+            Math.min(3, oldZoom - e.deltaY * zoomSpeed)
+          );
+          if (newZoom === oldZoom) return;
+
+          const rect = pixiCanvas.getBoundingClientRect();
+          const cx = e.clientX - rect.left;
+          const cy = e.clientY - rect.top;
+          // Scene-local point under the cursor before zoom changes.
+          const sceneX = (cx - panRef.current.x) / oldZoom;
+          const sceneY = (cy - panRef.current.y) / oldZoom;
+
+          zoomRef.current = newZoom;
+          sceneContainer.scale.set(newZoom);
+          // Re-anchor pan so the same scene point stays under the cursor.
+          panRef.current.x = cx - sceneX * newZoom;
+          panRef.current.y = cy - sceneY * newZoom;
+          sceneContainer.x = panRef.current.x;
+          sceneContainer.y = panRef.current.y;
+
+          // Nucleus visibility is zoom-gated — redraw whenever the
+          // crossing happens (and on the way out too, so the layer
+          // clears when zooming back below the threshold).
+          if (nucleiRef.current) {
+            drawNuclei(
+              nucleiRef.current,
+              useGameStore.getState().scene,
+              content.elements,
+              newZoom
+            );
+          }
+        },
+        { passive: false }
+      );
     }
 
     init().catch((err) => {
@@ -601,6 +766,7 @@ export default function PixiApp({ content }: PixiAppProps) {
       electronsRef.current = null;
       valenceRef.current = null;
       chargesRef.current = null;
+      nucleiRef.current = null;
       if (appRef.current) {
         try {
           appRef.current.destroy(true, { children: true, texture: true, textureSource: true });
@@ -671,7 +837,6 @@ export default function PixiApp({ content }: PixiAppProps) {
       if (!sprite) {
         sprite = createAtomSprite(atom, element, {
           onPointerDown: handleAtomPointerDown,
-          onHover: handleAtomHover,
           onContextMenu: handleAtomContextMenu,
         });
         atomsContainer.addChild(sprite);
@@ -776,6 +941,17 @@ export default function PixiApp({ content }: PixiAppProps) {
         scene,
         content.elements,
         content.bondRules
+      );
+    }
+    // Nucleus pass: only renders when the player has zoomed in
+    // enough. Re-runs on scene change so newly added atoms get their
+    // nuclei drawn at the current zoom.
+    if (nucleiRef.current) {
+      drawNuclei(
+        nucleiRef.current,
+        scene,
+        content.elements,
+        zoomRef.current
       );
     }
   }, [scene, selectedAtomId, selectedBondId, content.elements, content.bondRules, settings]);
@@ -1217,22 +1393,6 @@ export default function PixiApp({ content }: PixiAppProps) {
     }
     // No move cue any more — clicking empty canvas clears the selection,
     // it doesn't relocate the atom (atoms move only via drag).
-  }
-
-  function handleAtomHover(
-    _e: FederatedPointerEvent,
-    atomId: string,
-    element: Element
-  ) {
-    // Suppress tooltips while a drag is in progress so labels don't pop up
-    // on every atom the cursor sweeps past.
-    if (draggingRef.current) return;
-    const effectsContainer = effectsContainerRef.current;
-    if (!effectsContainer) return;
-    const sprite = atomSpritesRef.current.get(atomId);
-    if (!sprite) return;
-    const pos = sprite.getGlobalPosition();
-    createTooltip(effectsContainer, pos.x, pos.y, `${element.name} (${element.atomicNumber})`);
   }
 
   function handleBondHover(bondId: string) {
