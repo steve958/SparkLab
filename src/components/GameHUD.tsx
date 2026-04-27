@@ -254,7 +254,7 @@ export default function GameHUD({ content }: GameHUDProps) {
                 {reactionEquation}
               </p>
             ) : (
-              <p className="text-xs text-slate-500 hidden sm:block truncate">
+              <p className="text-[11px] sm:text-xs text-slate-500 truncate">
                 {mission.brief}
               </p>
             )}
