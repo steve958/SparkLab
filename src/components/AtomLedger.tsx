@@ -89,43 +89,66 @@ export default function AtomLedger({ elements, centerX = 400 }: AtomLedgerProps)
         </div>
       </div>
 
+      {/* One row per element. Each side shows colored dots — one per
+          atom — instead of just a number, so balance becomes visceral
+          ("see two H dots on each side"). The number stays alongside
+          for quick scanning at higher counts. Rows tint green when
+          balanced and red when off, mirroring the per-row equality
+          icon. */}
       <div className="space-y-1">
         {allElements.map((symbol) => {
           const element = elements.find((e) => e.symbol === symbol);
+          const color = element?.colorToken || "#94a3b8";
           const reactantCount = reactantCounts[symbol] || 0;
           const productCount = productCounts[symbol] || 0;
           const balanced = reactantCount === productCount && reactantCount > 0;
 
           return (
-            <div key={symbol} className="flex items-center gap-2">
+            <div
+              key={symbol}
+              className={`flex items-center gap-2 px-1.5 py-1 rounded-md transition-colors ${
+                balanced
+                  ? "bg-green-50/70"
+                  : reactantCount > 0 || productCount > 0
+                    ? "bg-red-50/40"
+                    : ""
+              }`}
+            >
               <div
                 className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0"
-                style={{ backgroundColor: element?.colorToken || "#94a3b8" }}
+                style={{ backgroundColor: color }}
               >
                 {symbol}
               </div>
-              <div className="flex items-center gap-1 flex-1 min-w-0">
+              <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                <AtomDotRow
+                  count={reactantCount}
+                  color={color}
+                  alignEnd
+                />
                 <span
-                  className={`flex-1 text-center text-sm font-mono font-semibold ${
+                  className={`text-[11px] sm:text-xs font-mono font-bold w-3 text-right tabular-nums shrink-0 ${
                     reactantCount === 0 ? "text-slate-300" : "text-slate-700"
                   }`}
                 >
                   {reactantCount}
                 </span>
                 <span
-                  className={`w-6 sm:w-8 text-center text-sm shrink-0 ${
-                    balanced ? "text-green-500" : "text-red-400"
+                  className={`w-5 sm:w-6 text-center text-sm shrink-0 ${
+                    balanced ? "text-green-600" : "text-red-400"
                   }`}
+                  aria-hidden
                 >
                   {balanced ? "=" : "≠"}
                 </span>
                 <span
-                  className={`flex-1 text-center text-sm font-mono font-semibold ${
+                  className={`text-[11px] sm:text-xs font-mono font-bold w-3 tabular-nums shrink-0 ${
                     productCount === 0 ? "text-slate-300" : "text-slate-700"
                   }`}
                 >
                   {productCount}
                 </span>
+                <AtomDotRow count={productCount} color={color} />
               </div>
             </div>
           );
@@ -141,4 +164,46 @@ function countByElement(atoms: { elementId: string }[]): Record<string, number> 
     counts[atom.elementId] = (counts[atom.elementId] || 0) + 1;
   }
   return counts;
+}
+
+// Renders `count` colored dots in a horizontal row, capped at 6
+// visible — beyond that the row would crowd the ledger so we collapse
+// the surplus into a "+N" badge. `alignEnd` flips the row to right-
+// alignment for the reactants column so the left-most dot is always
+// adjacent to the equality icon (visually anchoring "this many on
+// each side, side by side").
+function AtomDotRow({
+  count,
+  color,
+  alignEnd = false,
+}: {
+  count: number;
+  color: string;
+  alignEnd?: boolean;
+}) {
+  const MAX_DOTS = 6;
+  const visible = Math.min(count, MAX_DOTS);
+  const overflow = Math.max(0, count - MAX_DOTS);
+  const dots = Array.from({ length: visible });
+  return (
+    <div
+      className={`flex items-center gap-0.5 flex-1 min-w-0 ${
+        alignEnd ? "justify-end" : "justify-start"
+      }`}
+      aria-hidden
+    >
+      {dots.map((_, i) => (
+        <span
+          key={i}
+          className="block w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0 ring-1 ring-black/15"
+          style={{ backgroundColor: color }}
+        />
+      ))}
+      {overflow > 0 && (
+        <span className="text-[9px] font-bold text-slate-500 ml-0.5">
+          +{overflow}
+        </span>
+      )}
+    </div>
+  );
 }
