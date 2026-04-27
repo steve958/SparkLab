@@ -1,5 +1,6 @@
 "use client";
 
+import { useId } from "react";
 import type { Element, Molecule } from "@/types";
 
 interface MoleculePreviewProps {
@@ -19,6 +20,10 @@ interface MoleculePreviewProps {
 // star around one center, or chain) and lay nodes out accordingly.
 // Force-directed layout is overkill for the curriculum molecules,
 // which all fall into one of these four shapes.
+//
+// Bond rendering mirrors the canvas: each covalent bond is layered
+// (shadow → outline → element-color gradient), so the preview reads
+// as a polished diagram rather than a flat schematic.
 export default function MoleculePreview({
   molecule,
   elements,
@@ -27,6 +32,9 @@ export default function MoleculePreview({
   const graph = molecule.allowedBondGraph;
   const positions = layoutMolecule(graph);
   const atomR = atomRadiusFor(graph.nodes.length);
+  // Stable id prefix for gradient defs so multiple previews on the
+  // page don't collide on the same `bond-0` URL fragment.
+  const gradientId = useId();
 
   return (
     <svg
@@ -37,6 +45,35 @@ export default function MoleculePreview({
       role="img"
       aria-label={`${molecule.displayName} structure`}
     >
+      <defs>
+        {graph.edges.map((edge, i) => {
+          const fromElem = elements.find(
+            (e) => e.symbol === graph.nodes[edge.from].elementId
+          );
+          const toElem = elements.find(
+            (e) => e.symbol === graph.nodes[edge.to].elementId
+          );
+          const colorA = fromElem?.colorToken ?? "#475569";
+          const colorB = toElem?.colorToken ?? "#475569";
+          const a = positions[edge.from];
+          const b = positions[edge.to];
+          return (
+            <linearGradient
+              key={`g-${i}`}
+              id={`${gradientId}-bond-${i}`}
+              gradientUnits="userSpaceOnUse"
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+            >
+              <stop offset="0%" stopColor={colorA} />
+              <stop offset="100%" stopColor={colorB} />
+            </linearGradient>
+          );
+        })}
+      </defs>
+
       {/* Bonds first so atoms cover the line ends — no need to
           stop-short the strokes. */}
       {graph.edges.map((edge, i) => (
@@ -45,6 +82,7 @@ export default function MoleculePreview({
           from={positions[edge.from]}
           to={positions[edge.to]}
           type={edge.type}
+          gradientUrl={`url(#${gradientId}-bond-${i})`}
         />
       ))}
       {graph.nodes.map((node, i) => {
@@ -89,14 +127,22 @@ function atomRadiusFor(nodeCount: number): number {
   return 8;
 }
 
+// Bond palette — kept in sync with bond-graphics.ts so the HUD
+// preview reads as the same visual language as the canvas.
+const BOND_SHADOW = "#cbd5e1"; // slate-300
+const BOND_OUTLINE = "#0f172a"; // slate-900
+const IONIC_COLOR = "#7c3aed"; // violet-600
+
 function BondLine({
   from,
   to,
   type,
+  gradientUrl,
 }: {
   from: { x: number; y: number };
   to: { x: number; y: number };
   type: string;
+  gradientUrl: string;
 }) {
   const dx = to.x - from.x;
   const dy = to.y - from.y;
@@ -109,92 +155,152 @@ function BondLine({
   const py = ux;
 
   if (type === "ionic") {
-    // Violet dashed — matches the canvas bond palette.
+    // Ionic gets its own treatment — violet dashed inner over a
+    // slate outline so it stays visually distinct from covalent.
     return (
-      <line
-        x1={from.x}
-        y1={from.y}
-        x2={to.x}
-        y2={to.y}
-        stroke="#7c3aed"
-        strokeWidth={1.4}
-        strokeDasharray="2.5 1.5"
-        strokeLinecap="round"
-      />
-    );
-  }
-
-  if (type === "covalent-double") {
-    const off = 1.8;
-    return (
-      <>
+      <g>
         <line
-          x1={from.x + px * off}
-          y1={from.y + py * off}
-          x2={to.x + px * off}
-          y2={to.y + py * off}
-          stroke="#475569"
-          strokeWidth={1.2}
+          x1={from.x}
+          y1={from.y}
+          x2={to.x}
+          y2={to.y}
+          stroke={BOND_OUTLINE}
+          strokeWidth={2.4}
           strokeLinecap="round"
-        />
-        <line
-          x1={from.x - px * off}
-          y1={from.y - py * off}
-          x2={to.x - px * off}
-          y2={to.y - py * off}
-          stroke="#475569"
-          strokeWidth={1.2}
-          strokeLinecap="round"
-        />
-      </>
-    );
-  }
-
-  if (type === "covalent-triple") {
-    const off = 2.4;
-    return (
-      <>
-        <line
-          x1={from.x + px * off}
-          y1={from.y + py * off}
-          x2={to.x + px * off}
-          y2={to.y + py * off}
-          stroke="#475569"
-          strokeWidth={1.1}
-          strokeLinecap="round"
+          strokeDasharray="3 1.6"
+          opacity={0.85}
         />
         <line
           x1={from.x}
           y1={from.y}
           x2={to.x}
           y2={to.y}
-          stroke="#475569"
-          strokeWidth={1.1}
+          stroke={IONIC_COLOR}
+          strokeWidth={1.4}
           strokeLinecap="round"
+          strokeDasharray="3 1.6"
         />
-        <line
-          x1={from.x - px * off}
-          y1={from.y - py * off}
-          x2={to.x - px * off}
-          y2={to.y - py * off}
-          stroke="#475569"
-          strokeWidth={1.1}
-          strokeLinecap="round"
+      </g>
+    );
+  }
+
+  if (type === "covalent-double") {
+    const off = 1.8;
+    return (
+      <g>
+        <LayeredCovalent
+          from={{ x: from.x + px * off, y: from.y + py * off }}
+          to={{ x: to.x + px * off, y: to.y + py * off }}
+          gradientUrl={gradientUrl}
+          inner={1.2}
+          outline={2.2}
+          shadow={3.4}
         />
-      </>
+        <LayeredCovalent
+          from={{ x: from.x - px * off, y: from.y - py * off }}
+          to={{ x: to.x - px * off, y: to.y - py * off }}
+          gradientUrl={gradientUrl}
+          inner={1.2}
+          outline={2.2}
+          shadow={3.4}
+        />
+      </g>
+    );
+  }
+
+  if (type === "covalent-triple") {
+    const off = 2.4;
+    return (
+      <g>
+        <LayeredCovalent
+          from={{ x: from.x + px * off, y: from.y + py * off }}
+          to={{ x: to.x + px * off, y: to.y + py * off }}
+          gradientUrl={gradientUrl}
+          inner={1.1}
+          outline={2.0}
+          shadow={3.0}
+        />
+        <LayeredCovalent
+          from={from}
+          to={to}
+          gradientUrl={gradientUrl}
+          inner={1.1}
+          outline={2.0}
+          shadow={3.0}
+        />
+        <LayeredCovalent
+          from={{ x: from.x - px * off, y: from.y - py * off }}
+          to={{ x: to.x - px * off, y: to.y - py * off }}
+          gradientUrl={gradientUrl}
+          inner={1.1}
+          outline={2.0}
+          shadow={3.0}
+        />
+      </g>
     );
   }
 
   return (
-    <line
-      x1={from.x}
-      y1={from.y}
-      x2={to.x}
-      y2={to.y}
-      stroke="#475569"
-      strokeWidth={1.5}
-      strokeLinecap="round"
+    <LayeredCovalent
+      from={from}
+      to={to}
+      gradientUrl={gradientUrl}
+      inner={1.7}
+      outline={2.8}
+      shadow={4.2}
     />
+  );
+}
+
+// One covalent stroke as three stacked lines: a soft slate shadow,
+// a thin dark outline, and an element-gradient inner — same recipe
+// the canvas uses in bond-graphics.ts.
+function LayeredCovalent({
+  from,
+  to,
+  gradientUrl,
+  inner,
+  outline,
+  shadow,
+}: {
+  from: { x: number; y: number };
+  to: { x: number; y: number };
+  gradientUrl: string;
+  inner: number;
+  outline: number;
+  shadow: number;
+}) {
+  return (
+    <g>
+      <line
+        x1={from.x}
+        y1={from.y}
+        x2={to.x}
+        y2={to.y}
+        stroke={BOND_SHADOW}
+        strokeWidth={shadow}
+        strokeLinecap="round"
+        opacity={0.55}
+      />
+      <line
+        x1={from.x}
+        y1={from.y}
+        x2={to.x}
+        y2={to.y}
+        stroke={BOND_OUTLINE}
+        strokeWidth={outline}
+        strokeLinecap="round"
+      />
+      <line
+        x1={from.x}
+        y1={from.y}
+        x2={to.x}
+        y2={to.y}
+        stroke={gradientUrl}
+        strokeWidth={inner}
+        strokeLinecap="round"
+      />
+    </g>
   );
 }
 
