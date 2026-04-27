@@ -1794,17 +1794,66 @@ export default function PixiApp({ content }: PixiAppProps) {
     // Per-atom radius lookup so the preview line tucks neatly into
     // the actual edges of differently-sized atoms.
     let targetRadius = ATOM_RADIUS;
+    let targetElement: Element | null = null;
     if (snapTarget) {
       const targetAtom = state.scene.atoms.find(
         (a) => a.id === snapTarget!.id
       );
-      const targetElement = targetAtom
-        ? getElementBySymbol(content.elements, targetAtom.elementId)
+      targetElement = targetAtom
+        ? getElementBySymbol(content.elements, targetAtom.elementId) ?? null
         : null;
       targetRadius = targetElement
         ? getAtomRadius(targetElement)
         : ATOM_RADIUS;
     }
+
+    // Predict the bond type (and validity) that would form if the
+    // player tapped the snap target right now. Drives the preview's
+    // visual style — covalent single/double/triple use 1/2/3 parallel
+    // dashed lines respectively in brand green, ionic uses a single
+    // violet dashed line, and a pair the engine would refuse (no
+    // authored rule, or both atoms valence-exhausted) shows red so
+    // the player gets the "this won't work" signal before tapping.
+    let previewBondType: import("@/types").BondType | null = null;
+    let previewInvalid = false;
+    if (snapTarget && sourceElement && targetElement) {
+      const profileState = useProgressStore.getState();
+      const ageBand =
+        profileState.currentProfile?.ageBand ?? ("8-10" as const);
+      const aBonds = countBondOrder(
+        getBondsForAtom(selectedId, state.scene.bonds)
+      );
+      const bBonds = countBondOrder(
+        getBondsForAtom(snapTarget.id, state.scene.bonds)
+      );
+      const result = validateBond(
+        content.bondRules,
+        sourceElement,
+        targetElement,
+        ageBand,
+        aBonds,
+        bBonds
+      );
+      if (result.valid && result.bondType) {
+        previewBondType = result.bondType;
+      } else {
+        previewInvalid = true;
+      }
+    }
+
+    // Color the preview by chemistry. Red for refused bonds (no rule
+    // or no valence left), violet for ionic, brand green for covalent
+    // (matches the SELECTION_COLOR / BOND_PREVIEW_COLOR palette). Free-
+    // floating preview (no snap) stays a neutral slate.
+    const previewColor = !snapTarget
+      ? 0x64748b
+      : previewInvalid
+        ? 0xdc2626
+        : previewBondType === "ionic"
+          ? 0x7c3aed
+          : BOND_PREVIEW_COLOR;
+    const previewAlpha = !snapTarget ? 0.5 : 0.9;
+    const previewWidth = !snapTarget ? 3 : previewInvalid ? 4 : 4;
 
     const dx = endX - sourceAtom.x;
     const dy = endY - sourceAtom.y;
@@ -1812,6 +1861,9 @@ export default function PixiApp({ content }: PixiAppProps) {
     if (dist > sourceRadius + 4) {
       const ux = dx / dist;
       const uy = dy / dist;
+      // Perpendicular for offsetting parallel multi-bond lanes.
+      const px = -uy;
+      const py = ux;
       const startX = sourceAtom.x + ux * sourceRadius;
       const startY = sourceAtom.y + uy * sourceRadius;
       // When snapping, end before the target atom; otherwise stop at
@@ -1820,41 +1872,70 @@ export default function PixiApp({ content }: PixiAppProps) {
       const lineEndX = endX - ux * stopShort;
       const lineEndY = endY - uy * stopShort;
 
-      // Hand-drawn dashes — Pixi v8 stroke doesn't ship a dash API.
+      // 1/2/3 parallel lanes for single/double/triple; everything
+      // else (no snap, ionic, free-floating) draws a single line.
+      const lanes =
+        previewBondType === "covalent-triple"
+          ? 3
+          : previewBondType === "covalent-double"
+            ? 2
+            : 1;
+      const laneSpacing = lanes === 3 ? 6 : lanes === 2 ? 4 : 0;
+
+      // Pixi v8 stroke doesn't ship a dash API — hand-roll dashes.
       const dash = 8;
       const gap = 5;
       const total = Math.sqrt(
         (lineEndX - startX) ** 2 + (lineEndY - startY) ** 2
       );
-      let traveled = 0;
-      while (traveled < total) {
-        const t1 = traveled / total;
-        const t2 = Math.min(1, (traveled + dash) / total);
-        g.moveTo(
-          startX + (lineEndX - startX) * t1,
-          startY + (lineEndY - startY) * t1
-        );
-        g.lineTo(
-          startX + (lineEndX - startX) * t2,
-          startY + (lineEndY - startY) * t2
-        );
-        traveled += dash + gap;
+      for (let lane = 0; lane < lanes; lane++) {
+        const laneOff = lanes === 1 ? 0 : lane - (lanes - 1) / 2;
+        const offX = px * laneSpacing * laneOff;
+        const offY = py * laneSpacing * laneOff;
+        let traveled = 0;
+        while (traveled < total) {
+          const t1 = traveled / total;
+          const t2 = Math.min(1, (traveled + dash) / total);
+          g.moveTo(
+            startX + offX + (lineEndX - startX) * t1,
+            startY + offY + (lineEndY - startY) * t1
+          );
+          g.lineTo(
+            startX + offX + (lineEndX - startX) * t2,
+            startY + offY + (lineEndY - startY) * t2
+          );
+          traveled += dash + gap;
+        }
       }
       g.stroke({
-        width: snapTarget ? 4 : 3,
-        color: snapTarget ? BOND_PREVIEW_COLOR : 0x64748b,
-        alpha: snapTarget ? 0.85 : 0.5,
+        width: previewWidth,
+        color: previewColor,
+        alpha: previewAlpha,
+        cap: "round",
       });
+
+      // Tiny "X" mark in the middle of an invalid preview — extra
+      // signal beyond the red color so colorblind kids still get the
+      // "this bond won't work" message.
+      if (snapTarget && previewInvalid) {
+        const mx = (startX + lineEndX) / 2;
+        const my = (startY + lineEndY) / 2;
+        const r = 5;
+        g.moveTo(mx - r, my - r);
+        g.lineTo(mx + r, my + r);
+        g.moveTo(mx + r, my - r);
+        g.lineTo(mx - r, my + r);
+        g.stroke({ width: 2.5, color: previewColor, alpha: 1, cap: "round" });
+      }
     }
 
     if (snapTarget) {
-      // Snap indicator: a soft glowing ring on the target atom, signalling
-      // "release here to bond". Two concentric circles for a halo feel.
-      // Sized to the target atom's actual radius so it hugs the edge.
+      // Snap indicator: soft glowing rings on the target atom matching
+      // the preview color so the halo and line tell the same story.
       g.circle(snapTarget.x, snapTarget.y, targetRadius + 6);
-      g.stroke({ width: 3, color: BOND_PREVIEW_COLOR, alpha: 0.85 });
+      g.stroke({ width: 3, color: previewColor, alpha: 0.85 });
       g.circle(snapTarget.x, snapTarget.y, targetRadius + 11);
-      g.stroke({ width: 2, color: BOND_PREVIEW_COLOR, alpha: 0.35 });
+      g.stroke({ width: 2, color: previewColor, alpha: 0.35 });
     }
     // No move cue any more — clicking empty canvas clears the selection,
     // it doesn't relocate the atom (atoms move only via drag).
