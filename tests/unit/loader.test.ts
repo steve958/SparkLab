@@ -1,5 +1,12 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { clearContentCache, getElementBySymbol, getMoleculeById, getString, loadContent } from "@/data/loader";
+import {
+  clearContentCache,
+  getBondRulesForPair,
+  getElementBySymbol,
+  getMoleculeById,
+  getString,
+  loadContent,
+} from "@/data/loader";
 import type { BondRule, Element, LocalizedString, Mission, Molecule, Reaction, World } from "@/types";
 
 function elementSeed(overrides: Partial<Element> = {}): Element {
@@ -179,5 +186,93 @@ describe("loader / validateBundle", () => {
     ];
     expect(getString(strings, "hi")).toBe("Hello");
     expect(getString(strings, "missing")).toBe("missing");
+  });
+
+  it("getBondRulesForPair prefers the requested age band when rules exist for it", () => {
+    const rules: BondRule[] = [
+      {
+        ruleId: "h-h-young",
+        ageBand: "8-10",
+        atomA: "H",
+        atomB: "H",
+        bondType: "covalent-single",
+        maxOrder: 1,
+        slotCostA: 1,
+        slotCostB: 1,
+        formalChargeDeltaA: 0,
+        formalChargeDeltaB: 0,
+        geometryHint: null,
+        allowedWorlds: [],
+        explanationKey: "k",
+      } as unknown as BondRule,
+      {
+        ruleId: "h-h-older",
+        ageBand: "11-14",
+        atomA: "H",
+        atomB: "H",
+        bondType: "covalent-single",
+        maxOrder: 1,
+        slotCostA: 1,
+        slotCostB: 1,
+        formalChargeDeltaA: 0,
+        formalChargeDeltaB: 0,
+        geometryHint: null,
+        allowedWorlds: [],
+        explanationKey: "k",
+      } as unknown as BondRule,
+    ];
+    expect(getBondRulesForPair(rules, "H", "H", "8-10").map((r) => r.ruleId)).toEqual(
+      ["h-h-young"]
+    );
+    expect(getBondRulesForPair(rules, "H", "H", "11-14").map((r) => r.ruleId)).toEqual(
+      ["h-h-older"]
+    );
+  });
+
+  it("getBondRulesForPair falls back to any age band when the requested band has no match", () => {
+    // Regression: an 11-14 profile playing a foundations mission used to
+    // get every bond blocked because every foundations rule is tagged
+    // ageBand=8-10. The fallback keeps gameplay working across bands.
+    const rules: BondRule[] = [
+      {
+        ruleId: "h-h-young-only",
+        ageBand: "8-10",
+        atomA: "H",
+        atomB: "H",
+        bondType: "covalent-single",
+        maxOrder: 1,
+        slotCostA: 1,
+        slotCostB: 1,
+        formalChargeDeltaA: 0,
+        formalChargeDeltaB: 0,
+        geometryHint: null,
+        allowedWorlds: [],
+        explanationKey: "k",
+      } as unknown as BondRule,
+    ];
+    expect(
+      getBondRulesForPair(rules, "H", "H", "11-14").map((r) => r.ruleId)
+    ).toEqual(["h-h-young-only"]);
+  });
+
+  it("getBondRulesForPair returns empty when no rule exists for the pair at any band", () => {
+    const rules: BondRule[] = [
+      {
+        ruleId: "h-h-young",
+        ageBand: "8-10",
+        atomA: "H",
+        atomB: "H",
+        bondType: "covalent-single",
+        maxOrder: 1,
+        slotCostA: 1,
+        slotCostB: 1,
+        formalChargeDeltaA: 0,
+        formalChargeDeltaB: 0,
+        geometryHint: null,
+        allowedWorlds: [],
+        explanationKey: "k",
+      } as unknown as BondRule,
+    ];
+    expect(getBondRulesForPair(rules, "He", "Ar", "8-10")).toEqual([]);
   });
 });

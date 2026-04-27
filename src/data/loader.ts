@@ -184,10 +184,18 @@ export function getBondRulesForPair(
   b: string,
   ageBand?: string
 ): BondRule[] {
-  return rules.filter((r) => {
-    const matchPair =
-      (r.atomA === a && r.atomB === b) || (r.atomA === b && r.atomB === a);
-    const matchAge = ageBand ? r.ageBand === ageBand : true;
-    return matchPair && matchAge;
-  });
+  const matchesPair = (r: BondRule) =>
+    (r.atomA === a && r.atomB === b) || (r.atomA === b && r.atomB === a);
+
+  // The `ageBand` tag in bond_rules.json marks the curriculum band a
+  // rule is *introduced* at, not an exclusive filter. If we strictly
+  // filtered, an 11-14 profile playing foundations (rules are all
+  // tagged 8-10) would have every bond blocked. So: prefer rules
+  // matching the requested band, but fall back to any-band rules for
+  // the same pair so the player's age never silently breaks gameplay.
+  if (ageBand) {
+    const banded = rules.filter((r) => matchesPair(r) && r.ageBand === ageBand);
+    if (banded.length > 0) return banded;
+  }
+  return rules.filter(matchesPair);
 }
