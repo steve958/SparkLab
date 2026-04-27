@@ -14,6 +14,7 @@ import type { Element } from "@/types";
 import Molecule3DViewer from "./Molecule3DViewer";
 import AtomLedger from "./AtomLedger";
 import AtomDetailsModal from "./AtomDetailsModal";
+import MoleculePreview from "./MoleculePreview";
 import {
   Undo,
   Redo,
@@ -173,6 +174,24 @@ export default function GameHUD({ content }: GameHUDProps) {
     return content.molecules.find((m) => m.moleculeId === targetId) ?? null;
   }, [mission, content.molecules]);
 
+  // Every build-molecule target the mission expects, in the order the
+  // success conditions list them. Multi-target missions like "Ionic vs
+  // Covalent" return both (water + sodium chloride); single-target
+  // missions return one. The Target preview row renders one tile per
+  // entry so the player can see exactly what they're building.
+  const targetMolecules = useMemo(() => {
+    if (!mission || mission.objectiveType !== "build-molecule") return [];
+    const ids = mission.successConditions
+      .filter(
+        (c): c is { type: "build-molecule"; targetMoleculeId: string } =>
+          c.type === "build-molecule"
+      )
+      .map((c) => c.targetMoleculeId);
+    return ids
+      .map((id) => content.molecules.find((m) => m.moleculeId === id))
+      .filter((m): m is NonNullable<typeof m> => m != null);
+  }, [mission, content.molecules]);
+
   // Find reaction equation for run-reaction missions
   const reactionEquation = useMemo(() => {
     if (!mission || mission.objectiveType !== "run-reaction") return null;
@@ -330,6 +349,35 @@ export default function GameHUD({ content }: GameHUDProps) {
           >
             <X className="w-4 h-4 text-indigo-600" />
           </button>
+        </div>
+      )}
+
+      {/* Target preview — renders the mission's target molecule(s) so
+          the player has a structural reference for what they're
+          building, not just the verbal brief. Build-molecule missions
+          only; reaction missions already show the chemical equation in
+          the top bar. Renders one tile per target so multi-target
+          missions like "Ionic vs Covalent" show both structures. */}
+      {targetMolecules.length > 0 && (
+        <div className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-1.5 bg-sky-50 border-b border-sky-100 overflow-x-auto">
+          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-sky-700 shrink-0">
+            {targetMolecules.length === 1 ? "Build" : "Build both"}
+          </span>
+          {targetMolecules.map((m) => (
+            <div
+              key={m.moleculeId}
+              className="flex items-center gap-1.5 sm:gap-2 shrink-0 px-1.5 py-0.5 rounded-md bg-white border border-sky-200"
+            >
+              <MoleculePreview
+                molecule={m}
+                elements={content.elements}
+                size={36}
+              />
+              <span className="text-[11px] sm:text-xs font-semibold text-slate-700 pr-1">
+                {m.displayName}
+              </span>
+            </div>
+          ))}
         </div>
       )}
 
