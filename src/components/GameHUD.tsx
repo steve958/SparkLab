@@ -10,6 +10,7 @@ import { goBackOr } from "@/lib/navigation";
 import { generateAdaptiveHint } from "@/engine/hints";
 import { recordEvent } from "@/lib/telemetry";
 import type { ContentBundle } from "@/data/loader";
+import type { Element } from "@/types";
 import Molecule3DViewer from "./Molecule3DViewer";
 import AtomLedger from "./AtomLedger";
 import AtomDetailsModal from "./AtomDetailsModal";
@@ -323,39 +324,70 @@ export default function GameHUD({ content }: GameHUDProps) {
         </div>
       )}
 
-      {/* Atom inventory tray */}
-      <div className="flex items-center gap-2 px-2 sm:px-3 py-2 bg-slate-50 border-b border-slate-200 overflow-x-auto">
-        <span className="text-xs font-medium text-slate-500 shrink-0 mr-1">
-          {t("game.atoms_label")}
-        </span>
-        {mission.allowedElements.map((symbol) => {
-          const element = content.elements.find((e) => e.symbol === symbol);
-          if (!element) return null;
-          return (
-            <button
-              key={symbol}
-              onClick={() => {
-                const event = new CustomEvent("sparklab-add-atom", {
-                  detail: { elementId: symbol },
-                });
-                window.dispatchEvent(event);
-              }}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-slate-200 hover:border-primary hover:bg-sky-50 transition-colors shrink-0 touch-target"
-              aria-label={`Add ${element.name} atom`}
-            >
-              <span
-                className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: element.colorToken }}
-              />
-              <span className="font-bold text-sm">{symbol}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Atom Ledger for reaction missions */}
-      {reactionMode && (
-        <AtomLedger elements={content.elements} centerX={canvasCenterX} />
+      {/* Atom inventory tray. Reaction missions split the tray into two
+          side-labeled groups so the player can spawn atoms directly on
+          the Reactants (left half) or Products (right half) of the canvas;
+          the spawn handler in game/page.tsx reads `detail.side` to place
+          the atom in the correct half. Non-reaction missions keep a single
+          unlabeled tray. */}
+      {reactionMode ? (
+        <>
+          {/* Mass-conservation explainer — reaction missions are confusing
+              without it because the goal isn't "build a molecule" but
+              "show the same atoms on both sides, regrouped". */}
+          <div className="px-2 sm:px-3 py-1.5 bg-amber-50 border-b border-amber-100 text-[11px] sm:text-xs text-amber-900 leading-snug">
+            <span className="font-semibold">Conserve atoms:</span> place the
+            starting atoms as molecules on the <span className="font-semibold text-sky-700">left</span>,
+            then the <em>same</em> atoms regrouped as products on the{" "}
+            <span className="font-semibold text-green-700">right</span>.
+          </div>
+          <div className="grid grid-cols-2 gap-px bg-slate-200 border-b border-slate-200">
+            <ReactionAtomGroup
+              side="reactants"
+              label="Reactants"
+              tone="sky"
+              allowedElements={mission.allowedElements}
+              elements={content.elements}
+            />
+            <ReactionAtomGroup
+              side="products"
+              label="Products"
+              tone="green"
+              allowedElements={mission.allowedElements}
+              elements={content.elements}
+            />
+          </div>
+          <AtomLedger elements={content.elements} centerX={canvasCenterX} />
+        </>
+      ) : (
+        <div className="flex items-center gap-2 px-2 sm:px-3 py-2 bg-slate-50 border-b border-slate-200 overflow-x-auto">
+          <span className="text-xs font-medium text-slate-500 shrink-0 mr-1">
+            {t("game.atoms_label")}
+          </span>
+          {mission.allowedElements.map((symbol) => {
+            const element = content.elements.find((e) => e.symbol === symbol);
+            if (!element) return null;
+            return (
+              <button
+                key={symbol}
+                onClick={() => {
+                  const event = new CustomEvent("sparklab-add-atom", {
+                    detail: { elementId: symbol },
+                  });
+                  window.dispatchEvent(event);
+                }}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-slate-200 hover:border-primary hover:bg-sky-50 transition-colors shrink-0 touch-target"
+                aria-label={`Add ${element.name} atom`}
+              >
+                <span
+                  className="w-4 h-4 rounded-full"
+                  style={{ backgroundColor: element.colorToken }}
+                />
+                <span className="font-bold text-sm">{symbol}</span>
+              </button>
+            );
+          })}
+        </div>
       )}
 
       {/* Bottom action bar. Mobile: compact buttons with always-visible
@@ -619,5 +651,71 @@ export default function GameHUD({ content }: GameHUDProps) {
         />
       )}
     </>
+  );
+}
+
+// Side-labeled atom button row used by reaction missions. Buttons here
+// dispatch the same `sparklab-add-atom` event but include `side` so the
+// game page can spawn the atom in the correct half of the canvas
+// instead of always landing on the reactants side.
+type ReactionSide = "reactants" | "products";
+function ReactionAtomGroup({
+  side,
+  label,
+  tone,
+  allowedElements,
+  elements,
+}: {
+  side: ReactionSide;
+  label: string;
+  tone: "sky" | "green";
+  allowedElements: string[];
+  elements: Element[];
+}) {
+  const toneStyles =
+    tone === "sky"
+      ? {
+          wrap: "bg-sky-50",
+          label: "text-sky-700",
+          btn: "hover:border-sky-500 hover:bg-sky-100",
+        }
+      : {
+          wrap: "bg-green-50",
+          label: "text-green-700",
+          btn: "hover:border-green-500 hover:bg-green-100",
+        };
+  return (
+    <div
+      className={`flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-2 overflow-x-auto ${toneStyles.wrap}`}
+    >
+      <span
+        className={`text-[10px] sm:text-xs font-bold uppercase tracking-wider shrink-0 mr-0.5 ${toneStyles.label}`}
+      >
+        {label}
+      </span>
+      {allowedElements.map((symbol) => {
+        const element = elements.find((e) => e.symbol === symbol);
+        if (!element) return null;
+        return (
+          <button
+            key={`${side}-${symbol}`}
+            onClick={() => {
+              const event = new CustomEvent("sparklab-add-atom", {
+                detail: { elementId: symbol, side },
+              });
+              window.dispatchEvent(event);
+            }}
+            className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-white border border-slate-200 transition-colors shrink-0 touch-target ${toneStyles.btn}`}
+            aria-label={`Add ${element.name} atom to ${label}`}
+          >
+            <span
+              className="w-4 h-4 rounded-full"
+              style={{ backgroundColor: element.colorToken }}
+            />
+            <span className="font-bold text-sm">{symbol}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }

@@ -303,16 +303,26 @@ export default function GamePage() {
   // Handle add atom event from HUD
   useEffect(() => {
     const handler = (e: Event) => {
-      const detail = (e as CustomEvent).detail as { elementId: string };
+      const detail = (e as CustomEvent).detail as {
+        elementId: string;
+        side?: "reactants" | "products";
+      };
       if (!detail?.elementId) return;
 
       const canvas = document.querySelector("canvas");
       const rect = canvas?.getBoundingClientRect();
       const state = useGameStore.getState();
       const isReaction = state.reactionMode;
+      // Reaction missions use side-labeled tray buttons; honor the
+      // requested half so atoms can be placed on the products side
+      // instead of always landing on the reactants side. Non-reaction
+      // missions ignore `side` and spawn at canvas center.
+      const reactionAnchor =
+        detail.side === "products" ? 0.75 : 0.25;
       const x = rect
-        ? (isReaction ? rect.width / 4 : rect.width / 2) + (Math.random() - 0.5) * 100
-        : (isReaction ? 200 : 400);
+        ? (isReaction ? rect.width * reactionAnchor : rect.width / 2) +
+          (Math.random() - 0.5) * 100
+        : (isReaction ? (detail.side === "products" ? 600 : 200) : 400);
       const y = rect ? rect.height / 2 + (Math.random() - 0.5) * 100 : 300;
 
       const atom: SceneAtom = {
