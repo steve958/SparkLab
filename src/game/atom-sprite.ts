@@ -3,6 +3,27 @@ import type { Element } from "@/types";
 
 export const ATOM_RADIUS = 32;
 
+// Per-element radius scaled by the periodic-table row. Real atomic
+// radii span about 7× (H to Cs); we compress that to roughly 1.7×
+// so atoms still read together at one zoom level while showing visible
+// size differences. "Moving down a row → bigger atom" is the
+// pedagogical rule kids learn first; we honor that rather than the
+// finer left-right trend (which goes the other way within a row).
+const PERIOD_SCALE: Record<number, number> = {
+  1: 0.78, // H, He — smallest
+  2: 0.92, // Li, Be, B, C, N, O, F, Ne
+  3: 1.06, // Na, Mg, Al, Si, P, S, Cl, Ar
+  4: 1.18, // K-Kr
+  5: 1.26, // Rb-Xe
+  6: 1.32, // Cs-Rn
+  7: 1.36, // Fr-Og
+};
+
+export function getAtomRadius(element: Element): number {
+  const scale = PERIOD_SCALE[element.period ?? 2] ?? 1;
+  return Math.round(ATOM_RADIUS * scale);
+}
+
 export function parseColorToken(token: string): number {
   return parseInt(token.replace("#", ""), 16);
 }
@@ -27,8 +48,16 @@ export function adjustColor(hex: number, amount: number): number {
 // selected" visual language.
 const SELECTION_COLOR = 0x15803d;
 
-/** Re-render the atom body Graphics with the gradient + selection ring. */
-export function drawAtomBody(g: Graphics, baseColor: number, isSelected: boolean) {
+/** Re-render the atom body Graphics with the gradient + selection
+ *  ring. `radius` is the element-specific radius from getAtomRadius;
+ *  callers should pass it to keep the body consistent with shadow,
+ *  gloss, and hover halo geometry. */
+export function drawAtomBody(
+  g: Graphics,
+  baseColor: number,
+  isSelected: boolean,
+  radius: number = ATOM_RADIUS
+) {
   g.clear();
 
   const lightColor = adjustColor(baseColor, 0.45);
@@ -53,13 +82,13 @@ export function drawAtomBody(g: Graphics, baseColor: number, isSelected: boolean
     // Layered halo for more visual presence than a single thin ring —
     // a softer wide outer band plus a brighter inner ring. Drawn before
     // the body so the atom's own gradient/rim renders on top cleanly.
-    g.circle(0, 0, ATOM_RADIUS + 11);
+    g.circle(0, 0, radius + 11);
     g.stroke({ width: 3, color: SELECTION_COLOR, alpha: 0.32 });
-    g.circle(0, 0, ATOM_RADIUS + 6);
+    g.circle(0, 0, radius + 6);
     g.stroke({ width: 3, color: SELECTION_COLOR, alpha: 0.95 });
   }
 
-  g.circle(0, 0, ATOM_RADIUS);
+  g.circle(0, 0, radius);
   g.fill(gradient);
   g.stroke({ width: 1.5, color: rimColor, alpha: 0.85 });
 }
@@ -88,19 +117,20 @@ export function createAtomSprite(
   container.cursor = "pointer";
 
   const baseColor = parseColorToken(element.colorToken);
+  const radius = getAtomRadius(element);
 
   // Soft drop shadow underneath the atom
   const shadow = new Graphics();
-  shadow.ellipse(0, ATOM_RADIUS - 2, ATOM_RADIUS * 0.85, ATOM_RADIUS * 0.28);
+  shadow.ellipse(0, radius - 2, radius * 0.85, radius * 0.28);
   shadow.fill({ color: 0x000000, alpha: 0.22 });
 
   // Main 3D-shaded body
   const body = new Graphics();
-  drawAtomBody(body, baseColor, false);
+  drawAtomBody(body, baseColor, false, radius);
 
   // Glossy highlight near the top to suggest a light source
   const gloss = new Graphics();
-  gloss.ellipse(-ATOM_RADIUS * 0.28, -ATOM_RADIUS * 0.45, ATOM_RADIUS * 0.5, ATOM_RADIUS * 0.28);
+  gloss.ellipse(-radius * 0.28, -radius * 0.45, radius * 0.5, radius * 0.28);
   gloss.fill({ color: 0xffffff, alpha: 0.38 });
 
   const symbol = new Text({
@@ -138,14 +168,14 @@ export function createAtomSprite(
     },
   });
   nameText.anchor.set(0.5);
-  nameText.y = ATOM_RADIUS + 13;
+  nameText.y = radius + 13;
 
   // Hover halo — drawn behind everything else, hidden by default.
   // Toggled in the pointerover/pointerout handlers below for a subtle
   // "this atom is interactive" cue. Independent of the selection ring
   // so a hovered-but-not-selected atom still gets feedback.
   const hoverHalo = new Graphics();
-  hoverHalo.circle(0, 0, ATOM_RADIUS + 9);
+  hoverHalo.circle(0, 0, radius + 9);
   hoverHalo.stroke({ width: 3, color: SELECTION_COLOR, alpha: 0.35 });
   hoverHalo.alpha = 0;
 
@@ -183,5 +213,10 @@ export function updateAtomSprite(
   // children: [hoverHalo, shadow, body, gloss, symbol, nameText] —
   // body is at index 2 since hoverHalo was added in front.
   const body = sprite.children[2] as Graphics;
-  drawAtomBody(body, parseColorToken(element.colorToken), isSelected);
+  drawAtomBody(
+    body,
+    parseColorToken(element.colorToken),
+    isSelected,
+    getAtomRadius(element)
+  );
 }

@@ -76,7 +76,9 @@ export function drawBond(
   bondType: string,
   isSelected = false,
   colorA?: number,
-  colorB?: number
+  colorB?: number,
+  radiusA: number = ATOM_RADIUS,
+  radiusB: number = ATOM_RADIUS
 ) {
   g.clear();
 
@@ -110,12 +112,12 @@ export function drawBond(
 
   const nx = dx / dist;
   const ny = dy / dist;
-  const offset = ATOM_RADIUS;
-
-  const startX = atomA.x + nx * offset;
-  const startY = atomA.y + ny * offset;
-  const endX = atomB.x - nx * offset;
-  const endY = atomB.y - ny * offset;
+  // Stop the bond short of each atom's actual visible edge so the
+  // line tucks neatly into circles of different sizes.
+  const startX = atomA.x + nx * radiusA;
+  const startY = atomA.y + ny * radiusA;
+  const endX = atomB.x - nx * radiusB;
+  const endY = atomB.y - ny * radiusB;
 
   if (isSelected) {
     g.moveTo(startX, startY);
