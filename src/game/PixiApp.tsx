@@ -584,6 +584,24 @@ export default function PixiApp({ content }: PixiAppProps) {
   const pendingHoverPosRef = useRef<{ x: number; y: number } | null>(null);
   const zoomRef = useRef(1);
   const panRef = useRef({ x: 0, y: 0 });
+  // Multi-pointer gesture state. activePointers maps pointerId →
+  // current global coords; gestureMode tells the move handler which
+  // gesture to run (one pointer = pan, two pointers = pinch).
+  const activePointersRef = useRef(new Map<number, { x: number; y: number }>());
+  const gestureModeRef = useRef<"none" | "pan" | "pinch">("none");
+  const panGestureRef = useRef<{
+    startX: number;
+    startY: number;
+    startPanX: number;
+    startPanY: number;
+    isMoving: boolean;
+  } | null>(null);
+  const pinchGestureRef = useRef<{
+    startDist: number;
+    startZoom: number;
+    sceneAnchorX: number;
+    sceneAnchorY: number;
+  } | null>(null);
 
   const scene = useGameStore((s) => s.scene);
   const selectedAtomId = useGameStore((s) => s.selectedAtomId);
@@ -737,54 +755,184 @@ export default function PixiApp({ content }: PixiAppProps) {
       app.stage.eventMode = "static";
       app.stage.hitArea = app.screen;
 
-      // Background drag pans the view; a quick tap clears selection.
-      // Atoms still move only via their own drag handler. Same drag-
-      // detection pattern used for atom drag: if pointer travels > 5px
-      // before pointerup, treat as pan; else as a tap.
+      // Unified background gesture handling: one finger = pan, two
+      // fingers = pinch zoom (or wheel zoom on desktop). A single
+      // pointer that didn't move beyond the 5px threshold is treated
+      // as a tap and clears selection. Pointer state is kept on
+      // component refs so the move/up handlers attached at init can
+      // see the current gesture mode without per-event closures.
+      const startPan = (globalX: number, globalY: number) => {
+        panGestureRef.current = {
+          startX: globalX,
+          startY: globalY,
+          startPanX: panRef.current.x,
+          startPanY: panRef.current.y,
+          isMoving: false,
+        };
+      };
+      const updatePan = (globalX: number, globalY: number) => {
+        const s = panGestureRef.current;
+        if (!s) return;
+        const dx = globalX - s.startX;
+        const dy = globalY - s.startY;
+        if (!s.isMoving && Math.sqrt(dx * dx + dy * dy) > 5) {
+          s.isMoving = true;
+          pixiCanvas.style.cursor = "grabbing";
+        }
+        if (s.isMoving) {
+          panRef.current.x = s.startPanX + dx;
+          panRef.current.y = s.startPanY + dy;
+          sceneContainer.x = panRef.current.x;
+          sceneContainer.y = panRef.current.y;
+        }
+      };
+      const endPan = (treatAsTap: boolean) => {
+        const s = panGestureRef.current;
+        pixiCanvas.style.cursor = "";
+        panGestureRef.current = null;
+        if (treatAsTap && s && !s.isMoving) {
+          const state = useGameStore.getState();
+          if (state.selectedBondId) setSelectedBond(null);
+          if (state.selectedAtomId) setSelectedAtom(null);
+          dismissContextMenu();
+        }
+      };
+
+      const pointerPair = () => Array.from(activePointersRef.current.values());
+      const startPinch = () => {
+        const [a, b] = pointerPair();
+        if (!a || !b) return;
+        const midX = (a.x + b.x) / 2;
+        const midY = (a.y + b.y) / 2;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+        // Scene-local anchor under the pinch midpoint at gesture
+        // start. The midpoint of the two fingers stays fixed while
+        // the player pinches — same anchoring trick the wheel zoom
+        // uses for the cursor.
+        const sceneAnchorX = (midX - panRef.current.x) / zoomRef.current;
+        const sceneAnchorY = (midY - panRef.current.y) / zoomRef.current;
+        pinchGestureRef.current = {
+          startDist: dist,
+          startZoom: zoomRef.current,
+          sceneAnchorX,
+          sceneAnchorY,
+        };
+      };
+      const updatePinch = () => {
+        const s = pinchGestureRef.current;
+        if (!s) return;
+        const [a, b] = pointerPair();
+        if (!a || !b) return;
+        const midX = (a.x + b.x) / 2;
+        const midY = (a.y + b.y) / 2;
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.max(1, Math.sqrt(dx * dx + dy * dy));
+        const ratio = dist / s.startDist;
+        const newZoom = Math.max(0.5, Math.min(3, s.startZoom * ratio));
+        const oldZoom = zoomRef.current;
+        zoomRef.current = newZoom;
+        sceneContainer.scale.set(newZoom);
+        // Re-anchor pan so the scene point captured at pinch start
+        // stays under the current finger midpoint.
+        panRef.current.x = midX - s.sceneAnchorX * newZoom;
+        panRef.current.y = midY - s.sceneAnchorY * newZoom;
+        sceneContainer.x = panRef.current.x;
+        sceneContainer.y = panRef.current.y;
+
+        // Crossing the nucleus-zoom threshold reveals or clears the
+        // Bohr layers — same logic as the wheel handler.
+        if (
+          (oldZoom < NUCLEUS_ZOOM_THRESHOLD &&
+            newZoom >= NUCLEUS_ZOOM_THRESHOLD) ||
+          (oldZoom >= NUCLEUS_ZOOM_THRESHOLD &&
+            newZoom < NUCLEUS_ZOOM_THRESHOLD)
+        ) {
+          const scene = useGameStore.getState().scene;
+          if (nucleiRef.current) {
+            drawNuclei(nucleiRef.current, scene, content.elements, newZoom);
+          }
+          if (electronShellsRef.current) {
+            const reduceMotion =
+              useProgressStore.getState().settings?.reducedMotion ?? false;
+            drawElectronShells(
+              electronShellsRef.current,
+              scene,
+              content.elements,
+              performance.now() / 1000,
+              newZoom,
+              reduceMotion
+            );
+          }
+        }
+      };
+      const endPinch = () => {
+        pinchGestureRef.current = null;
+      };
+
       app.stage.on("pointerdown", (e: FederatedPointerEvent) => {
         if (e.target !== app.stage) return;
+        activePointersRef.current.set(e.pointerId, {
+          x: e.globalX,
+          y: e.globalY,
+        });
+        const count = activePointersRef.current.size;
 
-        const startX = e.globalX;
-        const startY = e.globalY;
-        const startPanX = panRef.current.x;
-        const startPanY = panRef.current.y;
-        let isPanning = false;
-        const previousCursor = pixiCanvas.style.cursor;
-
-        const onMove = (ev: FederatedPointerEvent) => {
-          const dx = ev.globalX - startX;
-          const dy = ev.globalY - startY;
-          if (!isPanning && Math.sqrt(dx * dx + dy * dy) > 5) {
-            isPanning = true;
-            pixiCanvas.style.cursor = "grabbing";
-          }
-          if (isPanning) {
-            panRef.current.x = startPanX + dx;
-            panRef.current.y = startPanY + dy;
-            sceneContainer.x = panRef.current.x;
-            sceneContainer.y = panRef.current.y;
-          }
-        };
-
-        const onUp = () => {
-          if (!isPanning) {
-            // Quick tap on the background — preserve the original
-            // clear-selection behavior.
-            const state = useGameStore.getState();
-            if (state.selectedBondId) setSelectedBond(null);
-            if (state.selectedAtomId) setSelectedAtom(null);
-            dismissContextMenu();
-          }
-          pixiCanvas.style.cursor = previousCursor;
-          app.stage.off("globalpointermove", onMove);
-          app.stage.off("pointerup", onUp);
-          app.stage.off("pointerupoutside", onUp);
-        };
-
-        app.stage.on("globalpointermove", onMove);
-        app.stage.on("pointerup", onUp);
-        app.stage.on("pointerupoutside", onUp);
+        if (count === 1) {
+          gestureModeRef.current = "pan";
+          startPan(e.globalX, e.globalY);
+        } else if (count === 2) {
+          // Second finger arrived mid-pan: silently end the pan
+          // (don't fire its tap-to-deselect) and start pinching.
+          if (gestureModeRef.current === "pan") endPan(false);
+          gestureModeRef.current = "pinch";
+          startPinch();
+        }
+        // 3+ pointers: ignored. Already-tracked pointers continue.
       });
+
+      app.stage.on(
+        "globalpointermove",
+        (e: FederatedPointerEvent) => {
+          if (!activePointersRef.current.has(e.pointerId)) return;
+          activePointersRef.current.set(e.pointerId, {
+            x: e.globalX,
+            y: e.globalY,
+          });
+          if (gestureModeRef.current === "pan") {
+            updatePan(e.globalX, e.globalY);
+          } else if (gestureModeRef.current === "pinch") {
+            updatePinch();
+          }
+        }
+      );
+
+      const handlePointerEnd = (e: FederatedPointerEvent) => {
+        if (!activePointersRef.current.has(e.pointerId)) return;
+        activePointersRef.current.delete(e.pointerId);
+        const remaining = activePointersRef.current.size;
+
+        if (gestureModeRef.current === "pinch") {
+          endPinch();
+          if (remaining === 1) {
+            // Demote back to pan with the surviving pointer so the
+            // user can keep dragging without lifting the second finger.
+            gestureModeRef.current = "pan";
+            const last = pointerPair()[0];
+            startPan(last.x, last.y);
+          } else {
+            gestureModeRef.current = "none";
+          }
+        } else if (gestureModeRef.current === "pan" && remaining === 0) {
+          endPan(true);
+          gestureModeRef.current = "none";
+        }
+      };
+      app.stage.on("pointerup", handlePointerEnd);
+      app.stage.on("pointerupoutside", handlePointerEnd);
+      app.stage.on("pointercancel", handlePointerEnd);
 
       // Global pointer move for hover cues — coalesce to one update per animation
       // frame so the O(atoms) distance scan doesn't run 100+ times per second.
