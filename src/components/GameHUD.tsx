@@ -358,24 +358,25 @@ export default function GameHUD({ content }: GameHUDProps) {
         <AtomLedger elements={content.elements} centerX={canvasCenterX} />
       )}
 
-      {/* Bottom action bar */}
-      <div className="flex items-center justify-between gap-2 p-2 sm:p-3 bg-white border-t border-slate-200">
-        <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+      {/* Bottom action bar. Mobile: compact buttons with always-visible
+          labels (no more icon-only mystery), wrapping if the left
+          cluster runs out of horizontal room. Check stays pinned to
+          the right and never wraps. */}
+      <div className="flex items-start justify-between gap-2 p-2 sm:p-3 bg-white border-t border-slate-200">
+        <div className="flex flex-wrap items-center gap-1 sm:gap-2 min-w-0 flex-1">
           <button
             onClick={() => { audio.uiClick(); handleHint(); }}
-            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-medium transition-colors touch-target-lg ${
+            className={`flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-colors touch-target ${
               showHint
                 ? "bg-yellow-100 text-yellow-700 border border-yellow-300"
                 : "bg-slate-100 text-slate-700 hover:bg-slate-200"
             }`}
             aria-label={showHint ? t("game.hide_hint") : t("game.hint")}
           >
-            <Lightbulb className="w-5 h-5" />
-            <span className="hidden sm:inline">
-              {showHint ? t("game.hide_hint") : t("game.hint")}
-            </span>
+            <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5" />
+            <span>{showHint ? t("game.hide_hint") : t("game.hint")}</span>
             {hintState.hintsUsed > 0 && (
-              <span className="text-xs bg-slate-200 px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] sm:text-xs bg-slate-200 px-1.5 py-0.5 rounded-full leading-none">
                 {hintState.hintsUsed}
               </span>
             )}
@@ -384,11 +385,11 @@ export default function GameHUD({ content }: GameHUDProps) {
           {targetMolecule && (
             <button
               onClick={() => { audio.uiClick(); setShow3D(true); }}
-              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-medium bg-sky-100 text-sky-700 hover:bg-sky-200 transition-colors touch-target-lg"
+              className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium bg-sky-100 text-sky-700 hover:bg-sky-200 transition-colors touch-target"
               aria-label={t("game.view_3d")}
             >
-              <Box className="w-5 h-5" />
-              <span className="hidden sm:inline">{t("game.view_3d")}</span>
+              <Box className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>{t("game.view_3d")}</span>
             </button>
           )}
 
@@ -401,11 +402,11 @@ export default function GameHUD({ content }: GameHUDProps) {
                 audio.uiClick();
                 setShowAtomDetails(true);
               }}
-              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors touch-target-lg"
+              className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors touch-target"
               aria-label={`Show ${selectedElement.name} details`}
             >
-              <Info className="w-5 h-5" />
-              <span className="hidden sm:inline">{selectedElement.name}</span>
+              <Info className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span>{selectedElement.name}</span>
             </button>
           )}
         </div>
@@ -413,9 +414,9 @@ export default function GameHUD({ content }: GameHUDProps) {
         <button
           onClick={handleCheck}
           disabled={isMissionComplete}
-          className="flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover disabled:opacity-50 transition-colors touch-target-lg shrink-0"
+          className="flex items-center gap-1 sm:gap-2 px-3 sm:px-6 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-sm bg-primary text-white font-semibold hover:bg-primary-hover disabled:opacity-50 transition-colors touch-target shrink-0"
         >
-          <CheckCircle className="w-5 h-5" />
+          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5" />
           <span>{t("game.check")}</span>
         </button>
       </div>

@@ -1,7 +1,13 @@
-import { Container, FederatedPointerEvent, FillGradient, Graphics, Text } from "pixi.js";
+import { Container, FederatedPointerEvent, FillGradient, Graphics, Rectangle, Text } from "pixi.js";
 import type { Element } from "@/types";
 
 export const ATOM_RADIUS = 32;
+// Minimum effective hit-area radius. Visual atom radius for period-1
+// elements (H, He) is ~25px; on a touch screen that's smaller than
+// the WCAG 44px target. Setting an explicit hit area on every atom
+// guarantees a consistent, generous tap target regardless of period
+// scaling. Picked to comfortably exceed 44px diameter.
+const HIT_RADIUS = 40;
 
 // Per-element radius scaled by the periodic-table row. Real atomic
 // radii span about 7× (H to Cs); we compress that to roughly 1.7×
@@ -117,6 +123,20 @@ export function createAtomSprite(
 
   const baseColor = parseColorToken(element.colorToken);
   const radius = getAtomRadius(element);
+
+  // Explicit hit area so small (period-1) atoms remain comfortably
+  // tappable on touch. We use max(visual radius + buffer, HIT_RADIUS)
+  // so atoms larger than the floor keep the bigger target instead of
+  // being clipped to a smaller box. Set on the container, not on a
+  // child Graphics, so the whole sprite (body + dots + name) shares
+  // one unified target.
+  const effectiveHitRadius = Math.max(HIT_RADIUS, radius + 4);
+  container.hitArea = new Rectangle(
+    -effectiveHitRadius,
+    -effectiveHitRadius,
+    effectiveHitRadius * 2,
+    effectiveHitRadius * 2
+  );
 
   // Soft drop shadow underneath the atom
   const shadow = new Graphics();
