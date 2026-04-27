@@ -492,7 +492,7 @@ export default function GamePage() {
   if (!currentProfile) return null;
   if (contentError) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="flex flex-col items-center justify-center min-h-dvh p-4">
         <p className="text-slate-700 font-semibold mb-1">Couldn&apos;t load chemistry content.</p>
         <p className="text-sm text-slate-500 mb-4 max-w-md text-center">
           {contentError.message}
@@ -516,7 +516,7 @@ export default function GamePage() {
   }
   if (!mission) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <div className="flex flex-col items-center justify-center min-h-dvh p-4">
         <p className="text-slate-500">No mission selected.</p>
         <button
           onClick={() => goBackOr(router, "/worlds")}

@@ -64,7 +64,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-background text-foreground">
+      <body className="min-h-dvh flex flex-col bg-background text-foreground">
         <I18nProvider>
           <ProfileBootstrap>{children}</ProfileBootstrap>
         </I18nProvider>
