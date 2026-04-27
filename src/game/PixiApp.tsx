@@ -54,9 +54,48 @@ function bondLabel(bondType: string): string {
 // the difference; adding shared-electron dots would mislabel the
 // chemistry.
 // Zoom threshold above which the atom reveals its nucleus (Bohr-style
-// "look inside the atom" view). Below this, atoms render as their
-// normal chemistry symbols only.
+// "look inside the atom" view). Below FADE_START the layers are
+// hidden entirely; between FADE_START and the threshold they crossfade
+// in so popping in/out of Bohr mode doesn't feel abrupt.
 const NUCLEUS_ZOOM_THRESHOLD = 1.8;
+const NUCLEUS_FADE_START = 1.6;
+
+function bohrFade(zoom: number): number {
+  if (zoom <= NUCLEUS_FADE_START) return 0;
+  if (zoom >= NUCLEUS_ZOOM_THRESHOLD) return 1;
+  return (zoom - NUCLEUS_FADE_START) / (NUCLEUS_ZOOM_THRESHOLD - NUCLEUS_FADE_START);
+}
+
+/** Apply an ionic charge to a neutral shell occupancy by removing
+ *  electrons from the outermost shell(s) for cations and adding them
+ *  to the outermost shell for anions. Trailing empty shells are
+ *  dropped so Na⁺ (originally [2,8,1]) renders as [2,8] rather than
+ *  a leftover empty ring. */
+function effectiveShellOccupancy(
+  baseShells: number[],
+  ionicCharge: number
+): number[] {
+  if (ionicCharge === 0 || baseShells.length === 0) return baseShells;
+  const shells = [...baseShells];
+  if (ionicCharge > 0) {
+    // Cation: peel electrons off the outermost shells until charge is
+    // satisfied. Standard ionic chemistry has charge ≤ outer shell, so
+    // the loop usually exits on the outermost shell.
+    let toRemove = ionicCharge;
+    for (let i = shells.length - 1; i >= 0 && toRemove > 0; i--) {
+      const remove = Math.min(shells[i], toRemove);
+      shells[i] -= remove;
+      toRemove -= remove;
+    }
+    while (shells.length > 0 && shells[shells.length - 1] === 0) {
+      shells.pop();
+    }
+  } else {
+    // Anion: add to outermost shell (typically completing the octet).
+    shells[shells.length - 1] += -ionicCharge;
+  }
+  return shells;
+}
 
 /** Pack `count` little dots inside a circle of `radius` using a
  *  sunflower (Vogel) spiral so the nucleus looks dense and varied
@@ -92,7 +131,9 @@ function drawNuclei(
   zoom: number
 ) {
   g.clear();
-  if (zoom < NUCLEUS_ZOOM_THRESHOLD) return;
+  const fade = bohrFade(zoom);
+  if (fade <= 0) return;
+  g.alpha = fade;
 
   for (const atom of scene.atoms) {
     const element = elements.find((e) => e.symbol === atom.elementId);
@@ -144,26 +185,32 @@ function drawNuclei(
  *  rotate at different rates so the picture stays visually "alive"
  *  rather than locking into a static pattern.
  *
- *  Uses element.shellOccupancy (e.g. O = [2, 6]) at the neutral
- *  configuration. We intentionally don't shrink the outermost shell
- *  for ions — the chemistry of "Na lost an electron" is already
- *  conveyed by the charge pill, and showing the neutral atomic
- *  structure keeps the visual stable while the player builds. */
+ *  Per-atom shell occupancy is the neutral configuration adjusted for
+ *  any ionic charge — Na⁺ visibly drops its outer-shell electron,
+ *  Cl⁻ visibly gains one. Ties the Bohr view back to the chemistry
+ *  the rest of the visualization (Lewis dots, charge pill) is showing. */
 function drawElectronShells(
   g: Graphics,
   scene: SceneState,
   elements: Element[],
+  bondRules: import("@/types").BondRule[],
   timeSec: number,
   zoom: number,
   reduceMotion: boolean
 ) {
   g.clear();
-  if (zoom < NUCLEUS_ZOOM_THRESHOLD) return;
+  const fade = bohrFade(zoom);
+  if (fade <= 0) return;
+  g.alpha = fade;
 
   for (const atom of scene.atoms) {
     const element = elements.find((e) => e.symbol === atom.elementId);
     if (!element || !element.shellOccupancy) continue;
-    const shells = element.shellOccupancy;
+    const ionicCharge = computeAtomCharge(atom, scene, bondRules);
+    const shells = effectiveShellOccupancy(
+      element.shellOccupancy,
+      ionicCharge
+    );
     if (shells.length === 0) continue;
 
     const atomRadius = getAtomRadius(element);
@@ -742,6 +789,7 @@ export default function PixiApp({ content }: PixiAppProps) {
             electronShellsRef.current,
             scene,
             content.elements,
+            content.bondRules,
             tSec,
             zoomRef.current,
             reduceMotion
@@ -842,14 +890,14 @@ export default function PixiApp({ content }: PixiAppProps) {
         sceneContainer.x = panRef.current.x;
         sceneContainer.y = panRef.current.y;
 
-        // Crossing the nucleus-zoom threshold reveals or clears the
-        // Bohr layers — same logic as the wheel handler.
-        if (
-          (oldZoom < NUCLEUS_ZOOM_THRESHOLD &&
-            newZoom >= NUCLEUS_ZOOM_THRESHOLD) ||
-          (oldZoom >= NUCLEUS_ZOOM_THRESHOLD &&
-            newZoom < NUCLEUS_ZOOM_THRESHOLD)
-        ) {
+        // Anywhere inside the fade window (or crossing it), redraw
+        // both Bohr layers so their alpha follows the new zoom. The
+        // electrons Ticker also continuously redraws shells, but
+        // nucleiG only redraws when this handler fires or when the
+        // scene changes — so it needs the explicit refresh here.
+        const inFade =
+          newZoom >= NUCLEUS_FADE_START || oldZoom >= NUCLEUS_FADE_START;
+        if (inFade) {
           const scene = useGameStore.getState().scene;
           if (nucleiRef.current) {
             drawNuclei(nucleiRef.current, scene, content.elements, newZoom);
@@ -861,6 +909,7 @@ export default function PixiApp({ content }: PixiAppProps) {
               electronShellsRef.current,
               scene,
               content.elements,
+              content.bondRules,
               performance.now() / 1000,
               newZoom,
               reduceMotion
@@ -996,6 +1045,7 @@ export default function PixiApp({ content }: PixiAppProps) {
               electronShellsRef.current,
               scene,
               content.elements,
+              content.bondRules,
               performance.now() / 1000,
               newZoom,
               reduceMotion
