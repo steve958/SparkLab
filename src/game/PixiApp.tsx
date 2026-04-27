@@ -101,6 +101,104 @@ function valenceDotPositions(
   return positions;
 }
 
+/** Compute the formal charge an atom carries from its ionic bonds.
+ *  Sums formalChargeDelta values from each ionic bond's rule, using
+ *  whichever side of the rule (atomA or atomB) matches this atom's
+ *  element. Returns 0 for purely covalent or unbonded atoms. */
+function computeAtomCharge(
+  atom: { id: string; elementId: string },
+  scene: SceneState,
+  bondRules: import("@/types").BondRule[]
+): number {
+  let charge = 0;
+  for (const bond of scene.bonds) {
+    if (bond.bondType !== "ionic") continue;
+    if (bond.atomAId !== atom.id && bond.atomBId !== atom.id) continue;
+    const partnerId =
+      bond.atomAId === atom.id ? bond.atomBId : bond.atomAId;
+    const partner = scene.atoms.find((a) => a.id === partnerId);
+    if (!partner) continue;
+    // Find the matching rule. Rules are bidirectional in chemistry but
+    // stored with a fixed (atomA, atomB) order in JSON.
+    const rule = bondRules.find(
+      (r) =>
+        r.bondType === "ionic" &&
+        ((r.atomA === atom.elementId && r.atomB === partner.elementId) ||
+          (r.atomB === atom.elementId && r.atomA === partner.elementId))
+    );
+    if (!rule) continue;
+    if (rule.atomA === atom.elementId) {
+      charge += rule.formalChargeDeltaA;
+    } else {
+      charge += rule.formalChargeDeltaB;
+    }
+  }
+  return charge;
+}
+
+/** Standard chemistry charge notation: "+", "−", "2+", "2−" etc.
+ *  Magnitude precedes sign for |charge| > 1, per textbook convention. */
+function chargeLabel(charge: number): string {
+  if (charge === 0) return "";
+  // Use the U+2212 minus sign so it's typographically correct, not the
+  // ASCII hyphen-minus.
+  const sign = charge > 0 ? "+" : "−";
+  const mag = Math.abs(charge);
+  return mag === 1 ? sign : `${mag}${sign}`;
+}
+
+/** Render charge labels on every atom carrying a non-zero formal
+ *  charge from ionic bonding. Container is rebuilt every render — fine
+ *  because this only fires on scene state change, not per frame. */
+function drawAtomCharges(
+  container: Container,
+  scene: SceneState,
+  elements: Element[],
+  bondRules: import("@/types").BondRule[]
+) {
+  // Tear down old labels.
+  for (let i = container.children.length - 1; i >= 0; i--) {
+    const child = container.children[i];
+    container.removeChildAt(i);
+    child.destroy();
+  }
+
+  for (const atom of scene.atoms) {
+    const charge = computeAtomCharge(atom, scene, bondRules);
+    if (charge === 0) continue;
+    const element = elements.find((e) => e.symbol === atom.elementId);
+    if (!element) continue;
+    const radius = getAtomRadius(element);
+
+    const label = new Text({
+      text: chargeLabel(charge),
+      style: {
+        fontSize: 14,
+        fontWeight: "bold",
+        // Positive (electron-poor) reads warm; negative (electron-
+        // rich) reads cool. The chemistry vocabulary "cation/anion"
+        // gets visual reinforcement before the kid learns the words.
+        fill: charge > 0 ? 0xdc2626 : 0x1d4ed8,
+        align: "center",
+        dropShadow: {
+          color: 0xffffff,
+          alpha: 0.9,
+          distance: 0,
+          blur: 4,
+          angle: 0,
+        },
+      },
+    });
+    label.anchor.set(0.5);
+    // Top-right corner of the atom — sits clear of bonds (which run
+    // through the atom centerline) and clear of the lone-pair dots
+    // (which sit at the cardinal directions).
+    label.x = atom.x + radius * 0.78;
+    label.y = atom.y - radius * 0.78;
+    container.addChild(label);
+  }
+}
+
 /** Render Lewis-style lone-pair dots around each atom. Lone pairs only —
  *  shared electrons are already shown by drawSharedElectrons in the
  *  bond region, so adding them here would double-count. */
@@ -253,6 +351,9 @@ export default function PixiApp({ content }: PixiAppProps) {
   const electronsRef = useRef<Graphics | null>(null);
   const electronsTickerRef = useRef<((ticker: { deltaMS: number }) => void) | null>(null);
   const valenceRef = useRef<Graphics | null>(null);
+  // Charge labels need Text children, so the charges layer is a
+  // Container (not a Graphics that we can g.clear()).
+  const chargesRef = useRef<Container | null>(null);
   const atomSpritesRef = useRef<Map<string, Container>>(new Map());
   const bondGraphicsRef = useRef<Map<string, Graphics>>(new Map());
   const draggingRef = useRef<{ atomId: string; offsetX: number; offsetY: number } | null>(null);
@@ -342,6 +443,13 @@ export default function PixiApp({ content }: PixiAppProps) {
       valenceG.zIndex = 2.5;
       sceneContainer.addChild(valenceG);
       valenceRef.current = valenceG;
+
+      // Charge-label layer — Text children for "+", "−", "2+", etc.
+      // Same render cadence as valence dots.
+      const chargesContainer = new Container();
+      chargesContainer.zIndex = 2.6;
+      sceneContainer.addChild(chargesContainer);
+      chargesRef.current = chargesContainer;
 
       const effectsContainer = new Container();
       effectsContainer.zIndex = 3;
@@ -437,6 +545,7 @@ export default function PixiApp({ content }: PixiAppProps) {
       }
       electronsRef.current = null;
       valenceRef.current = null;
+      chargesRef.current = null;
       if (appRef.current) {
         try {
           appRef.current.destroy(true, { children: true, texture: true, textureSource: true });
@@ -598,7 +707,18 @@ export default function PixiApp({ content }: PixiAppProps) {
     if (valenceRef.current) {
       drawValenceDots(valenceRef.current, scene, content.elements);
     }
-  }, [scene, selectedAtomId, selectedBondId, content.elements, settings]);
+    // Charge-label pass: only ionic atoms get a label, and the value
+    // depends on which ionic bonds the atom is in, so this also
+    // recomputes whenever bonds change.
+    if (chargesRef.current) {
+      drawAtomCharges(
+        chargesRef.current,
+        scene,
+        content.elements,
+        content.bondRules
+      );
+    }
+  }, [scene, selectedAtomId, selectedBondId, content.elements, content.bondRules, settings]);
 
   function dismissContextMenu() {
     if (contextMenuRef.current) {
