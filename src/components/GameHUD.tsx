@@ -12,6 +12,7 @@ import { recordEvent } from "@/lib/telemetry";
 import type { ContentBundle } from "@/data/loader";
 import Molecule3DViewer from "./Molecule3DViewer";
 import AtomLedger from "./AtomLedger";
+import AtomDetailsModal from "./AtomDetailsModal";
 import {
   Undo,
   Redo,
@@ -23,6 +24,7 @@ import {
   X,
   Box,
   Trash2,
+  Info,
 } from "lucide-react";
 
 interface GameHUDProps {
@@ -86,6 +88,17 @@ export default function GameHUD({ content }: GameHUDProps) {
   }, [mission, content.missions, progress, isMissionUnlocked]);
 
   const [show3D, setShow3D] = useState(false);
+  const [showAtomDetails, setShowAtomDetails] = useState(false);
+
+  // Element of the currently-selected atom — used by the "Element
+  // info" pill button + the AtomDetailsModal it opens. Null when no
+  // atom (or a non-existent one) is selected.
+  const selectedElement = useMemo(() => {
+    if (!selectedAtomId) return null;
+    const atom = scene.atoms.find((a) => a.id === selectedAtomId);
+    if (!atom) return null;
+    return content.elements.find((e) => e.symbol === atom.elementId) ?? null;
+  }, [selectedAtomId, scene.atoms, content.elements]);
   const [canvasCenterX, setCanvasCenterX] = useState(400);
   const [showInteractionHint, setShowInteractionHint] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
@@ -378,6 +391,23 @@ export default function GameHUD({ content }: GameHUDProps) {
               <span className="hidden sm:inline">{t("game.view_3d")}</span>
             </button>
           )}
+
+          {/* Element info — appears only when an atom is selected so it
+              doesn't clutter the bar by default. Single tap to open
+              the full property modal for that element. */}
+          {selectedElement && (
+            <button
+              onClick={() => {
+                audio.uiClick();
+                setShowAtomDetails(true);
+              }}
+              className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors touch-target-lg"
+              aria-label={`Show ${selectedElement.name} details`}
+            >
+              <Info className="w-5 h-5" />
+              <span className="hidden sm:inline">{selectedElement.name}</span>
+            </button>
+          )}
         </div>
 
         <button
@@ -576,6 +606,16 @@ export default function GameHUD({ content }: GameHUDProps) {
             </div>
           </div>
         </div>
+      )}
+
+      {/* Element details modal. Render inside the same fragment as
+          the rest of the HUD so it lives above the canvas; the modal
+          itself uses fixed positioning. */}
+      {showAtomDetails && selectedElement && (
+        <AtomDetailsModal
+          element={selectedElement}
+          onClose={() => setShowAtomDetails(false)}
+        />
       )}
     </>
   );
