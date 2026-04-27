@@ -89,8 +89,16 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
     (r) => r.worldId === worldId && r.phase === "post"
   );
 
+  // Pre-check is the "Take it" entry state. Originally only offered
+  // when the player hadn't earned any stars yet, but that left a dead
+  // state once a player jumped straight into a mission and skipped the
+  // gate (card body went blank — only the icon rendered). Now any
+  // not-yet-mastered world with no pre-check on file shows the
+  // "Take it" CTA, with copy that adapts to whether they've started.
+  const showPreCheckCta = !preTaken && !worldMastered;
+
   return (
-    <div className="max-w-3xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+    <div className="max-w-3xl mx-auto px-3 sm:px-4 pt-3 sm:pt-4 pb-10 sm:pb-8">
       <button
         onClick={() => goBackOr(router, "/worlds")}
         className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-3 sm:mb-6 touch-target"
@@ -114,13 +122,17 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
         <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-xl border-2 border-amber-200 bg-amber-50/60 flex items-start gap-3">
           <GraduationCap className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            {!preTaken && completedCount === 0 && (
+            {showPreCheckCta && (
               <>
                 <p className="text-sm font-semibold text-amber-900">
-                  Quick check before you start
+                  {completedCount === 0
+                    ? "Quick check before you start"
+                    : "Take the pre-check"}
                 </p>
                 <p className="text-xs text-amber-800 mt-0.5">
-                  3 questions — see what you already know.
+                  {completedCount === 0
+                    ? "3 questions — see what you already know."
+                    : "3 questions — set a baseline to compare against later."}
                 </p>
               </>
             )}
@@ -141,17 +153,18 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
                   Post-check unlocked
                 </p>
                 <p className="text-xs text-amber-800 mt-0.5">
-                  Pre: {preResult?.correctCount ?? 0}/
-                  {preResult?.totalCount ?? 0} — see how much you&apos;ve
-                  learned.
+                  {preResult
+                    ? `Pre: ${preResult.correctCount}/${preResult.totalCount} — see how much you've learned.`
+                    : "See how much you've learned."}
                 </p>
               </>
             )}
-            {worldMastered && postTaken && preResult && postResult && (
+            {worldMastered && postTaken && (
               <>
                 <p className="text-sm font-semibold text-amber-900">
-                  Mastery: {preResult.correctCount}/{preResult.totalCount} →{" "}
-                  {postResult.correctCount}/{postResult.totalCount}
+                  {preResult && postResult
+                    ? `Mastery: ${preResult.correctCount}/${preResult.totalCount} → ${postResult.correctCount}/${postResult.totalCount}`
+                    : `Mastery: ${postResult?.correctCount ?? 0}/${postResult?.totalCount ?? 0}`}
                 </p>
                 <p className="text-xs text-amber-800 mt-0.5">
                   Nice work — that&apos;s real chemistry learning.
@@ -159,7 +172,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
               </>
             )}
           </div>
-          {!preTaken && completedCount === 0 && (
+          {showPreCheckCta && (
             <button
               onClick={() => setMasteryModalPhase("pre")}
               className="px-3 py-1.5 rounded-lg bg-amber-700 text-white text-sm font-semibold hover:bg-amber-800 transition-colors shrink-0"
