@@ -10,7 +10,7 @@ import type { ContentBundle } from "@/data/loader";
 import { shakeSprite, createTooltip } from "./effects";
 import { createAtomSprite, updateAtomSprite, ATOM_RADIUS } from "./atom-sprite";
 import { drawBond } from "./bond-graphics";
-import { animateScale } from "./animations";
+import { animateScale, animateAlpha } from "./animations";
 import { validateBond, getBondsForAtom, countBondOrder } from "@/engine/bond";
 
 // Brand green — matches --primary in globals.css. Used for the bond
@@ -290,6 +290,7 @@ export default function PixiApp({ content }: PixiAppProps) {
       if (!atomA || !atomB) continue;
 
       let g = bondGraphicsRef.current.get(bond.id);
+      let isNewBond = false;
       if (!g) {
         g = new Graphics();
         g.eventMode = "static";
@@ -304,8 +305,17 @@ export default function PixiApp({ content }: PixiAppProps) {
         g.on("pointerover", () => handleBondHover(bondId));
         bondsContainer.addChild(g);
         bondGraphicsRef.current.set(bond.id, g);
+        isNewBond = true;
       }
       drawBond(g, atomA, atomB, bond.bondType, selectedBondId === bond.id);
+      if (isNewBond && !reducedMotion) {
+        // New bonds fade in over ~180ms — matches the atom-spawn
+        // animation cadence so the scene feels coherent. Reduced-motion
+        // users get the bond at full alpha immediately. Graphics
+        // extends Container, so the alpha tween targets the same
+        // displayObject API as atom sprites.
+        animateAlpha(g, 0, 1, 180);
+      }
     }
   }, [scene, selectedAtomId, selectedBondId, content.elements, settings]);
 

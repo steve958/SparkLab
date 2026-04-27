@@ -26,3 +26,30 @@ export function animateScale(
 
   requestAnimationFrame(tick);
 }
+
+/** Tween a sprite's alpha via easeOutCubic over `duration` ms. */
+export function animateAlpha(
+  sprite: Container,
+  from: number,
+  to: number,
+  duration: number,
+  onComplete?: () => void
+) {
+  const startTime = performance.now();
+  sprite.alpha = from;
+
+  function tick(now: number) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    sprite.alpha = from + (to - from) * ease;
+
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else if (onComplete) {
+      onComplete();
+    }
+  }
+
+  requestAnimationFrame(tick);
+}

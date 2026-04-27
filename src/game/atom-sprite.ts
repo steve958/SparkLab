@@ -22,6 +22,11 @@ export function adjustColor(hex: number, amount: number): number {
   return (blend(r) << 16) | (blend(g) << 8) | blend(b);
 }
 
+// Brand green-700 — same color the bond selection halo and overall
+// primary palette use, so atoms and bonds share a single "this is
+// selected" visual language.
+const SELECTION_COLOR = 0x15803d;
+
 /** Re-render the atom body Graphics with the gradient + selection ring. */
 export function drawAtomBody(g: Graphics, baseColor: number, isSelected: boolean) {
   g.clear();
@@ -44,14 +49,19 @@ export function drawAtomBody(g: Graphics, baseColor: number, isSelected: boolean
     textureSpace: "local",
   });
 
+  if (isSelected) {
+    // Layered halo for more visual presence than a single thin ring —
+    // a softer wide outer band plus a brighter inner ring. Drawn before
+    // the body so the atom's own gradient/rim renders on top cleanly.
+    g.circle(0, 0, ATOM_RADIUS + 11);
+    g.stroke({ width: 3, color: SELECTION_COLOR, alpha: 0.32 });
+    g.circle(0, 0, ATOM_RADIUS + 6);
+    g.stroke({ width: 3, color: SELECTION_COLOR, alpha: 0.95 });
+  }
+
   g.circle(0, 0, ATOM_RADIUS);
   g.fill(gradient);
   g.stroke({ width: 1.5, color: rimColor, alpha: 0.85 });
-
-  if (isSelected) {
-    g.circle(0, 0, ATOM_RADIUS + 6);
-    g.stroke({ width: 3, color: 0x0284c7, alpha: 0.95 });
-  }
 }
 
 export interface AtomSpriteHandlers {
@@ -62,8 +72,9 @@ export interface AtomSpriteHandlers {
 
 /**
  * Build a fresh atom Container.
- * Children are appended in a fixed order: [shadow, body, gloss, symbol, name].
- * `updateAtomSprite` relies on `body` being at index 1.
+ * Children are appended in a fixed order: [hoverHalo, shadow, body,
+ * gloss, symbol, name]. `updateAtomSprite` relies on `body` being at
+ * index 2.
  */
 export function createAtomSprite(
   atom: { id: string; x: number; y: number },
@@ -129,7 +140,16 @@ export function createAtomSprite(
   nameText.anchor.set(0.5);
   nameText.y = ATOM_RADIUS + 13;
 
-  container.addChild(shadow, body, gloss, symbol, nameText);
+  // Hover halo — drawn behind everything else, hidden by default.
+  // Toggled in the pointerover/pointerout handlers below for a subtle
+  // "this atom is interactive" cue. Independent of the selection ring
+  // so a hovered-but-not-selected atom still gets feedback.
+  const hoverHalo = new Graphics();
+  hoverHalo.circle(0, 0, ATOM_RADIUS + 9);
+  hoverHalo.stroke({ width: 3, color: SELECTION_COLOR, alpha: 0.35 });
+  hoverHalo.alpha = 0;
+
+  container.addChild(hoverHalo, shadow, body, gloss, symbol, nameText);
 
   container.on("pointerdown", (e: FederatedPointerEvent) => {
     // button === 2 is right-click; show the delete menu instead of starting a drag.
@@ -140,7 +160,13 @@ export function createAtomSprite(
     handlers.onPointerDown(e, atom.id);
   });
   container.on("pointerover", (e: FederatedPointerEvent) => {
+    hoverHalo.alpha = 1;
+    container.scale.set(1.06);
     handlers.onHover(e, atom.id, element);
+  });
+  container.on("pointerout", () => {
+    hoverHalo.alpha = 0;
+    container.scale.set(1);
   });
 
   return container;
@@ -154,7 +180,8 @@ export function updateAtomSprite(
 ) {
   sprite.x = atom.x;
   sprite.y = atom.y;
-  // children: [shadow, body, gloss, symbol, nameText] — body is at index 1.
-  const body = sprite.children[1] as Graphics;
+  // children: [hoverHalo, shadow, body, gloss, symbol, nameText] —
+  // body is at index 2 since hoverHalo was added in front.
+  const body = sprite.children[2] as Graphics;
   drawAtomBody(body, parseColorToken(element.colorToken), isSelected);
 }
