@@ -130,20 +130,16 @@ export default function PixiApp({ content }: PixiAppProps) {
       app.stage.eventMode = "static";
       app.stage.hitArea = app.screen;
 
-      // Background click/tap: move selected atom or clear selection
+      // Background click/tap: clear selection. Atoms move only via drag
+      // (handleAtomPointerDown) or keyboard arrows (in game/page.tsx).
+      // Click-to-move was a misclick trap — players who wanted to
+      // deselect ended up teleporting the selected atom across the
+      // canvas.
       app.stage.on("pointerdown", (e: FederatedPointerEvent) => {
         if (e.target === app.stage) {
           const state = useGameStore.getState();
-          if (state.selectedAtomId) {
-            // Tap-to-move: move selected atom to tapped location
-            const localPos = sceneContainer.toLocal({ x: e.globalX, y: e.globalY });
-            moveAtom(state.selectedAtomId, localPos.x, localPos.y);
-          } else if (state.selectedBondId) {
-            setSelectedBond(null);
-          } else {
-            setSelectedAtom(null);
-          }
-          // Dismiss context menu
+          if (state.selectedBondId) setSelectedBond(null);
+          if (state.selectedAtomId) setSelectedAtom(null);
           dismissContextMenu();
         }
       });
@@ -711,15 +707,9 @@ export default function PixiApp({ content }: PixiAppProps) {
       g.stroke({ width: 3, color: BOND_PREVIEW_COLOR, alpha: 0.85 });
       g.circle(snapTarget.x, snapTarget.y, ATOM_RADIUS + 11);
       g.stroke({ width: 2, color: BOND_PREVIEW_COLOR, alpha: 0.35 });
-    } else {
-      // Move cue at cursor when no atom is in range — clarifies that
-      // tapping empty canvas relocates the selected atom.
-      g.moveTo(localPos.x - 10, localPos.y);
-      g.lineTo(localPos.x + 10, localPos.y);
-      g.moveTo(localPos.x, localPos.y - 10);
-      g.lineTo(localPos.x, localPos.y + 10);
-      g.stroke({ width: 2, color: 0x64748b, alpha: 0.45 });
     }
+    // No move cue any more — clicking empty canvas clears the selection,
+    // it doesn't relocate the atom (atoms move only via drag).
   }
 
   function handleAtomHover(
