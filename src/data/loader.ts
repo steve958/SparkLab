@@ -182,20 +182,25 @@ export function getBondRulesForPair(
   rules: BondRule[],
   a: string,
   b: string,
-  ageBand?: string
+  // Retained for back-compat with callers; intentionally unused now —
+  // see comment below.
+  _ageBand?: string
 ): BondRule[] {
-  const matchesPair = (r: BondRule) =>
-    (r.atomA === a && r.atomB === b) || (r.atomA === b && r.atomB === a);
-
-  // The `ageBand` tag in bond_rules.json marks the curriculum band a
-  // rule is *introduced* at, not an exclusive filter. If we strictly
-  // filtered, an 11-14 profile playing foundations (rules are all
-  // tagged 8-10) would have every bond blocked. So: prefer rules
-  // matching the requested band, but fall back to any-band rules for
-  // the same pair so the player's age never silently breaks gameplay.
-  if (ageBand) {
-    const banded = rules.filter((r) => matchesPair(r) && r.ageBand === ageBand);
-    if (banded.length > 0) return banded;
-  }
-  return rules.filter(matchesPair);
+  // Return every authored rule for the pair. Earlier this function
+  // band-filtered with a fallback to "all" when no banded rule
+  // existed, but that hid valid alternatives whenever any banded rule
+  // was present. Concrete failure: O₂ for an 11-14 profile dropped
+  // `o-o-double` because `o-o-single` was tagged 11-14, leaving the
+  // engine with single as the only option for the Oxygen Gas mission.
+  //
+  // The chemistry-correct rule selection lives in validateBond
+  // (highest slot-cost rule whose valence fits) — keeping age band
+  // out of the selection means the same code path picks O=O for any
+  // profile, while peroxide / methanol naturally fall through to the
+  // single rule when valence is already partially used. The ageBand
+  // tag now only documents which curriculum band introduces the rule.
+  return rules.filter(
+    (r) =>
+      (r.atomA === a && r.atomB === b) || (r.atomA === b && r.atomB === a)
+  );
 }

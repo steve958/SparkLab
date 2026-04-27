@@ -39,36 +39,45 @@ export function validateBond(
   const maxBondsA = getMaxBonds(elementA);
   const maxBondsB = getMaxBonds(elementB);
 
-  // Walk the applicable rules in declared order — bond_rules.json
-  // lists higher-order forms first for pairs that have multiple
-  // (e.g. o-o-double before o-o-single, c-o-double before c-o-single
-  // at age 11-14) — and pick the first whose slot cost actually fits
-  // the available valence on both atoms. That way:
-  //   * Two fresh O atoms (0 prior bonds, max 2 each) form O=O
-  //     because the double rule passes.
-  //   * Each O in peroxide H-O-O-H (1 prior H bond, 1 slot left)
-  //     fails the double's slotCost = 2 check and falls through to
-  //     the single rule, giving the correct H-O-O-H structure.
-  // If every rule fails the valence check, surface the failure for
-  // the highest-order rule (most likely the player's actual ceiling).
-  for (const rule of applicableRules) {
-    const fitsA = existingBondsA + rule.slotCostA <= maxBondsA;
-    const fitsB = existingBondsB + rule.slotCostB <= maxBondsB;
-    if (fitsA && fitsB) {
-      return {
-        valid: true,
-        bondType: rule.bondType,
-        formalChargeA: rule.formalChargeDeltaA,
-        formalChargeB: rule.formalChargeDeltaB,
-        explanation: `A ${rule.bondType} bond forms between ${elementA.name} and ${elementB.name}.`,
-        geometryHint: rule.geometryHint,
-      };
-    }
+  // Pick the highest-slot-cost rule whose valence fits both atoms.
+  // Slot cost ≈ bond order, so this implements the chemistry rule
+  // "higher bond order wins when both atoms have the valence to
+  // support it":
+  //   * Two fresh O atoms (0 prior bonds, max 2 each) → O=O double
+  //     fits (slot 2 each); single also fits but loses on cost.
+  //   * Each O in peroxide H-O-O-H (1 prior H bond, 1 slot left) →
+  //     double doesn't fit (1+2 > 2); single does (1+1 = 2). Single.
+  //   * Fresh C-O → triple's slot 3 exceeds O's max 2 (no fit);
+  //     double fits and beats single → C=O. (CO₂ uses this twice.)
+  //   * Methanol H₃C-OH (C has 3 H bonds, 1 slot left) → triple and
+  //     double both exceed C's free slot; single fits → C-O single.
+  // This replaces the previous "first fitting rule" walk, which was
+  // brittle because it depended on rules appearing in a particular
+  // order in bond_rules.json.
+  const fittingRules = applicableRules.filter(
+    (r) =>
+      existingBondsA + r.slotCostA <= maxBondsA &&
+      existingBondsB + r.slotCostB <= maxBondsB
+  );
+  if (fittingRules.length > 0) {
+    const best = fittingRules.reduce((max, r) => {
+      const cost = Math.max(r.slotCostA, r.slotCostB);
+      const maxCost = Math.max(max.slotCostA, max.slotCostB);
+      return cost > maxCost ? r : max;
+    });
+    return {
+      valid: true,
+      bondType: best.bondType,
+      formalChargeA: best.formalChargeDeltaA,
+      formalChargeB: best.formalChargeDeltaB,
+      explanation: `A ${best.bondType} bond forms between ${elementA.name} and ${elementB.name}.`,
+      geometryHint: best.geometryHint,
+    };
   }
 
-  // Nothing fit. Use the first rule (highest-order) to choose which
-  // atom to blame in the explanation — its slotCost is what the
-  // player would have needed.
+  // Nothing fit. Use the first applicable rule (lowest-order
+  // typically) to decide which atom to blame in the explanation —
+  // we want to surface the side whose valence is actually exhausted.
   const ruleForExplain = applicableRules[0];
   if (existingBondsA + ruleForExplain.slotCostA > maxBondsA) {
     return {

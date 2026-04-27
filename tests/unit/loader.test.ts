@@ -188,7 +188,15 @@ describe("loader / validateBundle", () => {
     expect(getString(strings, "missing")).toBe("missing");
   });
 
-  it("getBondRulesForPair prefers the requested age band when rules exist for it", () => {
+  it("getBondRulesForPair returns all matching rules regardless of age band", () => {
+    // Earlier this function band-filtered with a fallback, which hid
+    // chemistry-correct alternatives whenever any banded rule existed.
+    // Concrete failure: O₂ for an 11-14 profile dropped o-o-double
+    // because o-o-single was tagged 11-14, leaving the engine with a
+    // single bond as the only option for the Oxygen Gas mission.
+    // Rule selection is now done by validateBond's "highest slot
+    // cost that fits both atoms' valence" — so this function just
+    // returns every authored rule for the pair in JSON order.
     const rules: BondRule[] = [
       {
         ruleId: "h-h-young",
@@ -222,17 +230,18 @@ describe("loader / validateBundle", () => {
       } as unknown as BondRule,
     ];
     expect(getBondRulesForPair(rules, "H", "H", "8-10").map((r) => r.ruleId)).toEqual(
-      ["h-h-young"]
+      ["h-h-young", "h-h-older"]
     );
     expect(getBondRulesForPair(rules, "H", "H", "11-14").map((r) => r.ruleId)).toEqual(
-      ["h-h-older"]
+      ["h-h-young", "h-h-older"]
     );
   });
 
-  it("getBondRulesForPair falls back to any age band when the requested band has no match", () => {
+  it("getBondRulesForPair returns the single available rule across bands", () => {
     // Regression: an 11-14 profile playing a foundations mission used to
     // get every bond blocked because every foundations rule is tagged
-    // ageBand=8-10. The fallback keeps gameplay working across bands.
+    // ageBand=8-10. Returning all matching rules keeps gameplay working
+    // across bands.
     const rules: BondRule[] = [
       {
         ruleId: "h-h-young-only",
