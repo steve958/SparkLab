@@ -102,6 +102,10 @@ export function drawAtomBody(
 export interface AtomSpriteHandlers {
   onPointerDown: (e: FederatedPointerEvent, atomId: string) => void;
   onContextMenu: (e: FederatedPointerEvent, atomId: string) => void;
+  // Read-only check from the caller — true when this atom is currently
+  // being dragged. Used by the hover handlers to skip the hover-state
+  // scale change so it doesn't fight the drag-lift effect.
+  isDragging?: (atomId: string) => boolean;
 }
 
 /**
@@ -210,11 +214,16 @@ export function createAtomSprite(
   });
   // Hover feedback is purely visual now — no more "Oxygen (8)" tooltip.
   // The atom is its own label (color + symbol + name underneath).
+  // While the atom is being dragged the caller already manages scale
+  // (with a slightly larger lift), so the hover handlers bail rather
+  // than fight that effect.
   container.on("pointerover", () => {
+    if (handlers.isDragging?.(atom.id)) return;
     hoverHalo.alpha = 1;
     container.scale.set(1.06);
   });
   container.on("pointerout", () => {
+    if (handlers.isDragging?.(atom.id)) return;
     hoverHalo.alpha = 0;
     container.scale.set(1);
   });

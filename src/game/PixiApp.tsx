@@ -16,7 +16,7 @@ import {
   getAtomRadius,
 } from "./atom-sprite";
 import { drawBond } from "./bond-graphics";
-import { animateScale, animateAlpha } from "./animations";
+import { animateScale, animateScalePop, animateAlpha } from "./animations";
 import { validateBond, getBondsForAtom, countBondOrder } from "@/engine/bond";
 
 // Brand green — matches --primary in globals.css. Used for the bond
@@ -1317,11 +1317,15 @@ export default function PixiApp({ content }: PixiAppProps) {
         sprite = createAtomSprite(atom, element, {
           onPointerDown: handleAtomPointerDown,
           onContextMenu: handleAtomContextMenu,
+          isDragging: (id) => draggingRef.current?.atomId === id,
         });
         atomsContainer.addChild(sprite);
         atomSpritesRef.current.set(atom.id, sprite);
         if (!reducedMotion) {
-          animateScale(sprite, 0, 1, 200);
+          // Pop in with overshoot rather than a linear scale —
+          // makes spawning an atom feel like a discrete event.
+          sprite.scale.set(0);
+          animateScalePop(sprite, 0, 1, 280);
         }
       } else {
         updateAtomSprite(sprite, atom, element, selectedAtomId === atom.id);
@@ -1616,6 +1620,17 @@ export default function PixiApp({ content }: PixiAppProps) {
           offsetX: ev.globalX - globalPos.x,
           offsetY: ev.globalY - globalPos.y,
         };
+        // Drag-lift: pop the atom up to scale 1.10 with overshoot so
+        // the player gets unmistakable "I've grabbed it" feedback.
+        // Reduced-motion users skip the animation but still get the
+        // bigger size (instant, no easing).
+        const reduce =
+          useProgressStore.getState().settings?.reducedMotion ?? false;
+        if (reduce) {
+          sprite.scale.set(1.1);
+        } else {
+          animateScalePop(sprite, sprite.scale.x, 1.1, 160);
+        }
       }
 
       if (isDragging && draggingRef.current) {
@@ -1644,7 +1659,23 @@ export default function PixiApp({ content }: PixiAppProps) {
         handleAtomTap(atomId, previouslySelectedId);
       }
 
-      draggingRef.current = null;
+      // Settle the lifted sprite back to rest. Run this BEFORE we
+      // clear draggingRef so the hover handlers (which gate on the
+      // drag flag) don't snap us back to 1.06 mid-animation.
+      if (isDragging) {
+        const reduce =
+          useProgressStore.getState().settings?.reducedMotion ?? false;
+        if (reduce) {
+          sprite.scale.set(1);
+          draggingRef.current = null;
+        } else {
+          animateScale(sprite, sprite.scale.x, 1, 160, () => {
+            draggingRef.current = null;
+          });
+        }
+      } else {
+        draggingRef.current = null;
+      }
       app.stage.off("globalpointermove", onMove);
       app.stage.off("pointerup", onUp);
       app.stage.off("pointerupoutside", onUp);
