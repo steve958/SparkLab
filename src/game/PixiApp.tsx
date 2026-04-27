@@ -53,6 +53,106 @@ function bondLabel(bondType: string): string {
 // *transfer*, not sharing, and the violet dashed style already conveys
 // the difference; adding shared-electron dots would mislabel the
 // chemistry.
+// Standard Lewis-dot layout: number of dots on each side (N, E, S, W),
+// filling singles before pairs. Indexed by total dot count 0..8.
+const VALENCE_LAYOUTS: Record<number, [number, number, number, number]> = {
+  0: [0, 0, 0, 0],
+  1: [1, 0, 0, 0],
+  2: [1, 0, 1, 0],
+  3: [1, 1, 1, 0],
+  4: [1, 1, 1, 1],
+  5: [2, 1, 1, 1],
+  6: [2, 1, 2, 1],
+  7: [2, 2, 2, 1],
+  8: [2, 2, 2, 2],
+};
+
+/** Compute dot positions (in atom-local coords) for `count` valence
+ *  electrons around an atom of given radius. Pairs are offset slightly
+ *  perpendicular to the radial direction so each pair reads as two
+ *  distinct dots. */
+function valenceDotPositions(
+  count: number,
+  radius: number
+): Array<{ x: number; y: number }> {
+  const layout = VALENCE_LAYOUTS[Math.max(0, Math.min(8, count))] ?? [
+    0, 0, 0, 0,
+  ];
+  const r = radius + 8; // just outside the body
+  const angles = [-Math.PI / 2, 0, Math.PI / 2, Math.PI]; // N, E, S, W
+  const pairOffset = 5;
+  const positions: Array<{ x: number; y: number }> = [];
+  for (let i = 0; i < 4; i++) {
+    const dots = layout[i];
+    const a = angles[i];
+    const cx = Math.cos(a) * r;
+    const cy = Math.sin(a) * r;
+    if (dots === 1) {
+      positions.push({ x: cx, y: cy });
+    } else if (dots === 2) {
+      // Offset perpendicular to radial direction so a "pair" reads as
+      // two side-by-side dots rather than overlapping.
+      const px = -Math.sin(a);
+      const py = Math.cos(a);
+      positions.push({ x: cx + px * pairOffset, y: cy + py * pairOffset });
+      positions.push({ x: cx - px * pairOffset, y: cy - py * pairOffset });
+    }
+  }
+  return positions;
+}
+
+/** Render Lewis-style lone-pair dots around each atom. Lone pairs only —
+ *  shared electrons are already shown by drawSharedElectrons in the
+ *  bond region, so adding them here would double-count. */
+function drawValenceDots(
+  g: Graphics,
+  scene: SceneState,
+  elements: Element[]
+) {
+  g.clear();
+  for (const atom of scene.atoms) {
+    const element = elements.find((e) => e.symbol === atom.elementId);
+    if (!element) continue;
+    const valence = element.valenceElectronsMainGroup;
+    if (valence <= 0) continue;
+
+    // Each bond contributes its order to the count of "this atom's
+    // electrons currently in bonds" (single = 1, double = 2, triple = 3,
+    // ionic = 1 — Na donates 1 to Cl).
+    let bonded = 0;
+    for (const b of scene.bonds) {
+      if (b.atomAId !== atom.id && b.atomBId !== atom.id) continue;
+      switch (b.bondType) {
+        case "covalent-double":
+          bonded += 2;
+          break;
+        case "covalent-triple":
+          bonded += 3;
+          break;
+        case "covalent-single":
+        case "ionic":
+        default:
+          bonded += 1;
+          break;
+      }
+    }
+    const lone = Math.max(0, valence - bonded);
+    if (lone === 0) continue;
+
+    const radius = getAtomRadius(element);
+    const positions = valenceDotPositions(lone, radius);
+    for (const p of positions) {
+      const dx = atom.x + p.x;
+      const dy = atom.y + p.y;
+      // Filled white dot with a thin dark outline for definition. No
+      // halo (those are reserved for the moving bond electrons).
+      g.circle(dx, dy, 2.5);
+      g.fill({ color: 0xffffff, alpha: 1 });
+      g.stroke({ width: 0.8, color: 0x334155, alpha: 0.7 });
+    }
+  }
+}
+
 function drawSharedElectrons(
   g: Graphics,
   scene: SceneState,
@@ -152,6 +252,7 @@ export default function PixiApp({ content }: PixiAppProps) {
   const effectsContainerRef = useRef<Container | null>(null);
   const electronsRef = useRef<Graphics | null>(null);
   const electronsTickerRef = useRef<((ticker: { deltaMS: number }) => void) | null>(null);
+  const valenceRef = useRef<Graphics | null>(null);
   const atomSpritesRef = useRef<Map<string, Container>>(new Map());
   const bondGraphicsRef = useRef<Map<string, Graphics>>(new Map());
   const draggingRef = useRef<{ atomId: string; offsetX: number; offsetY: number } | null>(null);
@@ -233,6 +334,14 @@ export default function PixiApp({ content }: PixiAppProps) {
       atomsContainer.zIndex = 2;
       sceneContainer.addChild(atomsContainer);
       atomsContainerRef.current = atomsContainer;
+
+      // Valence-dot (Lewis lone-pair) layer — sits just above atoms so
+      // the dots render on top of the atom body but below interactive
+      // effects. Updated from the scene-render effect (no animation).
+      const valenceG = new Graphics();
+      valenceG.zIndex = 2.5;
+      sceneContainer.addChild(valenceG);
+      valenceRef.current = valenceG;
 
       const effectsContainer = new Container();
       effectsContainer.zIndex = 3;
@@ -327,6 +436,7 @@ export default function PixiApp({ content }: PixiAppProps) {
         electronsTickerRef.current = null;
       }
       electronsRef.current = null;
+      valenceRef.current = null;
       if (appRef.current) {
         try {
           appRef.current.destroy(true, { children: true, texture: true, textureSource: true });
@@ -480,6 +590,13 @@ export default function PixiApp({ content }: PixiAppProps) {
         // displayObject API as atom sprites.
         animateAlpha(g, 0, 1, 180);
       }
+    }
+
+    // Valence-dot pass: redraw lone pairs every time bonds change.
+    // Static (no animation), so it lives in this scene-driven effect
+    // rather than in the per-frame Ticker like the shared electrons.
+    if (valenceRef.current) {
+      drawValenceDots(valenceRef.current, scene, content.elements);
     }
   }, [scene, selectedAtomId, selectedBondId, content.elements, settings]);
 
