@@ -133,6 +133,131 @@ describe("Bond Engine", () => {
     ];
     expect(countBondOrder(bonds)).toBe(7);
   });
+
+  // O-O has both an `o-o-double` and an `o-o-single` rule. The double
+  // is listed first, so two fresh oxygens (no prior bonds, max 2 each)
+  // should get the chemically-correct O=O double bond. If either
+  // oxygen is already bonded once (e.g. peroxide H-O-O-H, where each
+  // O has one H bond), the double's slotCost = 2 won't fit and the
+  // engine should fall through to the single rule rather than
+  // refusing the bond.
+  it("picks O=O double for two fresh oxygens", () => {
+    const oxygen: Element = {
+      atomicNumber: 8,
+      symbol: "O",
+      name: "Oxygen",
+      group: 16,
+      period: 2,
+      block: "p",
+      category: "nonmetal",
+      standardAtomicWeight: 15.999,
+      stateAtStp: "gas",
+      shellOccupancy: [2, 6],
+      valenceElectronsMainGroup: 6,
+      commonOxidationStates: [-2],
+      electronegativityPauling: 3.44,
+      colorToken: "#ef4444",
+      iconAsset: null,
+      unlockWorld: "foundations",
+      factCardKey: "fact_oxygen",
+      sourceRef: "NIST",
+    };
+    const ooRules: BondRule[] = [
+      {
+        ruleId: "o-o-double",
+        ageBand: "8-10",
+        atomA: "O",
+        atomB: "O",
+        bondType: "covalent-double",
+        maxOrder: 2,
+        slotCostA: 2,
+        slotCostB: 2,
+        formalChargeDeltaA: 0,
+        formalChargeDeltaB: 0,
+        geometryHint: null,
+        allowedWorlds: ["foundations"],
+        explanationKey: "hint_o_o_double",
+      },
+      {
+        ruleId: "o-o-single",
+        ageBand: "8-10",
+        atomA: "O",
+        atomB: "O",
+        bondType: "covalent-single",
+        maxOrder: 2,
+        slotCostA: 1,
+        slotCostB: 1,
+        formalChargeDeltaA: 0,
+        formalChargeDeltaB: 0,
+        geometryHint: null,
+        allowedWorlds: ["foundations"],
+        explanationKey: "hint_o_o_single",
+      },
+    ];
+
+    const fresh = validateBond(ooRules, oxygen, oxygen, "8-10", 0, 0);
+    expect(fresh.valid).toBe(true);
+    expect(fresh.bondType).toBe("covalent-double");
+  });
+
+  it("falls through to O-O single when each O already has one bond (peroxide)", () => {
+    const oxygen: Element = {
+      atomicNumber: 8,
+      symbol: "O",
+      name: "Oxygen",
+      group: 16,
+      period: 2,
+      block: "p",
+      category: "nonmetal",
+      standardAtomicWeight: 15.999,
+      stateAtStp: "gas",
+      shellOccupancy: [2, 6],
+      valenceElectronsMainGroup: 6,
+      commonOxidationStates: [-2],
+      electronegativityPauling: 3.44,
+      colorToken: "#ef4444",
+      iconAsset: null,
+      unlockWorld: "foundations",
+      factCardKey: "fact_oxygen",
+      sourceRef: "NIST",
+    };
+    const ooRules: BondRule[] = [
+      {
+        ruleId: "o-o-double",
+        ageBand: "8-10",
+        atomA: "O",
+        atomB: "O",
+        bondType: "covalent-double",
+        maxOrder: 2,
+        slotCostA: 2,
+        slotCostB: 2,
+        formalChargeDeltaA: 0,
+        formalChargeDeltaB: 0,
+        geometryHint: null,
+        allowedWorlds: ["foundations"],
+        explanationKey: "hint_o_o_double",
+      },
+      {
+        ruleId: "o-o-single",
+        ageBand: "8-10",
+        atomA: "O",
+        atomB: "O",
+        bondType: "covalent-single",
+        maxOrder: 2,
+        slotCostA: 1,
+        slotCostB: 1,
+        formalChargeDeltaA: 0,
+        formalChargeDeltaB: 0,
+        geometryHint: null,
+        allowedWorlds: ["foundations"],
+        explanationKey: "hint_o_o_single",
+      },
+    ];
+
+    const peroxide = validateBond(ooRules, oxygen, oxygen, "8-10", 1, 1);
+    expect(peroxide.valid).toBe(true);
+    expect(peroxide.bondType).toBe("covalent-single");
+  });
 });
 
 describe("Molecule Engine", () => {

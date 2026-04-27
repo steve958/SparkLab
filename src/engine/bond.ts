@@ -36,14 +36,41 @@ export function validateBond(
     };
   }
 
-  // Pick the first matching rule (simplified for MVP)
-  const rule = applicableRules[0];
-
-  // Check valence capacity
   const maxBondsA = getMaxBonds(elementA);
   const maxBondsB = getMaxBonds(elementB);
 
-  if (existingBondsA + rule.slotCostA > maxBondsA) {
+  // Walk the applicable rules in declared order — bond_rules.json
+  // lists higher-order forms first for pairs that have multiple
+  // (e.g. o-o-double before o-o-single, c-o-double before c-o-single
+  // at age 11-14) — and pick the first whose slot cost actually fits
+  // the available valence on both atoms. That way:
+  //   * Two fresh O atoms (0 prior bonds, max 2 each) form O=O
+  //     because the double rule passes.
+  //   * Each O in peroxide H-O-O-H (1 prior H bond, 1 slot left)
+  //     fails the double's slotCost = 2 check and falls through to
+  //     the single rule, giving the correct H-O-O-H structure.
+  // If every rule fails the valence check, surface the failure for
+  // the highest-order rule (most likely the player's actual ceiling).
+  for (const rule of applicableRules) {
+    const fitsA = existingBondsA + rule.slotCostA <= maxBondsA;
+    const fitsB = existingBondsB + rule.slotCostB <= maxBondsB;
+    if (fitsA && fitsB) {
+      return {
+        valid: true,
+        bondType: rule.bondType,
+        formalChargeA: rule.formalChargeDeltaA,
+        formalChargeB: rule.formalChargeDeltaB,
+        explanation: `A ${rule.bondType} bond forms between ${elementA.name} and ${elementB.name}.`,
+        geometryHint: rule.geometryHint,
+      };
+    }
+  }
+
+  // Nothing fit. Use the first rule (highest-order) to choose which
+  // atom to blame in the explanation — its slotCost is what the
+  // player would have needed.
+  const ruleForExplain = applicableRules[0];
+  if (existingBondsA + ruleForExplain.slotCostA > maxBondsA) {
     return {
       valid: false,
       bondType: null,
@@ -53,25 +80,13 @@ export function validateBond(
       geometryHint: null,
     };
   }
-
-  if (existingBondsB + rule.slotCostB > maxBondsB) {
-    return {
-      valid: false,
-      bondType: null,
-      formalChargeA: 0,
-      formalChargeB: 0,
-      explanation: `${elementB.name} cannot make any more bonds right now. It has used all its valence electrons.`,
-      geometryHint: null,
-    };
-  }
-
   return {
-    valid: true,
-    bondType: rule.bondType,
-    formalChargeA: rule.formalChargeDeltaA,
-    formalChargeB: rule.formalChargeDeltaB,
-    explanation: `A ${rule.bondType} bond forms between ${elementA.name} and ${elementB.name}.`,
-    geometryHint: rule.geometryHint,
+    valid: false,
+    bondType: null,
+    formalChargeA: 0,
+    formalChargeB: 0,
+    explanation: `${elementB.name} cannot make any more bonds right now. It has used all its valence electrons.`,
+    geometryHint: null,
   };
 }
 
