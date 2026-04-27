@@ -8,9 +8,33 @@ import type { Element } from "@/types";
 import { getElementBySymbol } from "@/data/loader";
 import type { ContentBundle } from "@/data/loader";
 import { shakeSprite, createTooltip } from "./effects";
-import { createAtomSprite, updateAtomSprite } from "./atom-sprite";
+import { createAtomSprite, updateAtomSprite, ATOM_RADIUS } from "./atom-sprite";
 import { drawBond } from "./bond-graphics";
 import { animateScale } from "./animations";
+import { validateBond, getBondsForAtom, countBondOrder } from "@/engine/bond";
+
+// Brand green — matches --primary in globals.css. Used for the bond
+// preview line and snap indicator so the action ties visually to the
+// rest of the app's primary affordances.
+const BOND_PREVIEW_COLOR = 0x15803d;
+// Snap range in scene-local pixels: how close the cursor needs to be to
+// an atom for the preview line to "lock on" to it.
+const BOND_SNAP_RADIUS = 56;
+
+function bondLabel(bondType: string): string {
+  switch (bondType) {
+    case "covalent-single":
+      return "Single bond";
+    case "covalent-double":
+      return "Double bond";
+    case "covalent-triple":
+      return "Triple bond";
+    case "ionic":
+      return "Ionic bond";
+    default:
+      return "Bond";
+  }
+}
 
 interface PixiAppProps {
   content: ContentBundle;
@@ -271,7 +295,13 @@ export default function PixiApp({ content }: PixiAppProps) {
         g.eventMode = "static";
         g.cursor = "pointer";
         const bondId = bond.id;
-        g.on("pointerdown", (e: FederatedPointerEvent) => handleBondPointerDown(e, bondId));
+        g.on("pointerdown", (e: FederatedPointerEvent) =>
+          handleBondPointerDown(e, bondId)
+        );
+        // Hover tooltip — surfaces the bond *type* on hover so the
+        // single/double/triple distinction in the visuals is also
+        // available as text. Mirrors the atom hover pattern.
+        g.on("pointerover", () => handleBondHover(bondId));
         bondsContainer.addChild(g);
         bondGraphicsRef.current.set(bond.id, g);
       }
@@ -342,8 +372,71 @@ export default function PixiApp({ content }: PixiAppProps) {
 
   function handleBondPointerDown(e: FederatedPointerEvent, bondId: string) {
     e.stopPropagation();
-    setSelectedBond(bondId);
-    showContextMenu(e.globalX, e.globalY - 12, "Delete bond", () => removeBond(bondId));
+    dismissContextMenu();
+
+    // Right-click → "Delete bond" menu directly, parallel to how atoms
+    // route right-click straight to context menu in atom-sprite.ts.
+    if (e.button === 2) {
+      showContextMenu(e.globalX, e.globalY - 12, "Delete bond", () =>
+        removeBond(bondId)
+      );
+      return;
+    }
+
+    const app = appRef.current;
+    if (!app) return;
+
+    const startX = e.globalX;
+    const startY = e.globalY;
+    const startTime = Date.now();
+    let triggeredLongPress = false;
+
+    // Mirror the atom interaction model: tap = select, long-press =
+    // "Delete bond" context menu. The previous code popped the delete
+    // menu on every tap, which made bonds feel aggressively
+    // destructive compared to atoms.
+    longPressTimerRef.current = setTimeout(() => {
+      longPressTimerRef.current = null;
+      triggeredLongPress = true;
+      // Anchor the menu near where the press happened — bonds are long
+      // and the midpoint can be far from the cursor.
+      showContextMenu(startX, startY - 12, "Delete bond", () =>
+        removeBond(bondId)
+      );
+    }, 600);
+
+    const onMove = (ev: FederatedPointerEvent) => {
+      const dx = ev.globalX - startX;
+      const dy = ev.globalY - startY;
+      if (
+        longPressTimerRef.current &&
+        Math.sqrt(dx * dx + dy * dy) > 5
+      ) {
+        clearTimeout(longPressTimerRef.current);
+        longPressTimerRef.current = null;
+      }
+    };
+
+    const onUp = () => {
+      if (longPressTimerRef.current) {
+        clearTimeout(longPressTimerRef.current);
+        longPressTimerRef.current = null;
+      }
+      const wasQuickTap =
+        !triggeredLongPress && Date.now() - startTime < 400;
+      if (wasQuickTap) {
+        // Toggle selection so a second tap on the same bond clears it.
+        const state = useGameStore.getState();
+        setSelectedBond(state.selectedBondId === bondId ? null : bondId);
+      }
+      app.stage.off("globalpointermove", onMove);
+      app.stage.off("pointerup", onUp);
+      app.stage.off("pointerupoutside", onUp);
+    };
+
+    app.stage.on("globalpointermove", onMove);
+    app.stage.on("pointerup", onUp);
+    app.stage.on("pointerupoutside", onUp);
   }
 
   function handleAtomPointerDown(
@@ -438,12 +531,60 @@ export default function PixiApp({ content }: PixiAppProps) {
 
   function handleAtomTap(atomId: string, previouslySelectedId: string | null) {
     if (previouslySelectedId && previouslySelectedId !== atomId) {
-      // Bond previously-selected atom to the just-tapped atom.
+      // B2: rule-driven bond-type selection. Look up the (elementA,
+      // elementB, ageBand) tuple in bond_rules.json via validateBond
+      // and create the bond at the *curriculum-correct* type. CO2 at
+      // age 11–14 forms double bonds automatically; N2 forms triple;
+      // NaCl forms ionic; etc. Falls back to single covalent for pairs
+      // with no authored rule (preserves existing missions that
+      // pre-date the rule set).
+      const state = useGameStore.getState();
+      const profileState = useProgressStore.getState();
+      const ageBand = profileState.currentProfile?.ageBand ?? "8-10";
+
+      const atomA = state.scene.atoms.find((a) => a.id === previouslySelectedId);
+      const atomB = state.scene.atoms.find((a) => a.id === atomId);
+      const elementA = atomA
+        ? getElementBySymbol(content.elements, atomA.elementId)
+        : null;
+      const elementB = atomB
+        ? getElementBySymbol(content.elements, atomB.elementId)
+        : null;
+
+      let bondType: "covalent-single" | "covalent-double" | "covalent-triple" | "ionic" =
+        "covalent-single";
+      if (atomA && atomB && elementA && elementB) {
+        const aBonds = countBondOrder(
+          getBondsForAtom(previouslySelectedId, state.scene.bonds)
+        );
+        const bBonds = countBondOrder(
+          getBondsForAtom(atomId, state.scene.bonds)
+        );
+        const result = validateBond(
+          content.bondRules,
+          elementA,
+          elementB,
+          ageBand,
+          aBonds,
+          bBonds
+        );
+        if (result.valid && result.bondType) {
+          bondType = result.bondType;
+        } else if (result.bondType === null && result.explanation) {
+          // Rule exists but valence is exhausted (or pair is forbidden).
+          // Don't create a misleading bond — surface the explanation.
+          state.showFeedback(result.explanation, "error");
+          window.dispatchEvent(new CustomEvent("sparklab-invalid-action"));
+          setSelectedAtom(atomId);
+          return;
+        }
+      }
+
       const bond = {
         id: crypto.randomUUID(),
         atomAId: previouslySelectedId,
         atomBId: atomId,
-        bondType: "covalent-single" as const,
+        bondType,
       };
       addBond(bond);
       setSelectedAtom(atomId);
@@ -469,39 +610,105 @@ export default function PixiApp({ content }: PixiAppProps) {
     }
 
     const localPos = sceneContainer.toLocal({ x: globalX, y: globalY });
+    const sourceAtom = state.scene.atoms.find((a) => a.id === selectedId);
+    if (!sourceAtom) return;
 
-    // Check if hovering over another atom
-    let hoveringAtom = false;
+    // Find the nearest non-self atom within the snap range. The preview
+    // line locks on to it; otherwise it follows the cursor.
+    let snapTarget: { x: number; y: number; id: string } | null = null;
+    let snapDistSq = BOND_SNAP_RADIUS * BOND_SNAP_RADIUS;
     for (const atom of state.scene.atoms) {
       if (atom.id === selectedId) continue;
       const dx = atom.x - localPos.x;
       const dy = atom.y - localPos.y;
-      if (Math.sqrt(dx * dx + dy * dy) < 40) {
-        hoveringAtom = true;
-        break;
+      const d2 = dx * dx + dy * dy;
+      if (d2 < snapDistSq) {
+        snapDistSq = d2;
+        snapTarget = { x: atom.x, y: atom.y, id: atom.id };
       }
+    }
+
+    // Suppress the preview if a bond already exists between the source
+    // and the snap target — visually misleading to draw a "form bond"
+    // hint on a pair that's already bonded.
+    if (snapTarget) {
+      const already = state.scene.bonds.some(
+        (b) =>
+          (b.atomAId === selectedId && b.atomBId === snapTarget!.id) ||
+          (b.atomAId === snapTarget!.id && b.atomBId === selectedId)
+      );
+      if (already) snapTarget = null;
     }
 
     if (!hoverCueRef.current) {
       hoverCueRef.current = new Graphics();
       effectsContainer.addChild(hoverCueRef.current);
     }
-
     const g = hoverCueRef.current;
     g.clear();
 
-    if (hoveringAtom) {
-      // Bond cue: ring around cursor
-      g.circle(localPos.x, localPos.y, 20);
-      g.stroke({ width: 2, color: 0x22c55e, alpha: 0.6 });
+    // Endpoint: target atom center if snapping, else cursor position.
+    const endX = snapTarget ? snapTarget.x : localPos.x;
+    const endY = snapTarget ? snapTarget.y : localPos.y;
+
+    // Pull the line endpoints into the atoms by ATOM_RADIUS so the
+    // dashes don't crash through the colored circles.
+    const dx = endX - sourceAtom.x;
+    const dy = endY - sourceAtom.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist > ATOM_RADIUS + 4) {
+      const ux = dx / dist;
+      const uy = dy / dist;
+      const startX = sourceAtom.x + ux * ATOM_RADIUS;
+      const startY = sourceAtom.y + uy * ATOM_RADIUS;
+      // When snapping, end before the target atom; otherwise stop at
+      // the cursor itself.
+      const stopShort = snapTarget ? ATOM_RADIUS : 0;
+      const lineEndX = endX - ux * stopShort;
+      const lineEndY = endY - uy * stopShort;
+
+      // Hand-drawn dashes — Pixi v8 stroke doesn't ship a dash API.
+      const dash = 8;
+      const gap = 5;
+      const total = Math.sqrt(
+        (lineEndX - startX) ** 2 + (lineEndY - startY) ** 2
+      );
+      let traveled = 0;
+      while (traveled < total) {
+        const t1 = traveled / total;
+        const t2 = Math.min(1, (traveled + dash) / total);
+        g.moveTo(
+          startX + (lineEndX - startX) * t1,
+          startY + (lineEndY - startY) * t1
+        );
+        g.lineTo(
+          startX + (lineEndX - startX) * t2,
+          startY + (lineEndY - startY) * t2
+        );
+        traveled += dash + gap;
+      }
+      g.stroke({
+        width: snapTarget ? 4 : 3,
+        color: snapTarget ? BOND_PREVIEW_COLOR : 0x64748b,
+        alpha: snapTarget ? 0.85 : 0.5,
+      });
+    }
+
+    if (snapTarget) {
+      // Snap indicator: a soft glowing ring on the target atom, signalling
+      // "release here to bond". Two concentric circles for a halo feel.
+      g.circle(snapTarget.x, snapTarget.y, ATOM_RADIUS + 6);
+      g.stroke({ width: 3, color: BOND_PREVIEW_COLOR, alpha: 0.85 });
+      g.circle(snapTarget.x, snapTarget.y, ATOM_RADIUS + 11);
+      g.stroke({ width: 2, color: BOND_PREVIEW_COLOR, alpha: 0.35 });
     } else {
-      // Move cue: crosshair
-      g.moveTo(localPos.x - 12, localPos.y);
-      g.lineTo(localPos.x + 12, localPos.y);
-      g.moveTo(localPos.x, localPos.y - 12);
-      g.lineTo(localPos.x, localPos.y + 12);
-      g.circle(localPos.x, localPos.y, 16);
-      g.stroke({ width: 2, color: 0x3b82f6, alpha: 0.4 });
+      // Move cue at cursor when no atom is in range — clarifies that
+      // tapping empty canvas relocates the selected atom.
+      g.moveTo(localPos.x - 10, localPos.y);
+      g.lineTo(localPos.x + 10, localPos.y);
+      g.moveTo(localPos.x, localPos.y - 10);
+      g.lineTo(localPos.x, localPos.y + 10);
+      g.stroke({ width: 2, color: 0x64748b, alpha: 0.45 });
     }
   }
 
@@ -519,6 +726,28 @@ export default function PixiApp({ content }: PixiAppProps) {
     if (!sprite) return;
     const pos = sprite.getGlobalPosition();
     createTooltip(effectsContainer, pos.x, pos.y, `${element.name} (${element.atomicNumber})`);
+  }
+
+  function handleBondHover(bondId: string) {
+    if (draggingRef.current) return;
+    const effectsContainer = effectsContainerRef.current;
+    const sceneContainer = sceneContainerRef.current;
+    if (!effectsContainer || !sceneContainer) return;
+    const state = useGameStore.getState();
+    const bond = state.scene.bonds.find((b) => b.id === bondId);
+    if (!bond) return;
+    const atomA = state.scene.atoms.find((a) => a.id === bond.atomAId);
+    const atomB = state.scene.atoms.find((a) => a.id === bond.atomBId);
+    if (!atomA || !atomB) return;
+    const midX = (atomA.x + atomB.x) / 2;
+    const midY = (atomA.y + atomB.y) / 2;
+    const globalPos = sceneContainer.toGlobal({ x: midX, y: midY });
+    createTooltip(
+      effectsContainer,
+      globalPos.x,
+      globalPos.y,
+      bondLabel(bond.bondType)
+    );
   }
 
   return (

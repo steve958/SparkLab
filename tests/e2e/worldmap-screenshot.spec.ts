@@ -90,4 +90,51 @@ test.describe.skip("Phase 1 visuals @visual", () => {
       fullPage: true,
     });
   });
+
+  test("bond preview line during selection (build-molecule mission)", async ({
+    page,
+  }) => {
+    // Drives the "Make Water" mission so we can stage two atoms and
+    // capture the new dotted preview line + green snap halo.
+    await page.setViewportSize({ width: 900, height: 700 });
+    await resetState(page);
+    await page.locator('button:has-text("New Player")').first().click();
+    await page.locator('input[type="text"]').first().fill("Bonder");
+    await page.locator('button:has-text("Create")').last().click();
+    await page
+      .getByRole("button", { name: /Skip the tutorial/i })
+      .click({ timeout: 10000 });
+    // Navigate directly to the foundations mission browser to skip the
+    // world map; clicking through it has been flaky in this test
+    // because of multiple overlapping "Foundations" matches.
+    await page.goto("/worlds?world=foundations", { waitUntil: "load" });
+    const missionBtn = page.getByRole("button", {
+      name: /Build a Hydrogen Atom/,
+    });
+    await missionBtn.waitFor({ state: "visible", timeout: 10000 });
+    await missionBtn.click();
+    await page.waitForSelector("canvas", { timeout: 15000 });
+
+    await page.getByRole("button", { name: "Add Hydrogen atom" }).click();
+    await page.waitForTimeout(150);
+    await page.getByRole("button", { name: "Add Hydrogen atom" }).click();
+    await page.waitForTimeout(300);
+
+    // Drive selection + hover via canvas-relative mouse moves. The
+    // engine spawns atoms near the canvas center with a small jitter so
+    // both should land within a reasonable radius.
+    const canvas = page.locator("canvas");
+    const box = await canvas.boundingBox();
+    if (!box) throw new Error("canvas not measurable");
+    const cx = box.x + box.width / 2;
+    const cy = box.y + box.height / 2;
+    await page.mouse.click(cx - 40, cy);
+    await page.waitForTimeout(150);
+    await page.mouse.move(cx + 40, cy);
+    await page.waitForTimeout(250);
+    await page.screenshot({
+      path: `${OUT}/bond-preview.png`,
+      fullPage: false,
+    });
+  });
 });

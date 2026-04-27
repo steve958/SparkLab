@@ -296,8 +296,8 @@ export default function GameHUD({ content }: GameHUDProps) {
             <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 sm:mt-0" />
             <span>
               {isTouchDevice
-                ? "Tap two atoms to bond. Long-press an atom — or tap a bond — to delete."
-                : "Drag to move, click two atoms to bond. Right-click an atom (or click a bond) to delete."}
+                ? "Tap two atoms to bond. Long-press an atom or bond to delete."
+                : "Drag to move, click two atoms to bond. Right-click an atom or bond to delete."}
             </span>
           </div>
           <button
