@@ -8,7 +8,12 @@ import type { Element } from "@/types";
 import { getElementBySymbol } from "@/data/loader";
 import type { ContentBundle } from "@/data/loader";
 import { shakeSprite, createTooltip } from "./effects";
-import { createAtomSprite, updateAtomSprite, ATOM_RADIUS } from "./atom-sprite";
+import {
+  createAtomSprite,
+  updateAtomSprite,
+  ATOM_RADIUS,
+  parseColorToken,
+} from "./atom-sprite";
 import { drawBond } from "./bond-graphics";
 import { animateScale, animateAlpha } from "./animations";
 import { validateBond, getBondsForAtom, countBondOrder } from "@/engine/bond";
@@ -304,7 +309,23 @@ export default function PixiApp({ content }: PixiAppProps) {
         bondGraphicsRef.current.set(bond.id, g);
         isNewBond = true;
       }
-      drawBond(g, atomA, atomB, bond.bondType, selectedBondId === bond.id);
+      // Look up element colors so the bond inner stroke can gradient
+      // between the two endpoints' atom palettes — H-O reads as
+      // blue→red, etc. Falls back to neutral slate inside drawBond if
+      // either lookup fails.
+      const elementA = getElementBySymbol(content.elements, atomA.elementId);
+      const elementB = getElementBySymbol(content.elements, atomB.elementId);
+      const colorA = elementA ? parseColorToken(elementA.colorToken) : undefined;
+      const colorB = elementB ? parseColorToken(elementB.colorToken) : undefined;
+      drawBond(
+        g,
+        atomA,
+        atomB,
+        bond.bondType,
+        selectedBondId === bond.id,
+        colorA,
+        colorB
+      );
       if (isNewBond && !reducedMotion) {
         // New bonds fade in over ~180ms — matches the atom-spawn
         // animation cadence so the scene feels coherent. Reduced-motion
