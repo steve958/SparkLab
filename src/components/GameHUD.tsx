@@ -273,16 +273,12 @@ export default function GameHUD({ content }: GameHUDProps) {
                 {reactionEquation}
               </p>
             ) : (
-              // Brief wraps to a max of two lines on mobile and stays
-              // single-line on tablet+. Earlier the `truncate` class
-              // collapsed the brief to a few characters because the
-              // top-bar action buttons squeeze the title column down
-              // to ~120px on a phone, so a long brief like
-              // "Some atoms share electrons. Others swap them..."
-              // showed as just "Some at…" — technically rendered but
-              // not useful. line-clamp-2 lets it wrap so kids actually
-              // read the prompt.
-              <p className="text-[11px] sm:text-xs text-slate-500 leading-snug line-clamp-2 sm:line-clamp-1 sm:truncate">
+              // Tablet+ shows a single-line truncated brief next to
+              // the title. On mobile this row is suppressed entirely
+              // and a dedicated full-width brief row renders just
+              // below the top bar (see below) so the text isn't
+              // squeezed by the action-button column.
+              <p className="hidden sm:block text-xs text-slate-500 truncate">
                 {mission.brief}
               </p>
             )}
@@ -330,6 +326,19 @@ export default function GameHUD({ content }: GameHUDProps) {
           </button>
         </div>
       </div>
+
+      {/* Mobile-only brief row. The brief gets the full screen width
+          here instead of the ~120px column it had to share with the
+          back button + action cluster in the top bar, so longer
+          briefs like "Some atoms share electrons. Others swap them..."
+          render in full instead of getting clipped to ellipsis.
+          Reaction missions skip this row because the equation is
+          already shown next to the title in the top bar. */}
+      {!reactionEquation && (
+        <p className="sm:hidden px-3 pb-2 -mt-1 text-[11px] text-slate-600 leading-snug">
+          {mission.brief}
+        </p>
+      )}
 
       {/* Interaction hint banner */}
       {showInteractionHint && (
