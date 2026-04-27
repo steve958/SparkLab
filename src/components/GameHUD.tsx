@@ -254,7 +254,16 @@ export default function GameHUD({ content }: GameHUDProps) {
                 {reactionEquation}
               </p>
             ) : (
-              <p className="text-[11px] sm:text-xs text-slate-500 truncate">
+              // Brief wraps to a max of two lines on mobile and stays
+              // single-line on tablet+. Earlier the `truncate` class
+              // collapsed the brief to a few characters because the
+              // top-bar action buttons squeeze the title column down
+              // to ~120px on a phone, so a long brief like
+              // "Some atoms share electrons. Others swap them..."
+              // showed as just "Some at…" — technically rendered but
+              // not useful. line-clamp-2 lets it wrap so kids actually
+              // read the prompt.
+              <p className="text-[11px] sm:text-xs text-slate-500 leading-snug line-clamp-2 sm:line-clamp-1 sm:truncate">
                 {mission.brief}
               </p>
             )}
