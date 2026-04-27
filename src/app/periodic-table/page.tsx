@@ -9,6 +9,7 @@ import { goBackOr } from "@/lib/navigation";
 import { useProgressStore } from "@/store/progressStore";
 import type { Element } from "@/types";
 import { ArrowLeft, Search, FlaskConical } from "lucide-react";
+import AtomSpinner from "@/components/AtomSpinner";
 
 type FilterCategory = "all" | "metals" | "nonmetals" | "noble" | "lanthanides" | "actinides";
 
@@ -96,7 +97,7 @@ export default function PeriodicTablePage() {
   if (!content) {
     return (
       <div className="flex flex-col items-center justify-center min-h-dvh">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <AtomSpinner size={56} />
       </div>
     );
   }

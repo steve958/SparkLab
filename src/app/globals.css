@@ -231,3 +231,16 @@ body {
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
 }
+
+/* Atom spinner — rotor element spins around its own center; the
+   electron child rides on the top edge so it traces the orbit. */
+@keyframes atom-spinner-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.atom-spinner-rotor {
+  animation: atom-spinner-orbit 1.1s linear infinite;
+  transform-origin: center;
+}

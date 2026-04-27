@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useProgressStore } from "@/store/progressStore";
+import AtomSpinner from "./AtomSpinner";
 
 // Loads profiles once on app boot so that hard navigations and deep links
 // can rehydrate `currentProfile` from localStorage. Placed at the layout
@@ -28,7 +29,7 @@ export default function ProfileBootstrap({
   if (!bootstrapped) {
     return (
       <div className="flex flex-col items-center justify-center min-h-dvh">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <AtomSpinner size={56} />
       </div>
     );
   }

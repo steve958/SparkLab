@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { I18nextProvider } from "react-i18next";
 import i18n from "@/lib/i18n";
+import AtomSpinner from "./AtomSpinner";
 
 export default function I18nProvider({
   children,
@@ -32,7 +33,7 @@ export default function I18nProvider({
   if (!ready) {
     return (
       <div className="flex flex-col items-center justify-center min-h-dvh">
-        <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+        <AtomSpinner size={56} />
       </div>
     );
   }

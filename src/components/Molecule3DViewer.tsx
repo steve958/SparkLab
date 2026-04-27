@@ -2,6 +2,7 @@
 
 import { Suspense, lazy } from "react";
 import type { Molecule, Element } from "@/types";
+import AtomSpinner from "./AtomSpinner";
 
 const Molecule3DCanvas = lazy(() => import("./Molecule3DCanvas"));
 
@@ -20,7 +21,7 @@ export default function Molecule3DViewer(props: Molecule3DViewerProps) {
           className="flex items-center justify-center bg-slate-50 rounded-xl border border-slate-200"
           style={{ width: props.width ?? 400, height: props.height ?? 300 }}
         >
-          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <AtomSpinner size={40} />
         </div>
       }
     >
