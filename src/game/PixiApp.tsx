@@ -18,7 +18,6 @@ import {
 import { drawBond } from "./bond-graphics";
 import { animateScale, animateAlpha } from "./animations";
 import { validateBond, getBondsForAtom, countBondOrder } from "@/engine/bond";
-import { getBondRulesForPair } from "@/data/loader";
 
 // Brand green — matches --primary in globals.css. Used for the bond
 // preview line and snap indicator so the action ties visually to the
@@ -1619,50 +1618,36 @@ export default function PixiApp({ content }: PixiAppProps) {
       let bondType: "covalent-single" | "covalent-double" | "covalent-triple" | "ionic" =
         "covalent-single";
       if (atomA && atomB && elementA && elementB) {
-        // Look up rules first so we can distinguish "no rule for this
-        // pair" (permissive fallback to single covalent) from "rule
-        // exists but the player has exhausted this atom's valence"
-        // (genuine pedagogical correction — surface the explanation
-        // and don't create a misleading bond). validateBond conflates
-        // these cases, so we check the rule list directly.
-        const matchingRules = getBondRulesForPair(
-          content.bondRules,
-          elementA.symbol,
-          elementB.symbol,
-          ageBand
+        // Rule-driven bond selection. validateBond reports invalid for
+        // both "no rule exists for this pair" and "rule exists but
+        // valence is exhausted" — both should refuse the bond and
+        // surface a chemistry-correct explanation. Earlier this path
+        // permissively fell back to covalent-single when no rule
+        // existed, which let the player create silent chemistry-wrong
+        // bonds (e.g. H-Na in the Ionic vs Covalent mission). Trust
+        // validateBond instead — content authoring is responsible for
+        // listing the chemistry that should bond, full stop.
+        const aBonds = countBondOrder(
+          getBondsForAtom(previouslySelectedId, state.scene.bonds)
         );
-        if (matchingRules.length === 0) {
-          // No authored rule for this pair (bond_rules.json is
-          // incomplete content). Fall back to a single covalent bond
-          // so gameplay isn't blocked by missing data.
-          bondType = "covalent-single";
+        const bBonds = countBondOrder(
+          getBondsForAtom(atomId, state.scene.bonds)
+        );
+        const result = validateBond(
+          content.bondRules,
+          elementA,
+          elementB,
+          ageBand,
+          aBonds,
+          bBonds
+        );
+        if (result.valid && result.bondType) {
+          bondType = result.bondType;
         } else {
-          const aBonds = countBondOrder(
-            getBondsForAtom(previouslySelectedId, state.scene.bonds)
-          );
-          const bBonds = countBondOrder(
-            getBondsForAtom(atomId, state.scene.bonds)
-          );
-          const result = validateBond(
-            content.bondRules,
-            elementA,
-            elementB,
-            ageBand,
-            aBonds,
-            bBonds
-          );
-          if (result.valid && result.bondType) {
-            bondType = result.bondType;
-          } else {
-            // Rule exists but valence is exhausted.
-            state.showFeedback(
-              result.explanation,
-              "error"
-            );
-            window.dispatchEvent(new CustomEvent("sparklab-invalid-action"));
-            setSelectedAtom(atomId);
-            return;
-          }
+          state.showFeedback(result.explanation, "error");
+          window.dispatchEvent(new CustomEvent("sparklab-invalid-action"));
+          setSelectedAtom(atomId);
+          return;
         }
       }
 
