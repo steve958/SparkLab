@@ -104,6 +104,12 @@ function nucleonPositions(
   radius: number
 ): Array<{ x: number; y: number }> {
   if (count <= 0) return [];
+  // Single-nucleon case (hydrogen: 1 proton, 0 neutrons) goes dead
+  // center. The sunflower formula below gives r = 0.6 × radius for
+  // i=0/count=1, which is mathematically the area-centroid of a
+  // 1-disk distribution but visually reads as the proton drifting off
+  // to the right. A single particle should sit at the nucleus center.
+  if (count === 1) return [{ x: 0, y: 0 }];
   const positions: Array<{ x: number; y: number }> = [];
   const goldenAngle = Math.PI * (3 - Math.sqrt(5));
   for (let i = 0; i < count; i++) {
