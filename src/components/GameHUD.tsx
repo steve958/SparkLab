@@ -15,6 +15,7 @@ import Molecule3DViewer from "./Molecule3DViewer";
 import AtomLedger from "./AtomLedger";
 import AtomDetailsModal from "./AtomDetailsModal";
 import MoleculePreview from "./MoleculePreview";
+import MissionCompleteConfetti from "./MissionCompleteConfetti";
 import {
   Undo,
   Redo,
@@ -617,7 +618,10 @@ export default function GameHUD({ content }: GameHUDProps) {
       {/* Mission complete overlay */}
       {isMissionComplete && (
         <div className="absolute inset-0 bg-black/40 flex items-center justify-center z-20">
-          <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl">
+          {/* Particle burst — only on actual wins (≥1 star), skipped
+              for reduced-motion users by the component itself. */}
+          {scoreState.stars > 0 && <MissionCompleteConfetti />}
+          <div className="bg-white rounded-2xl p-8 max-w-sm w-full mx-4 text-center shadow-2xl relative z-10">
             {/* Achievement badge: first-clear / new-best / mastered.
                 Hidden when replaying a same-or-worse run. */}
             {(() => {
