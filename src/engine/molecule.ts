@@ -7,6 +7,22 @@ export interface MoleculeValidationResult {
   explanation: string;
 }
 
+export interface MultiMoleculeValidationResult {
+  matches: boolean;
+  // moleculeId for each connected component that matched a known molecule,
+  // in the order the components were discovered.
+  matchedMoleculeIds: string[];
+  // Required molecule IDs that aren't yet present in the scene (with
+  // multiplicity — if the mission needs 2 H₂O and only 1 is built,
+  // this lists "water" once).
+  missingMoleculeIds: string[];
+  // Number of connected components that didn't match any known molecule
+  // — leftover atoms / partial structures the player still has to either
+  // finish or remove.
+  unmatchedComponents: number;
+  explanation: string;
+}
+
 export function validateSceneMolecule(
   molecules: Molecule[],
   atoms: SceneAtom[],
@@ -44,6 +60,150 @@ export function validateSceneMolecule(
     matchedMoleculeId: null,
     explanation: "This structure does not match a known molecule. Check your bonds and atom counts.",
   };
+}
+
+/**
+ * Validates a scene against multiple required molecules — used by
+ * missions whose successConditions list more than one build-molecule
+ * target (e.g. "Ionic vs Covalent": water + sodium chloride).
+ *
+ * Splits the scene into connected components, matches each component
+ * against the known molecule list, then checks that every required
+ * molecule is present as a matched component (with multiplicity). A
+ * disconnected scene is *expected* here — water and NaCl don't share
+ * bonds — so we don't flag the lack of full connectivity as an error.
+ */
+export function validateSceneMolecules(
+  knownMolecules: Molecule[],
+  requiredMoleculeIds: string[],
+  atoms: SceneAtom[],
+  bonds: SceneBond[]
+): MultiMoleculeValidationResult {
+  if (atoms.length === 0) {
+    return {
+      matches: false,
+      matchedMoleculeIds: [],
+      missingMoleculeIds: [...requiredMoleculeIds],
+      unmatchedComponents: 0,
+      explanation:
+        "No atoms in the scene yet. Build the molecules listed in the mission.",
+    };
+  }
+
+  const components = findConnectedComponents(atoms, bonds);
+  const matched: string[] = [];
+  let unmatched = 0;
+  for (const componentAtomIds of components) {
+    const matchedId = matchComponentToMolecule(
+      componentAtomIds,
+      atoms,
+      bonds,
+      knownMolecules
+    );
+    if (matchedId) matched.push(matchedId);
+    else unmatched += 1;
+  }
+
+  // Required vs matched, by multiplicity. A mission needing two waters
+  // isn't satisfied by a single water + a NaCl — it has to see "water"
+  // appear twice in the matched list.
+  const matchedCounts = new Map<string, number>();
+  for (const id of matched) {
+    matchedCounts.set(id, (matchedCounts.get(id) ?? 0) + 1);
+  }
+  const requiredCounts = new Map<string, number>();
+  for (const id of requiredMoleculeIds) {
+    requiredCounts.set(id, (requiredCounts.get(id) ?? 0) + 1);
+  }
+  const missing: string[] = [];
+  for (const [id, needed] of requiredCounts) {
+    const have = matchedCounts.get(id) ?? 0;
+    for (let i = have; i < needed; i++) missing.push(id);
+  }
+
+  let explanation: string;
+  if (missing.length > 0) {
+    const names = missing.map(
+      (id) =>
+        knownMolecules.find((m) => m.moleculeId === id)?.displayName ?? id
+    );
+    explanation = `Still need: ${names.join(", ")}.`;
+  } else if (unmatched > 0) {
+    // All required molecules are present but the player has extra
+    // partial structures. We accept this as long as the requirements
+    // are met — the message is informational, not blocking.
+    explanation =
+      "Looks like you also have some leftover atoms. The required molecules are built — you can clean up the extras or keep going.";
+  } else {
+    explanation = "You built every required molecule!";
+  }
+
+  return {
+    // Soft-pass even with unmatched leftovers: as long as every
+    // required molecule is present, the mission objective is met.
+    // Partial / extra structures are a UX nudge, not a fail.
+    matches: missing.length === 0,
+    matchedMoleculeIds: matched,
+    missingMoleculeIds: missing,
+    unmatchedComponents: unmatched,
+    explanation,
+  };
+}
+
+function findConnectedComponents(
+  atoms: SceneAtom[],
+  bonds: SceneBond[]
+): string[][] {
+  const atomIds = new Set(atoms.map((a) => a.id));
+  const adj = new Map<string, Set<string>>();
+  for (const id of atomIds) adj.set(id, new Set());
+  for (const b of bonds) {
+    if (atomIds.has(b.atomAId) && atomIds.has(b.atomBId)) {
+      adj.get(b.atomAId)?.add(b.atomBId);
+      adj.get(b.atomBId)?.add(b.atomAId);
+    }
+  }
+
+  const visited = new Set<string>();
+  const components: string[][] = [];
+  for (const id of atomIds) {
+    if (visited.has(id)) continue;
+    const component: string[] = [];
+    const stack = [id];
+    visited.add(id);
+    while (stack.length > 0) {
+      const curr = stack.pop()!;
+      component.push(curr);
+      for (const neighbor of adj.get(curr) ?? []) {
+        if (!visited.has(neighbor)) {
+          visited.add(neighbor);
+          stack.push(neighbor);
+        }
+      }
+    }
+    components.push(component);
+  }
+  return components;
+}
+
+function matchComponentToMolecule(
+  componentAtomIds: string[],
+  allAtoms: SceneAtom[],
+  allBonds: SceneBond[],
+  knownMolecules: Molecule[]
+): string | null {
+  const idSet = new Set(componentAtomIds);
+  const componentAtoms = allAtoms.filter((a) => idSet.has(a.id));
+  const componentBonds = allBonds.filter(
+    (b) => idSet.has(b.atomAId) && idSet.has(b.atomBId)
+  );
+  const sceneGraph = buildSceneGraph(componentAtoms, componentBonds);
+  for (const molecule of knownMolecules) {
+    if (isGraphMatch(sceneGraph, molecule.allowedBondGraph)) {
+      return molecule.moleculeId;
+    }
+  }
+  return null;
 }
 
 function buildSceneGraph(

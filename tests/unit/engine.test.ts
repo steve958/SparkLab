@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { buildAtom, getExpectedBondCount } from "@/engine/atom";
 import { validateBond, countBondOrder } from "@/engine/bond";
-import { validateSceneMolecule } from "@/engine/molecule";
+import { validateSceneMolecule, validateSceneMolecules } from "@/engine/molecule";
 import { validateAtomConservation, validateReactionMission } from "@/engine/reaction";
 import { calculateScore } from "@/engine/scoring";
 import type { Element, BondRule, SceneAtom, SceneBond, Molecule, Reaction } from "@/types";
@@ -287,6 +287,147 @@ describe("Molecule Engine", () => {
     const result = validateSceneMolecule([], atoms, bonds);
     expect(result.matches).toBe(false);
     expect(result.explanation.toLowerCase()).toContain("not all connected");
+  });
+
+  // Multi-molecule missions (e.g. "Ionic vs Covalent": water + NaCl)
+  // expect the scene to contain *multiple* disconnected molecules.
+  // The single-molecule validator surfaces "atoms not all connected"
+  // for a correctly-built scene, which is chemistry-wrong (you don't
+  // bond Na to H₂O). validateSceneMolecules must accept the scene as
+  // long as each required molecule appears as its own component.
+  it("validateSceneMolecules accepts disconnected required molecules", () => {
+    const water: Molecule = {
+      moleculeId: "water",
+      displayName: "Water",
+      formulaHill: "H2O",
+      ageBand: "8-10",
+      allowedBondGraph: {
+        nodes: [
+          { elementId: "O", label: "O" },
+          { elementId: "H", label: "H1" },
+          { elementId: "H", label: "H2" },
+        ],
+        edges: [
+          { from: 0, to: 1, type: "covalent-single" },
+          { from: 0, to: 2, type: "covalent-single" },
+        ],
+      },
+      synonyms: [],
+      difficulty: 1,
+      uses3dTemplate: false,
+      factKey: "fact_water",
+    } as unknown as Molecule;
+    const nacl: Molecule = {
+      moleculeId: "sodium_chloride",
+      displayName: "Sodium Chloride",
+      formulaHill: "NaCl",
+      ageBand: "11-14",
+      allowedBondGraph: {
+        nodes: [
+          { elementId: "Na", label: "Na" },
+          { elementId: "Cl", label: "Cl" },
+        ],
+        edges: [{ from: 0, to: 1, type: "ionic" }],
+      },
+      synonyms: [],
+      difficulty: 3,
+      uses3dTemplate: false,
+      factKey: "fact_sodium_chloride",
+    } as unknown as Molecule;
+
+    const atoms: SceneAtom[] = [
+      // Water on the left
+      { id: "o1", elementId: "O", x: 100, y: 100, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "h1", elementId: "H", x: 80, y: 130, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h2", elementId: "H", x: 120, y: 130, protons: 1, neutrons: 0, electrons: 1 },
+      // NaCl on the right (intentionally NOT bonded to the water)
+      { id: "na1", elementId: "Na", x: 400, y: 100, protons: 11, neutrons: 12, electrons: 11 },
+      { id: "cl1", elementId: "Cl", x: 440, y: 100, protons: 17, neutrons: 18, electrons: 17 },
+    ];
+    const bonds: SceneBond[] = [
+      { id: "b1", atomAId: "o1", atomBId: "h1", bondType: "covalent-single" },
+      { id: "b2", atomAId: "o1", atomBId: "h2", bondType: "covalent-single" },
+      { id: "b3", atomAId: "na1", atomBId: "cl1", bondType: "ionic" },
+    ];
+
+    const result = validateSceneMolecules(
+      [water, nacl],
+      ["water", "sodium_chloride"],
+      atoms,
+      bonds
+    );
+    expect(result.matches).toBe(true);
+    expect(result.matchedMoleculeIds.sort()).toEqual([
+      "sodium_chloride",
+      "water",
+    ]);
+    expect(result.missingMoleculeIds).toEqual([]);
+  });
+
+  it("validateSceneMolecules reports missing required molecules by display name", () => {
+    const water: Molecule = {
+      moleculeId: "water",
+      displayName: "Water",
+      formulaHill: "H2O",
+      ageBand: "8-10",
+      allowedBondGraph: {
+        nodes: [
+          { elementId: "O", label: "O" },
+          { elementId: "H", label: "H1" },
+          { elementId: "H", label: "H2" },
+        ],
+        edges: [
+          { from: 0, to: 1, type: "covalent-single" },
+          { from: 0, to: 2, type: "covalent-single" },
+        ],
+      },
+      synonyms: [],
+      difficulty: 1,
+      uses3dTemplate: false,
+      factKey: "fact_water",
+    } as unknown as Molecule;
+    const nacl: Molecule = {
+      moleculeId: "sodium_chloride",
+      displayName: "Sodium Chloride",
+      formulaHill: "NaCl",
+      ageBand: "11-14",
+      allowedBondGraph: {
+        nodes: [
+          { elementId: "Na", label: "Na" },
+          { elementId: "Cl", label: "Cl" },
+        ],
+        edges: [{ from: 0, to: 1, type: "ionic" }],
+      },
+      synonyms: [],
+      difficulty: 3,
+      uses3dTemplate: false,
+      factKey: "fact_sodium_chloride",
+    } as unknown as Molecule;
+
+    // Player built water but not NaCl yet.
+    const atoms: SceneAtom[] = [
+      { id: "o1", elementId: "O", x: 100, y: 100, protons: 8, neutrons: 8, electrons: 8 },
+      { id: "h1", elementId: "H", x: 80, y: 130, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h2", elementId: "H", x: 120, y: 130, protons: 1, neutrons: 0, electrons: 1 },
+    ];
+    const bonds: SceneBond[] = [
+      { id: "b1", atomAId: "o1", atomBId: "h1", bondType: "covalent-single" },
+      { id: "b2", atomAId: "o1", atomBId: "h2", bondType: "covalent-single" },
+    ];
+
+    const result = validateSceneMolecules(
+      [water, nacl],
+      ["water", "sodium_chloride"],
+      atoms,
+      bonds
+    );
+    expect(result.matches).toBe(false);
+    expect(result.missingMoleculeIds).toEqual(["sodium_chloride"]);
+    expect(result.explanation).toContain("Sodium Chloride");
+    // The player should never see "atoms not all connected" for a
+    // correctly-built water on its own — that wording belongs to
+    // single-molecule missions only.
+    expect(result.explanation.toLowerCase()).not.toContain("not all connected");
   });
 });
 

@@ -7,7 +7,7 @@ import { loadContent, clearContentCache, type ContentBundle, getString } from "@
 import { useGameStore } from "@/store/gameStore";
 import { useProgressStore } from "@/store/progressStore";
 import { saveSlot, saveMissionProgress } from "@/lib/db";
-import { validateSceneMolecule } from "@/engine/molecule";
+import { validateSceneMolecule, validateSceneMolecules } from "@/engine/molecule";
 import { validateReactionMission } from "@/engine/reaction";
 import { validateBond } from "@/engine/bond";
 import { nudgePosition, findNearestAtom } from "@/engine/interaction";
@@ -182,16 +182,61 @@ export default function GamePage() {
     };
 
     if (mission.objectiveType === "build-molecule") {
-      const result = validateSceneMolecule(content.molecules, scene.atoms, scene.bonds);
-      if (result.matches) {
-        const targetMoleculeId = mission.allowedMolecules[0];
-        const molecule = content.molecules.find((m) => m.moleculeId === targetMoleculeId);
-        const explanation = molecule
-          ? getString(content.strings, `explanation_${molecule.moleculeId}`, "en")
-          : "Great job!";
-        await handleSuccess(explanation);
+      // Some build-molecule missions list more than one target (e.g.
+      // "Ionic vs Covalent" wants water + sodium chloride built side
+      // by side). The single-molecule validator collapses the whole
+      // scene into one match attempt, which fails as soon as the
+      // scene has two disconnected molecules and then surfaces a
+      // chemistry-wrong "link them with bonds" message — water and
+      // NaCl don't share bonds. Dispatch on the success-condition
+      // shape so multi-target missions use the per-component matcher.
+      const requiredMoleculeIds = mission.successConditions
+        .filter(
+          (c): c is { type: "build-molecule"; targetMoleculeId: string } =>
+            c.type === "build-molecule"
+        )
+        .map((c) => c.targetMoleculeId);
+
+      if (requiredMoleculeIds.length > 1) {
+        const result = validateSceneMolecules(
+          content.molecules,
+          requiredMoleculeIds,
+          scene.atoms,
+          scene.bonds
+        );
+        if (result.matches) {
+          // Stitch every matched molecule's explanation into the
+          // success blurb so the notebook entry captures the chemistry
+          // for both bond types — that's the lesson of this mission.
+          const explanations = requiredMoleculeIds
+            .map((id) =>
+              getString(content.strings, `explanation_${id}`, "en")
+            )
+            .filter((t) => t && !t.startsWith("explanation_"));
+          const explanation =
+            explanations.length > 0 ? explanations.join(" ") : "Great job!";
+          await handleSuccess(explanation);
+        } else {
+          recordFailure(result.explanation);
+        }
       } else {
-        recordFailure(result.explanation);
+        const result = validateSceneMolecule(
+          content.molecules,
+          scene.atoms,
+          scene.bonds
+        );
+        if (result.matches) {
+          const targetMoleculeId = mission.allowedMolecules[0];
+          const molecule = content.molecules.find(
+            (m) => m.moleculeId === targetMoleculeId
+          );
+          const explanation = molecule
+            ? getString(content.strings, `explanation_${molecule.moleculeId}`, "en")
+            : "Great job!";
+          await handleSuccess(explanation);
+        } else {
+          recordFailure(result.explanation);
+        }
       }
     } else if (mission.objectiveType === "build-atom") {
       const condition = mission.successConditions[0];
