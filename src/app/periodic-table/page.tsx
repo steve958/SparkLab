@@ -386,13 +386,36 @@ interface PeriodicCellProps {
 
 function PeriodicCell({ element, onSelect, discovered = true }: PeriodicCellProps) {
   const img = getElementImageUrl(element.symbol);
+  // Hover lift: scale up, raise stacking context above neighbors, add a
+  // colored glow + white ring + drop shadow for depth. Smooth transition
+  // on all transform/shadow properties so the lift feels responsive
+  // rather than jumpy. active: a tiny bounce-down on click for tactile
+  // feedback. Reduced-motion users skip the global animation rule
+  // already, so the hover still triggers but resolves instantly.
+  const categoryColor = CATEGORY_COLORS[element.category] || "#94a3b8";
   return (
     <button
       onClick={() => onSelect(element)}
-      className={`w-full h-full rounded-md overflow-hidden flex flex-col items-center justify-center text-white transition-all hover:scale-110 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-primary relative ${
-        discovered ? "" : "grayscale opacity-50"
-      }`}
-      style={{ backgroundColor: CATEGORY_COLORS[element.category] || "#94a3b8" }}
+      className={`w-full h-full rounded-md overflow-hidden flex flex-col items-center justify-center text-white relative
+        transition-all duration-200 ease-out will-change-transform
+        hover:scale-[1.12] hover:-translate-y-0.5 hover:z-10
+        hover:ring-2 hover:ring-white/60 hover:shadow-xl
+        active:scale-[1.06] active:duration-75
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:ring-primary focus-visible:z-10
+        ${discovered ? "" : "grayscale opacity-50 hover:opacity-80"}`}
+      style={{
+        backgroundColor: categoryColor,
+        // Inline custom property so the hover shadow can pick up the
+        // element's category color — gives each cell a glow that
+        // matches its row tone instead of one generic black drop.
+        boxShadow: undefined,
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow = `0 12px 28px -6px ${categoryColor}99, 0 0 0 1px rgba(255,255,255,0.4)`;
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "";
+      }}
       aria-label={`${element.name}, atomic number ${element.atomicNumber}${discovered ? ", discovered" : ", not yet discovered"}`}
     >
       {img ? (
