@@ -79,7 +79,9 @@ export function matchReactionToScene(
 
 /**
  * Validates a reaction mission scene.
- * Atoms left of centerX are reactants; atoms right of centerX are products.
+ * Atoms whose `side` was stamped at spawn (Reactants/Products tray buttons)
+ * partition by that field. Atoms without a stamped side fall back to the
+ * legacy position rule: left of centerX = reactant, right = product.
  */
 export function validateReactionMission(
   reaction: Reaction,
@@ -88,9 +90,16 @@ export function validateReactionMission(
   sceneBonds: SceneBond[],
   centerX: number
 ): ReactionMissionValidationResult {
-  // Partition atoms by position
-  const reactantAtoms = sceneAtoms.filter((a) => a.x < centerX);
-  const productAtoms = sceneAtoms.filter((a) => a.x >= centerX);
+  // Partition by stamped side first, position only as fallback. The
+  // stamped side is what the player asked for via the side-aware tray
+  // and is robust to viewport size, pan, zoom, and post-spawn dragging
+  // — none of which is true for the centerX-vs-x comparison.
+  const reactantAtoms = sceneAtoms.filter((a) =>
+    a.side ? a.side === "reactants" : a.x < centerX
+  );
+  const productAtoms = sceneAtoms.filter((a) =>
+    a.side ? a.side === "products" : a.x >= centerX
+  );
 
   // 1. Conservation check
   const conservation = validateAtomConservation(reactantAtoms, productAtoms);

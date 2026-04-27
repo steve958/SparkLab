@@ -337,6 +337,12 @@ export default function GamePage() {
         electrons:
           content?.elements.find((e) => e.symbol === detail.elementId)
             ?.atomicNumber ?? 1,
+        // Stamp the side intent onto the atom in reaction missions so
+        // ledger + validation key off the button the player pressed,
+        // not a centerX guess that breaks on narrow viewports or after
+        // pan/zoom. Plain spawns (non-reaction missions) leave it
+        // undefined.
+        ...(isReaction && detail.side ? { side: detail.side } : {}),
       };
       addAtom(atom);
     };

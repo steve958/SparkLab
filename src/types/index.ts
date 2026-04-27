@@ -193,6 +193,15 @@ export interface SceneAtom {
   protons: number;
   neutrons: number;
   electrons: number;
+  // Reaction-mission side intent. Set by the side-aware spawn buttons
+  // (Reactants / Products) in reaction-mode missions and used by both
+  // the AtomLedger and the conservation validator instead of a fragile
+  // centerX-vs-atom-x partition. Persists across drags so the chemistry
+  // role stays what the player asked for, not what a coordinate guess
+  // happens to say after zooming or panning. Undefined in non-reaction
+  // missions and on legacy persisted scenes; consumers fall back to the
+  // position-based partition when missing.
+  side?: "reactants" | "products";
 }
 
 export interface SceneBond {

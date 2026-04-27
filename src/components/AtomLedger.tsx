@@ -16,12 +16,24 @@ export default function AtomLedger({ elements, centerX = 400 }: AtomLedgerProps)
   const scene = useGameStore((s) => s.scene);
   const reactionMode = useGameStore((s) => s.reactionMode);
 
+  // Prefer the side stamped on the atom at spawn (set by the
+  // Reactants/Products tray buttons) — that's the player's stated
+  // intent and survives drags, pan, zoom, and viewport changes. Fall
+  // back to the legacy x-vs-centerX partition only for atoms without a
+  // stamped side (older saves, or atoms placed before the side-aware
+  // tray landed).
   const reactantAtoms = useMemo(
-    () => scene.atoms.filter((a) => a.x < centerX),
+    () =>
+      scene.atoms.filter((a) =>
+        a.side ? a.side === "reactants" : a.x < centerX
+      ),
     [scene.atoms, centerX]
   );
   const productAtoms = useMemo(
-    () => scene.atoms.filter((a) => a.x >= centerX),
+    () =>
+      scene.atoms.filter((a) =>
+        a.side ? a.side === "products" : a.x >= centerX
+      ),
     [scene.atoms, centerX]
   );
 

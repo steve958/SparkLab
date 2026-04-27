@@ -413,6 +413,56 @@ describe("Reaction Mission Validation", () => {
     expect(result.success).toBe(false);
     expect(result.productsValid).toBe(false);
   });
+
+  // Regression: on a narrow viewport (or with a stale centerX prop in
+  // the AtomLedger), atom.x for "products" spawns can land below the
+  // partition's centerX and get misclassified as reactants. The stamped
+  // `side` field bypasses that — atoms placed via the Products tray
+  // button must be counted as products even when their x sits on the
+  // wrong side of centerX.
+  it("uses stamped side over position when both disagree", () => {
+    // All atoms placed at x = 100, well below centerX = 400, so a
+    // pure position-based partition would put everything on the
+    // reactants side. The `side` field overrides that.
+    const atoms: SceneAtom[] = [
+      // Reactants: 2 H2 + O2
+      { id: "h1", elementId: "H", x: 100, y: 100, protons: 1, neutrons: 0, electrons: 1, side: "reactants" },
+      { id: "h2", elementId: "H", x: 100, y: 110, protons: 1, neutrons: 0, electrons: 1, side: "reactants" },
+      { id: "h3", elementId: "H", x: 100, y: 120, protons: 1, neutrons: 0, electrons: 1, side: "reactants" },
+      { id: "h4", elementId: "H", x: 100, y: 130, protons: 1, neutrons: 0, electrons: 1, side: "reactants" },
+      { id: "o1", elementId: "O", x: 100, y: 140, protons: 8, neutrons: 8, electrons: 8, side: "reactants" },
+      { id: "o2", elementId: "O", x: 100, y: 150, protons: 8, neutrons: 8, electrons: 8, side: "reactants" },
+      // Products: 2 H2O — also placed at x = 100, but stamped "products"
+      { id: "h5", elementId: "H", x: 100, y: 200, protons: 1, neutrons: 0, electrons: 1, side: "products" },
+      { id: "h6", elementId: "H", x: 100, y: 210, protons: 1, neutrons: 0, electrons: 1, side: "products" },
+      { id: "o3", elementId: "O", x: 100, y: 220, protons: 8, neutrons: 8, electrons: 8, side: "products" },
+      { id: "h7", elementId: "H", x: 100, y: 230, protons: 1, neutrons: 0, electrons: 1, side: "products" },
+      { id: "h8", elementId: "H", x: 100, y: 240, protons: 1, neutrons: 0, electrons: 1, side: "products" },
+      { id: "o4", elementId: "O", x: 100, y: 250, protons: 8, neutrons: 8, electrons: 8, side: "products" },
+    ];
+    const bonds: SceneBond[] = [
+      { id: "b1", atomAId: "h1", atomBId: "h2", bondType: "covalent-single" },
+      { id: "b2", atomAId: "h3", atomBId: "h4", bondType: "covalent-single" },
+      { id: "b3", atomAId: "o1", atomBId: "o2", bondType: "covalent-double" },
+      { id: "b4", atomAId: "o3", atomBId: "h5", bondType: "covalent-single" },
+      { id: "b5", atomAId: "o3", atomBId: "h6", bondType: "covalent-single" },
+      { id: "b6", atomAId: "o4", atomBId: "h7", bondType: "covalent-single" },
+      { id: "b7", atomAId: "o4", atomBId: "h8", bondType: "covalent-single" },
+    ];
+
+    const result = validateReactionMission(
+      waterFormationReaction,
+      testMolecules,
+      atoms,
+      bonds,
+      400 // would misclassify everyone as reactants without the side field
+    );
+
+    expect(result.success).toBe(true);
+    expect(result.conservation.conserved).toBe(true);
+    expect(result.productsValid).toBe(true);
+    expect(result.reactantsValid).toBe(true);
+  });
 });
 
 describe("Scoring Engine", () => {
