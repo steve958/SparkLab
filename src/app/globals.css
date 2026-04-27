@@ -200,3 +200,34 @@ body {
   animation-timing-function: cubic-bezier(0.2, 0.7, 0.4, 1);
   animation-fill-mode: both;
 }
+
+/* Ambient atom drift — used on the home screen and world map for a
+   subtle "chemistry is alive in the background" feel. Intentionally
+   small motion (±60–80px) over 30+ seconds so the atoms read as
+   atmosphere, not movement competing with the UI. The global
+   prefers-reduced-motion rule above zeros the animation; the
+   AmbientAtoms component also drops the drift class in that case so
+   the dots become purely static decoration. */
+.ambient-atom {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(0.5px);
+  opacity: 0.55;
+  will-change: transform;
+}
+
+@keyframes ambient-drift {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(var(--drift-x), var(--drift-y));
+  }
+}
+
+.ambient-atom-drift {
+  animation-name: ambient-drift;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+}

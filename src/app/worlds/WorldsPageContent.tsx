@@ -7,6 +7,7 @@ import { useProgressStore } from "@/store/progressStore";
 import { goBackOr } from "@/lib/navigation";
 import MissionBrowser from "@/components/MissionBrowser";
 import WorldMap from "@/components/WorldMap";
+import AmbientAtoms from "@/components/AmbientAtoms";
 import { ArrowLeft } from "lucide-react";
 
 export default function WorldsPageContent() {
@@ -63,10 +64,14 @@ export default function WorldsPageContent() {
   }
 
   // Schematic world map. Per Phase 1 design decision Q2: clean schematic,
-  // no illustrated art. Implementation in components/WorldMap.tsx.
+  // no illustrated art. Implementation in components/WorldMap.tsx. The
+  // ambient atom layer sits behind the map for a faint chemistry-flavored
+  // atmosphere — different seed than the LabHub layer so the two surfaces
+  // have visually distinct distributions.
   return (
-    <main className="flex-1 flex flex-col items-center px-3 sm:px-4 py-4 sm:py-6 sm:justify-center overflow-y-auto">
-      <div className="w-full max-w-3xl">
+    <main className="flex-1 flex flex-col items-center px-3 sm:px-4 py-4 sm:py-6 sm:justify-center overflow-y-auto relative overflow-x-hidden">
+      <AmbientAtoms count={14} seed={113} />
+      <div className="relative z-10 w-full max-w-3xl">
         <button
           onClick={() => goBackOr(router, "/")}
           className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-3 sm:mb-6 touch-target"
