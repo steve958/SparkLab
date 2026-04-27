@@ -138,6 +138,81 @@ function drawNuclei(
   }
 }
 
+/** Draw Bohr-style electron shells for every atom: thin concentric
+ *  rings showing each occupied shell, with electron dots distributed
+ *  evenly around each ring and rotating slowly. Different shells
+ *  rotate at different rates so the picture stays visually "alive"
+ *  rather than locking into a static pattern.
+ *
+ *  Uses element.shellOccupancy (e.g. O = [2, 6]) at the neutral
+ *  configuration. We intentionally don't shrink the outermost shell
+ *  for ions — the chemistry of "Na lost an electron" is already
+ *  conveyed by the charge pill, and showing the neutral atomic
+ *  structure keeps the visual stable while the player builds. */
+function drawElectronShells(
+  g: Graphics,
+  scene: SceneState,
+  elements: Element[],
+  timeSec: number,
+  zoom: number,
+  reduceMotion: boolean
+) {
+  g.clear();
+  if (zoom < NUCLEUS_ZOOM_THRESHOLD) return;
+
+  for (const atom of scene.atoms) {
+    const element = elements.find((e) => e.symbol === atom.elementId);
+    if (!element || !element.shellOccupancy) continue;
+    const shells = element.shellOccupancy;
+    if (shells.length === 0) continue;
+
+    const atomRadius = getAtomRadius(element);
+    const nucleusRadius = Math.max(atomRadius * 0.42, 12);
+
+    // Lay shells out evenly between the nucleus edge and the inner
+    // perimeter of the atom body, leaving a small margin so the
+    // outermost orbit doesn't crash through the rim.
+    const innerEdge = nucleusRadius + 4;
+    const outerEdge = atomRadius * 0.93;
+    const span = Math.max(0, outerEdge - innerEdge);
+
+    for (let s = 0; s < shells.length; s++) {
+      const electronCount = shells[s];
+      // Distribute shells through the span so they're not crammed.
+      const t = (s + 0.5) / shells.length;
+      const shellRadius = innerEdge + span * t;
+
+      // Shell ring — thin and faint so it doesn't compete with the
+      // electrons riding it.
+      g.circle(atom.x, atom.y, shellRadius);
+      g.stroke({ width: 0.7, color: 0x64748b, alpha: 0.35 });
+
+      if (electronCount <= 0) continue;
+
+      // Each shell rotates at a slightly different rate so the visual
+      // doesn't flatten into a static rosette. Inner shells nominally
+      // orbit faster but we keep all shells slow so the eye reads
+      // "atom is alive" rather than "everything is moving."
+      const omega = reduceMotion
+        ? 0
+        : 0.35 * (1 + (shells.length - 1 - s) * 0.25);
+      const baseAngle = timeSec * omega + s * 0.7;
+
+      for (let i = 0; i < electronCount; i++) {
+        const angle = (i / electronCount) * Math.PI * 2 + baseAngle;
+        const ex = atom.x + Math.cos(angle) * shellRadius;
+        const ey = atom.y + Math.sin(angle) * shellRadius;
+        // Electron — small white dot with a thin outline so it reads
+        // as the same "kind of thing" as the Lewis valence dots
+        // (which sit at the perimeter of the atom).
+        g.circle(ex, ey, 2.2);
+        g.fill({ color: 0xffffff, alpha: 1 });
+        g.stroke({ width: 0.5, color: 0x334155, alpha: 0.7 });
+      }
+    }
+  }
+}
+
 // Standard Lewis-dot layout: number of dots on each side (N, E, S, W),
 // filling singles before pairs. Indexed by total dot count 0..8.
 const VALENCE_LAYOUTS: Record<number, [number, number, number, number]> = {
@@ -496,6 +571,9 @@ export default function PixiApp({ content }: PixiAppProps) {
   const chargesRef = useRef<Container | null>(null);
   // Nucleus detail (protons + neutrons) — only drawn when zoom >= 1.8x.
   const nucleiRef = useRef<Graphics | null>(null);
+  // Bohr electron shells + orbital electrons — animated, also gated
+  // on the same zoom threshold as the nucleus.
+  const electronShellsRef = useRef<Graphics | null>(null);
   const atomSpritesRef = useRef<Map<string, Container>>(new Map());
   const bondGraphicsRef = useRef<Map<string, Graphics>>(new Map());
   const draggingRef = useRef<{ atomId: string; offsetX: number; offsetY: number } | null>(null);
@@ -601,6 +679,16 @@ export default function PixiApp({ content }: PixiAppProps) {
       sceneContainer.addChild(nucleiG);
       nucleiRef.current = nucleiG;
 
+      // Bohr shell layer — concentric rings + orbital electrons that
+      // rotate around the nucleus. Sits above the nucleus dots but
+      // below the outer Lewis dots and charge pills, so the orbital
+      // structure renders inside the atom body without occluding the
+      // chemistry decorations on the perimeter.
+      const shellsG = new Graphics();
+      shellsG.zIndex = 2.45;
+      sceneContainer.addChild(shellsG);
+      electronShellsRef.current = shellsG;
+
       const effectsContainer = new Container();
       effectsContainer.zIndex = 3;
       sceneContainer.addChild(effectsContainer);
@@ -614,17 +702,33 @@ export default function PixiApp({ content }: PixiAppProps) {
         lastTickMs += ticker.deltaMS;
         if (lastTickMs < 33) return; // ~30 fps
         lastTickMs = 0;
-        const g = electronsRef.current;
-        if (!g) return;
         const reduceMotion =
           useProgressStore.getState().settings?.reducedMotion ?? false;
-        drawSharedElectrons(
-          g,
-          useGameStore.getState().scene,
-          content.elements,
-          performance.now() / 1000,
-          reduceMotion
-        );
+        const scene = useGameStore.getState().scene;
+        const tSec = performance.now() / 1000;
+
+        if (electronsRef.current) {
+          drawSharedElectrons(
+            electronsRef.current,
+            scene,
+            content.elements,
+            tSec,
+            reduceMotion
+          );
+        }
+        // Bohr orbital electrons — the per-atom shell rotation. The
+        // function early-exits if zoom is below the nucleus-detail
+        // threshold so the layer stays empty at normal zoom.
+        if (electronShellsRef.current) {
+          drawElectronShells(
+            electronShellsRef.current,
+            scene,
+            content.elements,
+            tSec,
+            zoomRef.current,
+            reduceMotion
+          );
+        }
       };
       app.ticker.add(electronsTick);
       electronsTickerRef.current = electronsTick;
@@ -725,15 +829,28 @@ export default function PixiApp({ content }: PixiAppProps) {
           sceneContainer.x = panRef.current.x;
           sceneContainer.y = panRef.current.y;
 
-          // Nucleus visibility is zoom-gated — redraw whenever the
-          // crossing happens (and on the way out too, so the layer
-          // clears when zooming back below the threshold).
+          // Nucleus + shell visibility is zoom-gated — redraw both
+          // whenever the crossing happens (and on the way out too,
+          // so the layers clear when zooming back below threshold).
+          const scene = useGameStore.getState().scene;
           if (nucleiRef.current) {
             drawNuclei(
               nucleiRef.current,
-              useGameStore.getState().scene,
+              scene,
               content.elements,
               newZoom
+            );
+          }
+          if (electronShellsRef.current) {
+            const reduceMotion =
+              useProgressStore.getState().settings?.reducedMotion ?? false;
+            drawElectronShells(
+              electronShellsRef.current,
+              scene,
+              content.elements,
+              performance.now() / 1000,
+              newZoom,
+              reduceMotion
             );
           }
         },
@@ -767,6 +884,7 @@ export default function PixiApp({ content }: PixiAppProps) {
       valenceRef.current = null;
       chargesRef.current = null;
       nucleiRef.current = null;
+      electronShellsRef.current = null;
       if (appRef.current) {
         try {
           appRef.current.destroy(true, { children: true, texture: true, textureSource: true });
