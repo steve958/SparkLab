@@ -65,16 +65,29 @@ function bohrFade(zoom: number): number {
   return (zoom - NUCLEUS_FADE_START) / (NUCLEUS_ZOOM_THRESHOLD - NUCLEUS_FADE_START);
 }
 
-/** Apply an ionic charge to a neutral shell occupancy by removing
- *  electrons from the outermost shell(s) for cations and adding them
- *  to the outermost shell for anions. Trailing empty shells are
- *  dropped so Na⁺ (originally [2,8,1]) renders as [2,8] rather than
- *  a leftover empty ring. */
+/** Apply an ionic charge AND covalent bond order to a neutral shell
+ *  occupancy. Cations lose outer-shell electrons; anions gain them;
+ *  covalent bonds peel off `bondedCovalent` electrons from the outer
+ *  shell because those electrons are currently shared in the bond
+ *  region (drawBondFlow renders them there separately). Without the
+ *  covalent subtraction the high-zoom view double-counts bonded
+ *  electrons — e.g. Cl in HCl rendered [2,8,7] in shells AND showed
+ *  the bond pair traveling, totaling 9 around Cl when chemistry says
+ *  8 (octet). Trailing empty shells are dropped so Na⁺ (originally
+ *  [2,8,1]) renders as [2,8] rather than a leftover empty ring. */
 function effectiveShellOccupancy(
   baseShells: number[],
-  ionicCharge: number
+  ionicCharge: number,
+  bondedCovalent: number = 0
 ): number[] {
-  if (ionicCharge === 0 || baseShells.length === 0) return baseShells;
+  if (
+    ionicCharge === 0 &&
+    bondedCovalent === 0 &&
+    baseShells.length > 0
+  ) {
+    return baseShells;
+  }
+  if (baseShells.length === 0) return baseShells;
   const shells = [...baseShells];
   if (ionicCharge > 0) {
     // Cation: peel electrons off the outermost shells until charge is
@@ -86,14 +99,52 @@ function effectiveShellOccupancy(
       shells[i] -= remove;
       toRemove -= remove;
     }
-    while (shells.length > 0 && shells[shells.length - 1] === 0) {
-      shells.pop();
-    }
-  } else {
+  } else if (ionicCharge < 0) {
     // Anion: add to outermost shell (typically completing the octet).
     shells[shells.length - 1] += -ionicCharge;
   }
+  // Covalent: subtract bonded electrons from the outermost shells.
+  // One per single-bond, two per double, three per triple — those
+  // electrons are now visualized in the bond region by drawBondFlow.
+  if (bondedCovalent > 0) {
+    let toRemove = bondedCovalent;
+    for (let i = shells.length - 1; i >= 0 && toRemove > 0; i--) {
+      const remove = Math.min(shells[i], toRemove);
+      shells[i] -= remove;
+      toRemove -= remove;
+    }
+  }
+  while (shells.length > 0 && shells[shells.length - 1] === 0) {
+    shells.pop();
+  }
   return shells;
+}
+
+/** Sum of bond orders for an atom's covalent bonds — same heuristic
+ *  drawValenceDots already uses for lone-pair counting, lifted here so
+ *  drawElectronShells can subtract these from the Bohr shells too. */
+function covalentBondOrderForAtom(
+  atomId: string,
+  scene: SceneState
+): number {
+  let order = 0;
+  for (const b of scene.bonds) {
+    if (b.atomAId !== atomId && b.atomBId !== atomId) continue;
+    switch (b.bondType) {
+      case "covalent-double":
+        order += 2;
+        break;
+      case "covalent-triple":
+        order += 3;
+        break;
+      case "covalent-single":
+        order += 1;
+        break;
+      // Ionic bonds are handled separately via formal charge — no
+      // shared-electron deduction here.
+    }
+  }
+  return order;
 }
 
 /** Pack `count` little dots inside a circle of `radius` using a
@@ -191,9 +242,12 @@ function drawNuclei(
  *  rather than locking into a static pattern.
  *
  *  Per-atom shell occupancy is the neutral configuration adjusted for
- *  any ionic charge — Na⁺ visibly drops its outer-shell electron,
- *  Cl⁻ visibly gains one. Ties the Bohr view back to the chemistry
- *  the rest of the visualization (Lewis dots, charge pill) is showing. */
+ *  ionic charge AND covalent bond order — Na⁺ visibly drops its
+ *  outer-shell electron, Cl⁻ visibly gains one, and any covalent
+ *  bonds peel off their shared electrons (those are rendered in the
+ *  bond region by drawBondFlow, so leaving them here would
+ *  double-count). Total visible electrons across atoms + bond flow
+ *  now matches the molecule's actual electron inventory. */
 function drawElectronShells(
   g: Graphics,
   scene: SceneState,
@@ -212,9 +266,11 @@ function drawElectronShells(
     const element = elements.find((e) => e.symbol === atom.elementId);
     if (!element || !element.shellOccupancy) continue;
     const ionicCharge = computeAtomCharge(atom, scene, bondRules);
+    const bondedCovalent = covalentBondOrderForAtom(atom.id, scene);
     const shells = effectiveShellOccupancy(
       element.shellOccupancy,
-      ionicCharge
+      ionicCharge,
+      bondedCovalent
     );
     if (shells.length === 0) continue;
 
