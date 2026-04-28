@@ -118,5 +118,23 @@
     "animationTemplate": "decomposition",
     "energyChangeLabel": "exothermic",
     "standardsTags": ["NGSS-MS-PS1-5"]
+  },
+  {
+    "reactionId": "acid_base_neutralization",
+    "ageBand": "11-14",
+    "reactants": [
+      { "moleculeId": "hydrogen_chloride", "coefficient": 1 },
+      { "moleculeId": "sodium_hydroxide", "coefficient": 1 }
+    ],
+    "products": [
+      { "moleculeId": "sodium_chloride", "coefficient": 1 },
+      { "moleculeId": "water", "coefficient": 1 }
+    ],
+    "conditionTags": ["aqueous"],
+    "conservationSignature": { "H": 2, "Cl": 1, "Na": 1, "O": 1 },
+    "equationDisplay": "HCl + NaOH → NaCl + H₂O",
+    "animationTemplate": "synthesis",
+    "energyChangeLabel": "exothermic",
+    "standardsTags": ["NGSS-MS-PS1-5"]
   }
 ]

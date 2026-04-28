@@ -244,5 +244,57 @@
     "difficulty": 3,
     "uses3dTemplate": false,
     "factKey": "fact_hydrogen_peroxide"
+  },
+  {
+    "moleculeId": "sodium_hydroxide",
+    "displayName": "Sodium Hydroxide",
+    "formulaHill": "HNaO",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "Na", "label": "Na" },
+        { "elementId": "O", "label": "O" },
+        { "elementId": "H", "label": "H" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "ionic" },
+        { "from": 1, "to": 2, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["NaOH", "lye", "caustic soda"],
+    "difficulty": 4,
+    "uses3dTemplate": false,
+    "factKey": "fact_sodium_hydroxide"
+  },
+  {
+    "moleculeId": "ethane",
+    "displayName": "Ethane",
+    "formulaHill": "C2H6",
+    "ageBand": "11-14",
+    "allowedBondGraph": {
+      "nodes": [
+        { "elementId": "C", "label": "C1" },
+        { "elementId": "C", "label": "C2" },
+        { "elementId": "H", "label": "H1" },
+        { "elementId": "H", "label": "H2" },
+        { "elementId": "H", "label": "H3" },
+        { "elementId": "H", "label": "H4" },
+        { "elementId": "H", "label": "H5" },
+        { "elementId": "H", "label": "H6" }
+      ],
+      "edges": [
+        { "from": 0, "to": 1, "type": "covalent-single" },
+        { "from": 0, "to": 2, "type": "covalent-single" },
+        { "from": 0, "to": 3, "type": "covalent-single" },
+        { "from": 0, "to": 4, "type": "covalent-single" },
+        { "from": 1, "to": 5, "type": "covalent-single" },
+        { "from": 1, "to": 6, "type": "covalent-single" },
+        { "from": 1, "to": 7, "type": "covalent-single" }
+      ]
+    },
+    "synonyms": ["C2H6"],
+    "difficulty": 4,
+    "uses3dTemplate": false,
+    "factKey": "fact_ethane"
   }
 ]

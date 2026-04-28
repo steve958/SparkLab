@@ -633,5 +633,92 @@
       "options": ["Fertilizers", "Plastics", "Fuels"],
       "correctIndex": 0
     }
+  },
+  {
+    "missionId": "c11_salt_water",
+    "worldId": "core",
+    "title": "Salt Water",
+    "brief": "Ocean water is salt dissolved in water. Build one NaCl and three water molecules side by side — the same atoms you've already met, in their everyday combination.",
+    "objectiveType": "build-molecule",
+    "allowedElements": ["H", "O", "Na", "Cl"],
+    "allowedMolecules": ["water", "sodium_chloride"],
+    "successConditions": [
+      { "type": "build-molecule", "targetMoleculeId": "sodium_chloride" },
+      { "type": "build-molecule", "targetMoleculeId": "water" },
+      { "type": "build-molecule", "targetMoleculeId": "water" },
+      { "type": "build-molecule", "targetMoleculeId": "water" }
+    ],
+    "hintSetId": "hints_bond_types",
+    "estimatedMinutes": 6,
+    "standardsTags": ["NGSS-MS-PS1-5"],
+    "teacherNotes": "Reinforces multi-molecule scenes and the ionic vs covalent contrast in a familiar real-world context (saltwater).",
+    "difficulty": 3,
+    "ageBand": "11-14",
+    "prerequisites": ["c03_ionic_vs_covalent"],
+    "explanationQuiz": {
+      "question": "Why doesn't the salt bond to the water?",
+      "options": [
+        "Ionic and covalent bonds form between different kinds of atoms",
+        "Salt and water never touch in real life",
+        "Water is too small to bond with"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "missionId": "c12_carbon_chains",
+    "worldId": "core",
+    "title": "Bigger Carbon Chains",
+    "brief": "Carbon atoms can bond to each other and stack into chains. Build ethane (C₂H₆): two carbons sharing a single bond, with three hydrogens on each side.",
+    "objectiveType": "build-molecule",
+    "allowedElements": ["C", "H"],
+    "allowedMolecules": ["ethane"],
+    "successConditions": [
+      { "type": "build-molecule", "targetMoleculeId": "ethane" }
+    ],
+    "hintSetId": "hints_methane",
+    "estimatedMinutes": 8,
+    "standardsTags": ["NGSS-MS-PS1-5"],
+    "teacherNotes": "Introduces C-C single bonds — the foundation of organic chemistry. Builds on methane (one C, four H).",
+    "difficulty": 4,
+    "ageBand": "11-14",
+    "prerequisites": ["f03_methane"],
+    "explanationQuiz": {
+      "question": "Why can carbon make long chains?",
+      "options": [
+        "Carbon can form 4 strong bonds, including bonds with itself",
+        "Carbon is the heaviest atom",
+        "Carbon is always positively charged"
+      ],
+      "correctIndex": 0
+    }
+  },
+  {
+    "missionId": "r06_acid_base",
+    "worldId": "reactions",
+    "title": "Acid Meets Base",
+    "brief": "An acid (HCl) and a base (NaOH) cancel each other out. Build the reactants and products of HCl + NaOH → NaCl + H₂O — every atom shows up on both sides.",
+    "objectiveType": "run-reaction",
+    "allowedElements": ["H", "O", "Na", "Cl"],
+    "allowedMolecules": ["hydrogen_chloride", "sodium_hydroxide", "sodium_chloride", "water"],
+    "successConditions": [
+      { "type": "run-reaction", "targetReactionId": "acid_base_neutralization" }
+    ],
+    "hintSetId": "hints_bond_types",
+    "estimatedMinutes": 9,
+    "standardsTags": ["NGSS-MS-PS1-5"],
+    "teacherNotes": "Introduces acid-base neutralization. Both ionic (Na-Cl, Na-O) and covalent (H-Cl, O-H) bonds appear in one reaction.",
+    "difficulty": 5,
+    "ageBand": "11-14",
+    "prerequisites": ["c11_salt_water"],
+    "explanationQuiz": {
+      "question": "What two products form when an acid neutralizes a base?",
+      "options": [
+        "A salt and water",
+        "Two new acids",
+        "Hydrogen gas and oxygen"
+      ],
+      "correctIndex": 0
+    }
   }
 ]
