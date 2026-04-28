@@ -429,6 +429,75 @@ describe("Molecule Engine", () => {
     // single-molecule missions only.
     expect(result.explanation.toLowerCase()).not.toContain("not all connected");
   });
+
+  // Regression: the previous isomorphism implementation capped at
+  // n=6 and silently failed on any larger molecule. Ethane is the
+  // smallest curriculum molecule above that cap (2 C + 6 H = 8
+  // atoms). This test would have returned matches=false under the
+  // old algorithm; the backtracking + degree-pruning replacement
+  // should match it correctly.
+  it("validateSceneMolecules matches an 8-atom molecule (ethane)", () => {
+    const ethane: Molecule = {
+      moleculeId: "ethane",
+      displayName: "Ethane",
+      formulaHill: "C2H6",
+      ageBand: "11-14",
+      allowedBondGraph: {
+        nodes: [
+          { elementId: "C", label: "C1" },
+          { elementId: "C", label: "C2" },
+          { elementId: "H", label: "H1" },
+          { elementId: "H", label: "H2" },
+          { elementId: "H", label: "H3" },
+          { elementId: "H", label: "H4" },
+          { elementId: "H", label: "H5" },
+          { elementId: "H", label: "H6" },
+        ],
+        edges: [
+          { from: 0, to: 1, type: "covalent-single" },
+          { from: 0, to: 2, type: "covalent-single" },
+          { from: 0, to: 3, type: "covalent-single" },
+          { from: 0, to: 4, type: "covalent-single" },
+          { from: 1, to: 5, type: "covalent-single" },
+          { from: 1, to: 6, type: "covalent-single" },
+          { from: 1, to: 7, type: "covalent-single" },
+        ],
+      },
+      synonyms: [],
+      difficulty: 4,
+      uses3dTemplate: false,
+      factKey: "fact_ethane",
+    } as unknown as Molecule;
+
+    const atoms: SceneAtom[] = [
+      { id: "c1", elementId: "C", x: 0, y: 0, protons: 6, neutrons: 6, electrons: 6 },
+      { id: "c2", elementId: "C", x: 50, y: 0, protons: 6, neutrons: 6, electrons: 6 },
+      { id: "h1", elementId: "H", x: -20, y: -20, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h2", elementId: "H", x: -20, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h3", elementId: "H", x: -20, y: 20, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h4", elementId: "H", x: 70, y: -20, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h5", elementId: "H", x: 70, y: 0, protons: 1, neutrons: 0, electrons: 1 },
+      { id: "h6", elementId: "H", x: 70, y: 20, protons: 1, neutrons: 0, electrons: 1 },
+    ];
+    const bonds: SceneBond[] = [
+      { id: "b1", atomAId: "c1", atomBId: "c2", bondType: "covalent-single" },
+      { id: "b2", atomAId: "c1", atomBId: "h1", bondType: "covalent-single" },
+      { id: "b3", atomAId: "c1", atomBId: "h2", bondType: "covalent-single" },
+      { id: "b4", atomAId: "c1", atomBId: "h3", bondType: "covalent-single" },
+      { id: "b5", atomAId: "c2", atomBId: "h4", bondType: "covalent-single" },
+      { id: "b6", atomAId: "c2", atomBId: "h5", bondType: "covalent-single" },
+      { id: "b7", atomAId: "c2", atomBId: "h6", bondType: "covalent-single" },
+    ];
+
+    const result = validateSceneMolecules(
+      [ethane],
+      ["ethane"],
+      atoms,
+      bonds
+    );
+    expect(result.matches).toBe(true);
+    expect(result.matchedMoleculeIds).toEqual(["ethane"]);
+  });
 });
 
 describe("Reaction Engine", () => {

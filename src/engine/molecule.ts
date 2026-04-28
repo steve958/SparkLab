@@ -304,35 +304,17 @@ function isIsomorphic(
   if (n === 0) return true;
   if (n !== target.nodes.length) return false;
 
-  // Generate all permutations for small graphs (n <= 6 for MVP)
-  const indices = Array.from({ length: n }, (_, i) => i);
-  for (const perm of permutations(indices)) {
-    if (isValidPermutation(scene, target, perm)) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function isValidPermutation(
-  scene: { nodes: string[]; edges: { from: number; to: number }[] },
-  target: BondGraph,
-  perm: number[]
-): boolean {
-  // Check node labels match
-  for (let i = 0; i < perm.length; i++) {
-    if (scene.nodes[perm[i]] !== target.nodes[i].elementId) {
-      return false;
-    }
-  }
-
-  // Build edge sets
-  const sceneEdgeSet = new Set<string>();
-  for (const e of scene.edges) {
-    const a = Math.min(perm.indexOf(e.from), perm.indexOf(e.to));
-    const b = Math.max(perm.indexOf(e.from), perm.indexOf(e.to));
-    sceneEdgeSet.add(`${a}-${b}`);
-  }
+  // Backtracking search with element + degree pruning. The previous
+  // implementation enumerated all n! permutations and capped at n=6,
+  // which made any molecule with 7+ atoms (ethane, propane, hydrogen
+  // peroxide if grown, etc.) impossible to validate. Pruning by
+  // (elementId, degree) means we only ever try perms where each
+  // candidate is at least topologically plausible — for ethane,
+  // 2 carbons of degree 4 + 6 hydrogens of degree 1 collapse the
+  // search space from 8! = 40 320 to 2! × 6! = 1 440. Scales fine
+  // to molecules with 12-15 atoms (glucose-class).
+  const sceneDegrees = computeNodeDegrees(n, scene.edges);
+  const targetDegrees = computeNodeDegrees(n, target.edges);
 
   const targetEdgeSet = new Set<string>();
   for (const e of target.edges) {
@@ -341,35 +323,48 @@ function isValidPermutation(
     targetEdgeSet.add(`${a}-${b}`);
   }
 
-  if (sceneEdgeSet.size !== targetEdgeSet.size) return false;
-  for (const edge of sceneEdgeSet) {
-    if (!targetEdgeSet.has(edge)) return false;
-  }
+  const perm = new Array<number>(n);
+  const used = new Array<boolean>(n).fill(false);
 
-  return true;
-}
-
-function* permutations(arr: number[]): Generator<number[]> {
-  if (arr.length <= 6) {
-    yield* heapPermutation(arr, arr.length);
-  }
-}
-
-function* heapPermutation(
-  arr: number[],
-  size: number
-): Generator<number[]> {
-  if (size === 1) {
-    yield [...arr];
-    return;
-  }
-
-  for (let i = 0; i < size; i++) {
-    yield* heapPermutation(arr, size - 1);
-    if (size % 2 === 1) {
-      [arr[0], arr[size - 1]] = [arr[size - 1], arr[0]];
-    } else {
-      [arr[i], arr[size - 1]] = [arr[size - 1], arr[i]];
+  const tryAt = (i: number): boolean => {
+    if (i === n) {
+      // perm[i] is the scene-node index assigned to target position i.
+      // Invert so we can canonicalize scene edges into target's
+      // numbering for set-equality comparison.
+      const sceneToTarget = new Array<number>(n);
+      for (let j = 0; j < n; j++) sceneToTarget[perm[j]] = j;
+      for (const e of scene.edges) {
+        const a = Math.min(sceneToTarget[e.from], sceneToTarget[e.to]);
+        const b = Math.max(sceneToTarget[e.from], sceneToTarget[e.to]);
+        if (!targetEdgeSet.has(`${a}-${b}`)) return false;
+      }
+      return true;
     }
+    const targetEl = target.nodes[i].elementId;
+    const targetDeg = targetDegrees[i];
+    for (let j = 0; j < n; j++) {
+      if (used[j]) continue;
+      if (scene.nodes[j] !== targetEl) continue;
+      if (sceneDegrees[j] !== targetDeg) continue;
+      used[j] = true;
+      perm[i] = j;
+      if (tryAt(i + 1)) return true;
+      used[j] = false;
+    }
+    return false;
+  };
+
+  return tryAt(0);
+}
+
+function computeNodeDegrees(
+  n: number,
+  edges: { from: number; to: number }[]
+): number[] {
+  const deg = new Array<number>(n).fill(0);
+  for (const e of edges) {
+    deg[e.from]++;
+    deg[e.to]++;
   }
+  return deg;
 }
