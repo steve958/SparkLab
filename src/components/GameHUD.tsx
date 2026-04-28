@@ -92,6 +92,10 @@ export default function GameHUD({ content }: GameHUDProps) {
   }, [mission, content.missions, progress, isMissionUnlocked]);
 
   const [show3D, setShow3D] = useState(false);
+  // Index into uniqueTargetMolecules (computed below) for the molecule
+  // currently displayed in the 3D viewer modal. Resets to 0 each time
+  // the modal opens so the player always lands on the first target.
+  const [view3DIndex, setView3DIndex] = useState(0);
   const [showAtomDetails, setShowAtomDetails] = useState(false);
 
   // Element of the currently-selected atom — used by the "Element
@@ -193,6 +197,22 @@ export default function GameHUD({ content }: GameHUDProps) {
       .map((id) => content.molecules.find((m) => m.moleculeId === id))
       .filter((m): m is NonNullable<typeof m> => m != null);
   }, [mission, content.molecules]);
+
+  // Deduped target list for the 3D viewer modal — successConditions
+  // can include the same moleculeId multiple times (e.g. Salt Water
+  // wants 1 NaCl + 3 H₂O so water shows up three times in the array).
+  // For 3D inspection the player just needs each unique molecule
+  // once; multiplicity is already conveyed by the build-row tiles.
+  const uniqueTargetMolecules = useMemo(() => {
+    const seen = new Set<string>();
+    const out: typeof targetMolecules = [];
+    for (const m of targetMolecules) {
+      if (seen.has(m.moleculeId)) continue;
+      seen.add(m.moleculeId);
+      out.push(m);
+    }
+    return out;
+  }, [targetMolecules]);
 
   // Find reaction equation for run-reaction missions
   const reactionEquation = useMemo(() => {
@@ -519,9 +539,13 @@ export default function GameHUD({ content }: GameHUDProps) {
             )}
           </button>
 
-          {targetMolecule && (
+          {uniqueTargetMolecules.length > 0 && (
             <button
-              onClick={() => { audio.uiClick(); setShow3D(true); }}
+              onClick={() => {
+                audio.uiClick();
+                setView3DIndex(0);
+                setShow3D(true);
+              }}
               className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium bg-sky-100 text-sky-700 hover:bg-sky-200 transition-colors touch-target"
               aria-label={t("game.view_3d")}
             >
@@ -618,40 +642,92 @@ export default function GameHUD({ content }: GameHUDProps) {
         </div>
       )}
 
-      {/* 3D Viewer Modal */}
-      {show3D && targetMolecule && (
-        <div
-          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4"
-          onClick={() => setShow3D(false)}
-        >
+      {/* 3D Viewer Modal — supports multi-target missions by showing
+          a row of molecule tabs above the viewer. Single-target
+          missions just show the one molecule with no tab UI. */}
+      {show3D && uniqueTargetMolecules.length > 0 && (() => {
+        // Defensive: clamp the index so a stale value can't reference a
+        // molecule that no longer exists (mission switch with the
+        // modal still open is unlikely but cheap to guard against).
+        const safeIndex = Math.min(
+          view3DIndex,
+          uniqueTargetMolecules.length - 1
+        );
+        const activeMolecule = uniqueTargetMolecules[safeIndex];
+        return (
           <div
-            className="bg-white rounded-2xl p-3 sm:p-6 max-w-[95vw] sm:max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-2 sm:p-4"
+            onClick={() => setShow3D(false)}
           >
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <h3 className="text-base sm:text-lg font-bold">{t("game.view_3d_title")}</h3>
-              <button
-                onClick={() => setShow3D(false)}
-                className="p-2 rounded-lg hover:bg-slate-100"
-                aria-label="Close"
-              >
-                <X className="w-5 h-5" />
-              </button>
+            <div
+              className="bg-white rounded-2xl p-3 sm:p-6 max-w-[95vw] sm:max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-3 sm:mb-4">
+                <h3 className="text-base sm:text-lg font-bold">
+                  {t("game.view_3d_title")}
+                </h3>
+                <button
+                  onClick={() => setShow3D(false)}
+                  className="p-2 rounded-lg hover:bg-slate-100"
+                  aria-label="Close"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Molecule tabs — only render when there's more than
+                  one to switch between. Single-target missions skip
+                  the row entirely so the modal stays minimal. */}
+              {uniqueTargetMolecules.length > 1 && (
+                <div className="flex flex-wrap gap-1.5 mb-3 justify-center">
+                  {uniqueTargetMolecules.map((m, i) => (
+                    <button
+                      key={m.moleculeId}
+                      onClick={() => setView3DIndex(i)}
+                      className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors ${
+                        i === safeIndex
+                          ? "bg-sky-600 text-white"
+                          : "bg-sky-50 text-sky-700 hover:bg-sky-100"
+                      }`}
+                      aria-pressed={i === safeIndex}
+                    >
+                      {m.displayName}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className="flex justify-center">
+                <Molecule3DViewer
+                  // key forces a remount when the tab changes so the
+                  // 3dmol viewer re-initializes against the new
+                  // molecule's xyz data instead of trying to update
+                  // an existing scene in place.
+                  key={activeMolecule.moleculeId}
+                  molecule={activeMolecule}
+                  elements={content.elements}
+                  width={Math.min(
+                    400,
+                    typeof window !== "undefined"
+                      ? window.innerWidth - 64
+                      : 400
+                  )}
+                  height={Math.min(
+                    300,
+                    typeof window !== "undefined"
+                      ? Math.max(220, window.innerHeight * 0.45)
+                      : 300
+                  )}
+                />
+              </div>
+              <p className="text-center text-sm text-slate-500 mt-3">
+                {activeMolecule.displayName}
+              </p>
             </div>
-            <div className="flex justify-center">
-              <Molecule3DViewer
-                molecule={targetMolecule}
-                elements={content.elements}
-                width={Math.min(400, typeof window !== "undefined" ? window.innerWidth - 64 : 400)}
-                height={Math.min(300, typeof window !== "undefined" ? Math.max(220, window.innerHeight * 0.45) : 300)}
-              />
-            </div>
-            <p className="text-center text-sm text-slate-500 mt-3">
-              {targetMolecule.displayName}
-            </p>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {/* Mission complete overlay */}
       {isMissionComplete && (
