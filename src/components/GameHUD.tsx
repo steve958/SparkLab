@@ -28,6 +28,7 @@ import {
   Box,
   Trash2,
   Info,
+  Search,
 } from "lucide-react";
 
 interface GameHUDProps {
@@ -353,16 +354,31 @@ export default function GameHUD({ content }: GameHUDProps) {
         )}
       </div>
 
-      {/* Interaction hint banner */}
+      {/* Interaction hint banner. Two stacked tips: the basics
+          (drag / tap / delete) plus a "zoom in for the real magic"
+          line that surfaces the Bohr nucleus + electron-shell + bond
+          electron-flow visuals — easy to miss without a nudge since
+          they're gated on a zoom threshold. Both share one banner so
+          the player only has one thing to dismiss. */}
       {showInteractionHint && (
-        <div className="flex items-start sm:items-center justify-between gap-2 px-2 sm:px-3 py-2 bg-indigo-50 border-b border-indigo-100">
-          <div className="flex items-start sm:items-center gap-2 text-xs sm:text-sm text-indigo-800 min-w-0">
-            <Lightbulb className="w-4 h-4 shrink-0 mt-0.5 sm:mt-0" />
-            <span>
-              {isTouchDevice
-                ? "Drag an atom to move it. Tap two atoms to bond. Long-press to delete."
-                : "Drag an atom to move it. Click two atoms to bond. Right-click to delete."}
-            </span>
+        <div className="flex items-start justify-between gap-2 px-2 sm:px-3 py-2 bg-indigo-50 border-b border-indigo-100">
+          <div className="flex items-start gap-2 text-xs sm:text-sm text-indigo-800 min-w-0">
+            <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
+            <div className="space-y-0.5">
+              <p>
+                {isTouchDevice
+                  ? "Drag an atom to move it. Tap two atoms to bond. Long-press to delete."
+                  : "Drag an atom to move it. Click two atoms to bond. Right-click to delete."}
+              </p>
+              <p className="flex items-center gap-1 text-indigo-700">
+                <Search className="w-3.5 h-3.5 shrink-0" />
+                <span>
+                  {isTouchDevice
+                    ? "Pinch to zoom in — see the electrons whirl through the bonds."
+                    : "Scroll to zoom in — see the electrons whirl through the bonds."}
+                </span>
+              </p>
+            </div>
           </div>
           <button
             onClick={dismissInteractionHint}
@@ -411,14 +427,24 @@ export default function GameHUD({ content }: GameHUDProps) {
           unlabeled tray. */}
       {reactionMode ? (
         <>
-          {/* Mass-conservation explainer — reaction missions are confusing
-              without it because the goal isn't "build a molecule" but
-              "show the same atoms on both sides, regrouped". */}
+          {/* Mass-conservation explainer — reaction missions are
+              confusing without it because the goal isn't "build a
+              molecule" but "show the same atoms on both sides,
+              regrouped". Two copies: a tight one-liner on mobile to
+              save vertical space, the full sentence with colored
+              left/right callouts on tablet+. */}
           <div className="px-2 sm:px-3 py-1.5 bg-amber-50 border-b border-amber-100 text-[11px] sm:text-xs text-amber-900 leading-snug">
-            <span className="font-semibold">Conserve atoms:</span> place the
-            starting atoms as molecules on the <span className="font-semibold text-sky-700">left</span>,
-            then the <em>same</em> atoms regrouped as products on the{" "}
-            <span className="font-semibold text-green-700">right</span>.
+            <span className="sm:hidden">
+              <span className="font-semibold">Conserve atoms:</span> same
+              atoms on both sides, just regrouped.
+            </span>
+            <span className="hidden sm:inline">
+              <span className="font-semibold">Conserve atoms:</span> place
+              the starting atoms as molecules on the{" "}
+              <span className="font-semibold text-sky-700">left</span>,
+              then the <em>same</em> atoms regrouped as products on the{" "}
+              <span className="font-semibold text-green-700">right</span>.
+            </span>
           </div>
           <div className="grid grid-cols-2 gap-px bg-slate-200 border-b border-slate-200">
             <ReactionAtomGroup
