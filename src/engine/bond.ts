@@ -16,14 +16,23 @@ export function validateBond(
   elementB: Element,
   ageBand: AgeBand,
   existingBondsA: number,
-  existingBondsB: number
+  existingBondsB: number,
+  // When true, also consider rules tagged `upgradeOnly` — used by
+  // the tap-on-already-bonded upgrade gesture. Default false so a
+  // fresh-bond tap never lands on an exotic high-order rule (e.g.
+  // C≡O, which is the C-O triple but should NOT be the default for
+  // every fresh C+O tap — that would break CO₂).
+  includeUpgradeOnly = false
 ): BondValidationResult {
-  const applicableRules = getBondRulesForPair(
+  const allRules = getBondRulesForPair(
     rules,
     elementA.symbol,
     elementB.symbol,
     ageBand
   );
+  const applicableRules = includeUpgradeOnly
+    ? allRules
+    : allRules.filter((r) => !r.upgradeOnly);
 
   if (applicableRules.length === 0) {
     return {

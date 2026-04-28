@@ -387,8 +387,8 @@ export default function GameHUD({ content }: GameHUDProps) {
             <div className="space-y-0.5">
               <p>
                 {isTouchDevice
-                  ? "Drag an atom to move it. Tap two atoms to bond. Long-press to delete."
-                  : "Drag an atom to move it. Click two atoms to bond. Right-click to delete."}
+                  ? "Drag an atom to move it. Tap two atoms to bond — tap a bonded pair again to upgrade. Long-press to delete."
+                  : "Drag an atom to move it. Click two atoms to bond — click a bonded pair again to upgrade. Right-click to delete."}
               </p>
               <p className="flex items-center gap-1 text-indigo-700">
                 <Search className="w-3.5 h-3.5 shrink-0" />

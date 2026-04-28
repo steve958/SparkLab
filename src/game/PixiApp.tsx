@@ -55,6 +55,23 @@ function bondLabel(bondType: string): string {
   }
 }
 
+// Used by the bond-upgrade gesture to compare existing vs candidate
+// rule strength. Ionic ranks alongside single — there's no "upgrade
+// from ionic to covalent-double" path in the curriculum.
+function bondTypeOrder(bondType: string): number {
+  switch (bondType) {
+    case "covalent-single":
+    case "ionic":
+      return 1;
+    case "covalent-double":
+      return 2;
+    case "covalent-triple":
+      return 3;
+    default:
+      return 0;
+  }
+}
+
 // Render the shared-electron dots for every covalent bond in the scene.
 // Each pair shows two small dots that oscillate in opposite directions
 // along the bond axis, visibly "exchanging" position over a ~2s cycle —
@@ -2065,6 +2082,73 @@ export default function PixiApp({ content }: PixiAppProps) {
       const elementB = atomB
         ? getElementBySymbol(content.elements, atomB.elementId)
         : null;
+
+      // Tap-on-already-bonded → upgrade gesture. Some bonds (notably
+      // C≡O in carbon monoxide) require an exotic higher-order rule
+      // that the engine deliberately avoids picking on a fresh tap
+      // (it would break CO₂'s default of two C=O double bonds). When
+      // the player taps two atoms that are *already* bonded, treat
+      // it as a request to upgrade the bond — replace it with the
+      // next-higher-order rule that fits the available valence,
+      // including upgradeOnly rules.
+      const existingBond = state.scene.bonds.find(
+        (b) =>
+          (b.atomAId === previouslySelectedId && b.atomBId === atomId) ||
+          (b.atomAId === atomId && b.atomBId === previouslySelectedId)
+      );
+      if (existingBond && atomA && atomB && elementA && elementB) {
+        // Compute valence usage *excluding* the existing bond, then
+        // ask validateBond for the highest-fitting rule INCLUDING
+        // upgradeOnly. Strict-greater bond order is the gate — same
+        // type back means there's no higher rule available.
+        const otherBonds = state.scene.bonds.filter(
+          (b) => b.id !== existingBond.id
+        );
+        const aBondsExcl = countBondOrder(
+          getBondsForAtom(previouslySelectedId, otherBonds)
+        );
+        const bBondsExcl = countBondOrder(
+          getBondsForAtom(atomId, otherBonds)
+        );
+        const result = validateBond(
+          content.bondRules,
+          elementA,
+          elementB,
+          ageBand,
+          aBondsExcl,
+          bBondsExcl,
+          true // includeUpgradeOnly
+        );
+        if (
+          result.valid &&
+          result.bondType &&
+          bondTypeOrder(result.bondType) >
+            bondTypeOrder(existingBond.bondType)
+        ) {
+          // Replace the existing bond with the upgraded one. Using
+          // remove + add (rather than a dedicated mutate action)
+          // keeps the undo stack symmetric with how bonds are
+          // normally created.
+          state.removeBond(existingBond.id);
+          state.addBond({
+            id: crypto.randomUUID(),
+            atomAId: existingBond.atomAId,
+            atomBId: existingBond.atomBId,
+            bondType: result.bondType,
+          });
+          state.showFeedback(
+            `Upgraded to a ${result.bondType.replace("covalent-", "")} bond.`,
+            "info"
+          );
+        } else {
+          state.showFeedback(
+            "This bond is already as strong as it can be.",
+            "info"
+          );
+        }
+        setSelectedAtom(null);
+        return;
+      }
 
       let bondType: "covalent-single" | "covalent-double" | "covalent-triple" | "ionic" =
         "covalent-single";

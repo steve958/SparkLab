@@ -75,6 +75,13 @@ export interface BondRule {
   geometryHint: string | null;
   allowedWorlds: string[];
   explanationKey: string;
+  // When true, this rule is only considered during a deliberate
+  // bond-upgrade action (the player tapping two atoms that are
+  // already bonded). Fresh-bond formation skips it. Used for
+  // chemistry-exotic higher-order bonds like C≡O — the engine's
+  // default for a fresh C-O pair should be C=O (carbonyls,
+  // CO₂-style), with C≡O reachable as an explicit upgrade.
+  upgradeOnly?: boolean;
 }
 
 // ============================================================================
