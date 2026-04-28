@@ -1,4 +1,5 @@
 import { Container, Graphics, Text, Ticker } from "pixi.js";
+import { TEXT_RESOLUTION } from "./atom-sprite";
 
 // ============================================================================
 // SparkLab Visual Effects Engine
@@ -138,6 +139,7 @@ export function createTooltip(
 
   const label = new Text({
     text,
+    resolution: TEXT_RESOLUTION,
     style: {
       fontSize: 12,
       fill: 0xffffff,

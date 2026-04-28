@@ -1,6 +1,18 @@
 import { Container, FederatedPointerEvent, FillGradient, Graphics, Rectangle, Text } from "pixi.js";
 import type { Element } from "@/types";
 
+// Pixi v8 Text rasterizes at its own `resolution` setting (separate
+// from the renderer's `resolution` / `autoDensity`). The default is
+// 1, which renders blurry on any high-DPI display AND when the
+// player zooms in past 1×. We pick max(devicePixelRatio, 2) so text
+// is always at least 2× — crisp on retina at default zoom and still
+// readable at moderate pinch-zoom. Recomputed at module load because
+// it's a stable property of the device.
+export const TEXT_RESOLUTION =
+  typeof window !== "undefined"
+    ? Math.max(window.devicePixelRatio || 1, 2)
+    : 2;
+
 export const ATOM_RADIUS = 32;
 // Minimum effective hit-area radius. Visual atom radius for period-1
 // elements (H, He) is ~25px; on a touch screen that's smaller than
@@ -158,6 +170,7 @@ export function createAtomSprite(
 
   const symbol = new Text({
     text: element.symbol,
+    resolution: TEXT_RESOLUTION,
     style: {
       fontSize: 20,
       fontWeight: "bold",
@@ -176,6 +189,7 @@ export function createAtomSprite(
 
   const nameText = new Text({
     text: element.name,
+    resolution: TEXT_RESOLUTION,
     style: {
       fontSize: 11,
       fontWeight: "600",

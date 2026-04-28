@@ -12,6 +12,7 @@ import {
   createAtomSprite,
   updateAtomSprite,
   ATOM_RADIUS,
+  TEXT_RESOLUTION,
   parseColorToken,
   getAtomRadius,
 } from "./atom-sprite";
@@ -479,6 +480,7 @@ function drawAtomCharges(
 
     const label = new Text({
       text,
+      resolution: TEXT_RESOLUTION,
       style: {
         fontSize,
         fontWeight: "900",
@@ -1761,6 +1763,7 @@ export default function PixiApp({ content }: PixiAppProps) {
     const padY = 10;
     const label = new Text({
       text: labelText,
+      resolution: TEXT_RESOLUTION,
       style: { fontSize: 14, fill: 0xef4444, fontWeight: "bold" },
     });
     label.anchor.set(0.5);
