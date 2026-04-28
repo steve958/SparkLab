@@ -20,6 +20,18 @@ import { drawBond } from "./bond-graphics";
 import { animateScale, animateScalePop, animateAlpha } from "./animations";
 import { validateBond, getBondsForAtom, countBondOrder } from "@/engine/bond";
 
+// Bridge for the spawn handler in game/page.tsx (which lives outside
+// PixiApp and has no access to the pan/zoom refs) — PixiApp publishes
+// a getter on window so the spawn handler can convert display
+// coordinates into scene-local ones at the time of spawn.
+declare global {
+  interface Window {
+    __sparklabViewport?: {
+      getTransform: () => { panX: number; panY: number; zoom: number };
+    };
+  }
+}
+
 // Brand green — matches --primary in globals.css. Used for the bond
 // preview line and snap indicator so the action ties visually to the
 // rest of the app's primary affordances.
@@ -1047,6 +1059,21 @@ export default function PixiApp({ content }: PixiAppProps) {
 
       appRef.current = app;
 
+      // Publish the current viewport transform so the spawn handler in
+      // game/page.tsx can convert canvas-display coordinates into
+      // scene-local coordinates. Without this, atoms spawned after the
+      // player has panned or zoomed land at the canvas's CSS center
+      // (which is no longer the *visible* center) — sometimes off-
+      // screen. The closure reads panRef/zoomRef live so the spawn
+      // handler always gets the current values.
+      window.__sparklabViewport = {
+        getTransform: () => ({
+          panX: panRef.current.x,
+          panY: panRef.current.y,
+          zoom: zoomRef.current,
+        }),
+      };
+
       const sceneContainer = new Container();
       sceneContainer.sortableChildren = true;
       app.stage.addChild(sceneContainer);
@@ -1477,6 +1504,11 @@ export default function PixiApp({ content }: PixiAppProps) {
       nucleiRef.current = null;
       electronShellsRef.current = null;
       bondFlowRef.current = null;
+      // Drop the viewport bridge so a stale closure from a destroyed
+      // app instance can't return values for refs that no longer exist.
+      if (typeof window !== "undefined") {
+        window.__sparklabViewport = undefined;
+      }
       if (appRef.current) {
         try {
           appRef.current.destroy(true, { children: true, texture: true, textureSource: true });

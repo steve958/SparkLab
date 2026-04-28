@@ -393,11 +393,33 @@ export default function GamePage() {
       // missions ignore `side` and spawn at canvas center.
       const reactionAnchor =
         detail.side === "products" ? 0.75 : 0.25;
-      const x = rect
-        ? (isReaction ? rect.width * reactionAnchor : rect.width / 2) +
-          (Math.random() - 0.5) * 100
-        : (isReaction ? (detail.side === "products" ? 600 : 200) : 400);
-      const y = rect ? rect.height / 2 + (Math.random() - 0.5) * 100 : 300;
+      // Target a display position (CSS pixels of the canvas) where the
+      // atom should *visually appear*. Then convert to scene-local
+      // coords using the current pan/zoom transform — without this,
+      // atoms spawned after the player has panned or zoomed land at
+      // the canvas's CSS center, which is no longer the *visible*
+      // center; the new atom can spawn off-screen.
+      const displayX = rect
+        ? isReaction
+          ? rect.width * reactionAnchor
+          : rect.width / 2
+        : isReaction
+          ? detail.side === "products"
+            ? 600
+            : 200
+          : 400;
+      const displayY = rect ? rect.height / 2 : 300;
+      const transform =
+        typeof window !== "undefined" && window.__sparklabViewport
+          ? window.__sparklabViewport.getTransform()
+          : { panX: 0, panY: 0, zoom: 1 };
+      const sceneX = (displayX - transform.panX) / transform.zoom;
+      const sceneY = (displayY - transform.panY) / transform.zoom;
+      // Jitter is in scene-local units so the spread visually stays
+      // ~100px regardless of zoom level.
+      const jitterScale = 100 / transform.zoom;
+      const x = sceneX + (Math.random() - 0.5) * jitterScale;
+      const y = sceneY + (Math.random() - 0.5) * jitterScale;
 
       const atom: SceneAtom = {
         id: crypto.randomUUID(),
