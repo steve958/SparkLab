@@ -253,7 +253,15 @@ export default function GameHUD({ content }: GameHUDProps) {
 
   return (
     <>
-      {/* Top bar */}
+      {/* Top bar.
+          Tablet+: back + title + brief inline + actions all on one
+          row — there's horizontal room for the title to breathe.
+          Mobile: back + actions only. The title and brief move to
+          dedicated full-width rows below so neither has to share the
+          ~140px column the action-button cluster used to leave next
+          to the back button. With `truncate` and that column width,
+          titles like "Ionic vs Covalent" or "Methane Combustion"
+          were rendering as "Ionic vs..." even at text-sm. */}
       <div className="flex items-center justify-between gap-2 px-2 sm:px-3 py-2 bg-white border-b border-slate-200">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
           <button
@@ -265,8 +273,10 @@ export default function GameHUD({ content }: GameHUDProps) {
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          <div className="min-w-0">
-            <h2 className="font-semibold text-sm sm:text-base truncate">
+          {/* Tablet+ inline title + brief. Hidden on mobile because
+              the dedicated rows below render those instead. */}
+          <div className="hidden sm:block min-w-0">
+            <h2 className="font-semibold text-base truncate">
               {mission.title}
             </h2>
             {reactionEquation ? (
@@ -274,12 +284,7 @@ export default function GameHUD({ content }: GameHUDProps) {
                 {reactionEquation}
               </p>
             ) : (
-              // Tablet+ shows a single-line truncated brief next to
-              // the title. On mobile this row is suppressed entirely
-              // and a dedicated full-width brief row renders just
-              // below the top bar (see below) so the text isn't
-              // squeezed by the action-button column.
-              <p className="hidden sm:block text-xs text-slate-500 truncate">
+              <p className="text-xs text-slate-500 truncate">
                 {mission.brief}
               </p>
             )}
@@ -328,18 +333,25 @@ export default function GameHUD({ content }: GameHUDProps) {
         </div>
       </div>
 
-      {/* Mobile-only brief row. The brief gets the full screen width
-          here instead of the ~120px column it had to share with the
-          back button + action cluster in the top bar, so longer
-          briefs like "Some atoms share electrons. Others swap them..."
-          render in full instead of getting clipped to ellipsis.
-          Reaction missions skip this row because the equation is
-          already shown next to the title in the top bar. */}
-      {!reactionEquation && (
-        <p className="sm:hidden px-3 pb-2 -mt-1 text-[11px] text-slate-600 leading-snug">
-          {mission.brief}
-        </p>
-      )}
+      {/* Mobile-only title + brief block. Both get the full screen
+          width here instead of being squeezed into the top bar's
+          shared column, so titles render in full and briefs wrap to
+          their natural line count. Tablet+ skips this block — the
+          inline version inside the top bar is already visible there. */}
+      <div className="sm:hidden px-3 pt-1.5 pb-2 bg-white border-b border-slate-100">
+        <h2 className="font-semibold text-base leading-tight text-foreground">
+          {mission.title}
+        </h2>
+        {reactionEquation ? (
+          <p className="mt-0.5 text-xs font-mono font-medium text-primary">
+            {reactionEquation}
+          </p>
+        ) : (
+          <p className="mt-0.5 text-xs text-slate-600 leading-snug">
+            {mission.brief}
+          </p>
+        )}
+      </div>
 
       {/* Interaction hint banner */}
       {showInteractionHint && (
