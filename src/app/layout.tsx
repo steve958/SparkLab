@@ -57,7 +57,42 @@ export default function RootLayout({
             __html: `
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js');
+                  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                    // When a new service worker is found, watch its
+                    // statechange events. If it reaches "installed"
+                    // while there's already a controlling SW (= the
+                    // user has been running the OLD version in this
+                    // tab), reload so the new version takes over —
+                    // otherwise a deploy that lands while the tab is
+                    // open leaves the page running stale JS that
+                    // references chunks the server no longer has.
+                    var refreshing = false;
+                    navigator.serviceWorker.addEventListener('controllerchange', function() {
+                      if (refreshing) return;
+                      refreshing = true;
+                      window.location.reload();
+                    });
+                    reg.addEventListener('updatefound', function() {
+                      var newWorker = reg.installing;
+                      if (!newWorker) return;
+                      newWorker.addEventListener('statechange', function() {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                          // Nudge the waiting SW to take over so the
+                          // controllerchange handler above fires and
+                          // we reload.
+                          newWorker.postMessage({ type: 'SKIP_WAITING' });
+                        }
+                      });
+                    });
+                    // Periodically check for an updated SW so a tab
+                    // left open across a deploy picks it up within a
+                    // minute or so. Browser default is to check on
+                    // every navigation, which doesn't help SPAs that
+                    // don't navigate.
+                    setInterval(function() {
+                      reg.update().catch(function() {});
+                    }, 60 * 1000);
+                  }).catch(function() {});
                 });
               }
             `,
