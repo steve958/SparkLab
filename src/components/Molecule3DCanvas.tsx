@@ -117,6 +117,30 @@ export default function Molecule3DCanvas({
 
       viewer.zoomTo();
       viewer.render();
+
+      // Default y-axis spin so the player sees the 3D shape
+      // without having to click-drag to rotate it. Skipped for
+      // reduced-motion users — they get the same static
+      // ball-and-stick render desktop chemistry textbooks use.
+      // The 3dmol API is `spin(axis, speed)`; speed is a multiplier
+      // of the default rate, 0.5 is a gentle slow turn that lets
+      // the geometry register without feeling busy. Wrapped in try
+      // so an older bundle without the spin method just no-ops.
+      const reduceMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduceMotion && typeof viewer.spin === "function") {
+        try {
+          viewer.spin("y", 0.5);
+        } catch {
+          // Older 3dmol versions might not support the speed arg.
+          try {
+            viewer.spin("y");
+          } catch {
+            // No spin available — fall back to the static render.
+          }
+        }
+      }
     }
 
     init();
@@ -124,6 +148,16 @@ export default function Molecule3DCanvas({
     return () => {
       destroyed = true;
       if (viewer) {
+        // Stop auto-rotation before tearing the viewer down so the
+        // RAF loop the spin runs on doesn't try to render against a
+        // destroyed canvas.
+        if (typeof viewer.spin === "function") {
+          try {
+            viewer.spin(false);
+          } catch {
+            // ignore — viewer may already be torn down
+          }
+        }
         viewer.removeAllModels();
         viewer.removeAllLabels();
         viewer.removeAllSurfaces();
