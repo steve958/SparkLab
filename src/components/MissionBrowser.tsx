@@ -17,6 +17,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import MasteryCheckModal from "./MasteryCheckModal";
+import MoleculePreview from "./MoleculePreview";
 import { recordEvent } from "@/lib/telemetry";
 
 interface MissionBrowserProps {
@@ -242,6 +243,26 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
             lockTitle = `Complete ${preTitles.join(", ")} to unlock`;
           }
 
+          // Resolve the mission's primary target molecule (for
+          // build-molecule missions, the first success condition's
+          // moleculeId). null for run-reaction / build-atom missions
+          // — those skip the preview tile entirely.
+          let targetMolecule: typeof content.molecules[number] | null = null;
+          if (mission.objectiveType === "build-molecule") {
+            const buildCondition = mission.successConditions.find(
+              (c) => c.type === "build-molecule"
+            );
+            const moleculeId =
+              buildCondition && buildCondition.type === "build-molecule"
+                ? buildCondition.targetMoleculeId
+                : mission.allowedMolecules[0];
+            if (moleculeId) {
+              targetMolecule =
+                content.molecules.find((m) => m.moleculeId === moleculeId) ??
+                null;
+            }
+          }
+
           return (
             <button
               key={mission.missionId}
@@ -281,6 +302,22 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
                   <Lock className="w-5 h-5" />
                 )}
               </div>
+
+              {/* Molecule preview tile — only on build-molecule
+                  missions. Mirrors the in-game HUD target row and the
+                  notebook entry render so kids see "this is what
+                  you're going to build" before they pick the mission.
+                  Hidden when locked so the lock icon stays the focal
+                  point on gated missions. */}
+              {targetMolecule && unlocked && (
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-sky-50 border border-sky-100 flex items-center justify-center shrink-0 p-0.5">
+                  <MoleculePreview
+                    molecule={targetMolecule}
+                    elements={content.elements}
+                    size={36}
+                  />
+                </div>
+              )}
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
