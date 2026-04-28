@@ -46,6 +46,11 @@ export interface GameStore {
   addAtom: (atom: SceneAtom) => void;
   removeAtom: (atomId: string) => void;
   moveAtom: (atomId: string, x: number, y: number) => void;
+  // Updates the reaction-mission side stamp on an atom — driven by
+  // the drag handler so dragging an atom across the canvas midline
+  // also moves it from "reactants" to "products" (or vice versa) in
+  // the AtomLedger and the conservation validator.
+  setAtomSide: (atomId: string, side: "reactants" | "products") => void;
   addBond: (bond: SceneBond) => void;
   removeBond: (bondId: string) => void;
   setSelectedAtom: (atomId: string | null) => void;
@@ -198,6 +203,27 @@ export const useGameStore = create<GameStore>((set) => ({
         },
         undoStack: [...state.undoStack, command],
         redoStack: [],
+      };
+    }),
+
+  setAtomSide: (atomId, side) =>
+    set((state) => {
+      const atom = state.scene.atoms.find((a) => a.id === atomId);
+      if (!atom || atom.side === side) return state;
+      // Note: not pushed onto the undo stack. The side stamp is a
+      // direct consequence of position changes (the drag handler
+      // updates it after moveAtom), so undoing the move already
+      // reverts the position; recomputing the side from x at undo
+      // time would require new infrastructure. Worst case if a user
+      // undoes a cross-midline drag: the position reverts but the
+      // side stays — they can drag it again to recover.
+      return {
+        scene: {
+          ...state.scene,
+          atoms: state.scene.atoms.map((a) =>
+            a.id === atomId ? { ...a, side } : a
+          ),
+        },
       };
     }),
 

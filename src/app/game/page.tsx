@@ -20,6 +20,7 @@ import CanvasAccessibilityOverlay from "@/components/CanvasAccessibilityOverlay"
 import ExplanationQuizModal from "@/components/ExplanationQuizModal";
 import OnboardingCoachmark from "@/components/OnboardingCoachmark";
 import { goBackOr } from "@/lib/navigation";
+import { ArrowRight } from "lucide-react";
 import type { ExplanationQuiz, SceneAtom, SceneBond } from "@/types";
 
 const PixiApp = dynamic(() => import("@/game/PixiApp"), { ssr: false });
@@ -535,19 +536,37 @@ export default function GamePage() {
         {content && <PixiApp content={content} />}
         {content && <CanvasAccessibilityOverlay content={content} />}
 
-        {/* Reaction mode zone overlay */}
+        {/* Reaction mode zone overlay. Soft tinted halves bracket
+            the canvas midline; an arrow chip sits on the divider so
+            the "reactants → products" metaphor reads at a glance,
+            especially on mobile where the two halves are narrow. */}
         {reactionMode && (
-          <div className="absolute inset-0 pointer-events-none flex">
-            <div className="flex-1 bg-sky-50/30 flex items-start justify-start p-4">
-              <span className="text-xs font-bold text-sky-700 uppercase tracking-wider bg-white/80 px-2 py-1 rounded">
-                Reactants
-              </span>
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Side gradient washes — fade outward from each edge so
+                the visual emphasis is on the zone, but the canvas
+                center stays cleanest where the atoms typically sit. */}
+            <div className="absolute inset-y-0 left-0 right-1/2 bg-gradient-to-r from-sky-100/50 to-sky-50/0" />
+            <div className="absolute inset-y-0 right-0 left-1/2 bg-gradient-to-l from-green-100/50 to-green-50/0" />
+
+            {/* Vertical divider line at midline. Solid in the center
+                so it reads as a real boundary, fading at top/bottom
+                so it doesn't crowd the corners. */}
+            <div className="absolute inset-y-6 left-1/2 -translate-x-1/2 w-0.5 bg-gradient-to-b from-slate-300/0 via-slate-400/70 to-slate-300/0" />
+
+            {/* Center arrow chip — chemistry's left-to-right
+                "reactants → products" notation, made literal. */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white shadow-md ring-1 ring-slate-200 flex items-center justify-center">
+              <ArrowRight className="w-4 h-4 text-slate-500" />
             </div>
-            <div className="w-px border-l-2 border-dashed border-slate-400" />
-            <div className="flex-1 bg-green-50/30 flex items-start justify-end p-4">
-              <span className="text-xs font-bold text-green-700 uppercase tracking-wider bg-white/80 px-2 py-1 rounded">
-                Products
-              </span>
+
+            {/* Side labels — subtle pills in the top corners, tinted
+                to match each zone so they feel like part of the
+                background rather than overlaid UI. */}
+            <div className="absolute top-2 left-2 sm:top-3 sm:left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/85 ring-1 ring-sky-200 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-sky-700">
+              Reactants
+            </div>
+            <div className="absolute top-2 right-2 sm:top-3 sm:right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/85 ring-1 ring-green-200 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-green-700">
+              Products
             </div>
           </div>
         )}

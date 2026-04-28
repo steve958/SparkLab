@@ -1953,6 +1953,35 @@ export default function PixiApp({ content }: PixiAppProps) {
         handleAtomTap(atomId, previouslySelectedId);
       }
 
+      // Reaction-mission side stamp follows the atom across the
+      // canvas midline. Without this, dragging an atom from
+      // reactants to products visually moves it but the AtomLedger
+      // and conservation validator still count it as the original
+      // side — confusing on mobile where the midline is close and
+      // crossing it accidentally is easy. Compute side from the
+      // atom's display position (sceneContainer.toGlobal) and the
+      // canvas's actual width so the partition tracks the visible
+      // zone overlay rather than scene-local coords (which diverge
+      // from display under pan/zoom).
+      if (isDragging) {
+        const reactionMode = useGameStore.getState().reactionMode;
+        if (reactionMode) {
+          const canvas = app.canvas as HTMLCanvasElement;
+          const sceneContainer = sceneContainerRef.current;
+          const atom = useGameStore
+            .getState()
+            .scene.atoms.find((a) => a.id === atomId);
+          if (canvas && sceneContainer && atom) {
+            const screen = sceneContainer.toGlobal({ x: atom.x, y: atom.y });
+            const newSide =
+              screen.x < canvas.clientWidth / 2 ? "reactants" : "products";
+            if (atom.side !== newSide) {
+              useGameStore.getState().setAtomSide(atomId, newSide);
+            }
+          }
+        }
+      }
+
       // Settle the lifted sprite back to rest. Run this BEFORE we
       // clear draggingRef so the hover handlers (which gate on the
       // drag flag) don't snap us back to 1.06 mid-animation.
