@@ -147,6 +147,30 @@ function covalentBondOrderForAtom(
   return order;
 }
 
+/** True when an atom has reached noble-gas configuration — either via
+ *  ionic transfer (formal charge ≠ 0) or by completing its octet/duet
+ *  through covalent sharing. Mirrors the stability check inlined in
+ *  drawValenceDots so the pulse trigger and the static ring stay in
+ *  agreement. */
+function isAtomStable(
+  atom: { id: string; elementId: string },
+  element: Element,
+  scene: SceneState,
+  bondRules: import("@/types").BondRule[]
+): boolean {
+  const valence = element.valenceElectronsMainGroup;
+  if (valence <= 0) return false;
+  const ionicCharge = computeAtomCharge(atom, scene, bondRules);
+  if (ionicCharge !== 0) return true;
+  const bondedCovalent = covalentBondOrderForAtom(atom.id, scene);
+  const effectiveValence = valence - ionicCharge;
+  const lone = Math.max(0, effectiveValence - bondedCovalent);
+  const octetTarget =
+    element.symbol === "H" || element.symbol === "He" ? 2 : 8;
+  const totalShell = 2 * bondedCovalent + lone;
+  return totalShell === octetTarget;
+}
+
 /** Pack `count` little dots inside a circle of `radius` using a
  *  sunflower (Vogel) spiral so the nucleus looks dense and varied
  *  rather than gridded. Returns positions in atom-local coordinates. */
@@ -723,6 +747,187 @@ function drawBondFlow(
   }
 }
 
+/** Soft rings around every non-selected atom telegraphing whether
+ *  tapping it next would form a bond (green) or be refused by the
+ *  engine (red). Empty when no atom is selected. Computed via
+ *  validateBond — same engine call that runs at tap time, so the
+ *  hint never disagrees with the actual outcome. Atoms already
+ *  bonded to the selection get nothing because re-tapping would be
+ *  a no-op. */
+function drawConnectionHints(
+  g: Graphics,
+  scene: SceneState,
+  elements: Element[],
+  bondRules: import("@/types").BondRule[],
+  selectedAtomId: string | null,
+  ageBand: import("@/types").AgeBand
+) {
+  g.clear();
+  if (!selectedAtomId) return;
+  const sourceAtom = scene.atoms.find((a) => a.id === selectedAtomId);
+  if (!sourceAtom) return;
+  const sourceElement = elements.find((e) => e.symbol === sourceAtom.elementId);
+  if (!sourceElement) return;
+
+  const sourceBondOrder = covalentBondOrderForAtom(selectedAtomId, scene);
+
+  for (const target of scene.atoms) {
+    if (target.id === selectedAtomId) continue;
+    const targetElement = elements.find((e) => e.symbol === target.elementId);
+    if (!targetElement) continue;
+
+    // Already bonded — re-tap wouldn't add another bond, so no hint.
+    const alreadyBonded = scene.bonds.some(
+      (b) =>
+        (b.atomAId === selectedAtomId && b.atomBId === target.id) ||
+        (b.atomAId === target.id && b.atomBId === selectedAtomId)
+    );
+    if (alreadyBonded) continue;
+
+    const targetBondOrder = covalentBondOrderForAtom(target.id, scene);
+    const result = validateBondLight(
+      bondRules,
+      sourceElement,
+      targetElement,
+      ageBand,
+      sourceBondOrder,
+      targetBondOrder
+    );
+
+    const radius = getAtomRadius(targetElement);
+    if (result === "bondable") {
+      g.circle(target.x, target.y, radius + 7);
+      g.stroke({ width: 2, color: 0x16a34a, alpha: 0.55 });
+    } else {
+      // Refused: no rule for the pair, or one side has no valence
+      // left. Drawn dimmer so it doesn't crowd; the player just sees
+      // "this one isn't an option right now."
+      g.circle(target.x, target.y, radius + 7);
+      g.stroke({ width: 1.5, color: 0xdc2626, alpha: 0.28 });
+    }
+  }
+}
+
+// Trimmed validateBond that only returns the bondable / not-bondable
+// boolean — the connection-hints layer doesn't care about the bond
+// type or the failure reason.
+function validateBondLight(
+  rules: import("@/types").BondRule[],
+  elementA: Element,
+  elementB: Element,
+  ageBand: import("@/types").AgeBand,
+  bondsA: number,
+  bondsB: number
+): "bondable" | "refused" {
+  const result = validateBond(rules, elementA, elementB, ageBand, bondsA, bondsB);
+  return result.valid ? "bondable" : "refused";
+}
+
+/** One-shot pulse ring that scales out from an atom's stability
+ *  radius and fades. Used when an atom transitions into noble-gas
+ *  configuration so the player gets per-atom feedback as they build,
+ *  not just at mission complete. Spawned into a parent Container that
+ *  destroys/cleans up the temporary Graphics on completion. */
+function spawnOctetPulse(
+  parent: Container,
+  x: number,
+  y: number,
+  radius: number,
+  reduceMotion: boolean
+) {
+  if (reduceMotion) return;
+  const g = new Graphics();
+  parent.addChild(g);
+  const startR = radius + 3;
+  const endR = radius + 22;
+  const duration = 600;
+  const startTime = performance.now();
+  let raf = 0;
+  const tick = (now: number) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 2);
+    const r = startR + (endR - startR) * ease;
+    const alpha = (1 - progress) * 0.7;
+    g.clear();
+    g.circle(x, y, r);
+    g.stroke({ width: 2.5, color: 0x16a34a, alpha });
+    if (progress < 1) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      g.destroy();
+    }
+  };
+  raf = requestAnimationFrame(tick);
+  // Detach RAF if the parent goes away early.
+  parent.on("destroyed", () => {
+    cancelAnimationFrame(raf);
+  });
+}
+
+/** Damped rotational shake — used when the player tries to bond two
+ *  atoms the engine refuses. Wobbles ±~7° around the sprite center
+ *  for ~320ms then settles. Independent of position so it doesn't
+ *  fight the scene render's atom.x sync. */
+function shakeAtomSprite(sprite: Container) {
+  const startTime = performance.now();
+  const duration = 320;
+  const tick = (now: number) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    if (progress >= 1) {
+      sprite.rotation = 0;
+      return;
+    }
+    const t = progress * 6 * Math.PI;
+    const amplitude = (1 - progress) * 0.12;
+    sprite.rotation = Math.sin(t) * amplitude;
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+/** Animate a fresh bond growing from atomA toward atomB over
+ *  `duration` ms. While the animation runs the calling code should
+ *  exclude this bond from the scene-render redraw loop so the
+ *  growth animation owns its Graphics. On completion calls
+ *  `onComplete` so the caller can clear the "growing" flag and let
+ *  the next scene render redraw the bond at full state. */
+function animateBondGrowth(
+  g: Graphics,
+  atomA: { x: number; y: number },
+  atomB: { x: number; y: number },
+  bondType: import("@/types").BondType,
+  isSelected: boolean,
+  colorA: number | undefined,
+  colorB: number | undefined,
+  rA: number,
+  rB: number,
+  duration: number,
+  onComplete?: () => void
+) {
+  const startTime = performance.now();
+  const tick = (now: number) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const ease = 1 - Math.pow(1 - progress, 3);
+    // Interpolate the visible endpoint from atomA toward atomB so
+    // the bond reads as being drawn from the source atom outward.
+    const interpB = {
+      x: atomA.x + (atomB.x - atomA.x) * ease,
+      y: atomA.y + (atomB.y - atomA.y) * ease,
+    };
+    drawBond(g, atomA, interpB, bondType, isSelected, colorA, colorB, rA, rB);
+    if (progress < 1) {
+      requestAnimationFrame(tick);
+    } else {
+      drawBond(g, atomA, atomB, bondType, isSelected, colorA, colorB, rA, rB);
+      if (onComplete) onComplete();
+    }
+  };
+  requestAnimationFrame(tick);
+}
+
 interface PixiAppProps {
   content: ContentBundle;
 }
@@ -749,6 +954,20 @@ export default function PixiApp({ content }: PixiAppProps) {
   // transfer). Crossfades in via the same bohrFade curve as the nucleus
   // and shell layers, taking over from the simple swinging-dots layer.
   const bondFlowRef = useRef<Graphics | null>(null);
+  // Connection-hint layer — when the player has an atom selected,
+  // every other atom in the scene gets a faint ring telling them
+  // whether tapping it next would form a bond (green) or be refused
+  // (red). Removes the trial-and-error tapping that gameplay
+  // otherwise asks for.
+  const connectionHintsRef = useRef<Graphics | null>(null);
+  // Tracks which atoms are currently considered stable (octet/duet)
+  // so we can fire a one-shot pulse exactly on the transition into
+  // stability rather than continuously while it stays stable.
+  const previousStableSetRef = useRef<Set<string>>(new Set());
+  // Bond ids whose grow-in animation is still running. The scene
+  // render loop skips these bonds so the per-frame growth animation
+  // owns their Graphics until it finishes.
+  const growingBondsRef = useRef<Set<string>>(new Set());
   const atomSpritesRef = useRef<Map<string, Container>>(new Map());
   const bondGraphicsRef = useRef<Map<string, Graphics>>(new Map());
   const draggingRef = useRef<{ atomId: string; offsetX: number; offsetY: number } | null>(null);
@@ -846,6 +1065,16 @@ export default function PixiApp({ content }: PixiAppProps) {
       bondFlowG.zIndex = 1.55;
       sceneContainer.addChild(bondFlowG);
       bondFlowRef.current = bondFlowG;
+
+      // Connection-hint layer — soft rings around atoms that telegraph
+      // "you can / can't bond here" while another atom is selected.
+      // zIndex 1.7: above bond-flow but BELOW the atom bodies (z=2)
+      // so the ring tucks visually behind each atom. Empty when no
+      // selection is active.
+      const connectionHintsG = new Graphics();
+      connectionHintsG.zIndex = 1.7;
+      sceneContainer.addChild(connectionHintsG);
+      connectionHintsRef.current = connectionHintsG;
 
       const atomsContainer = new Container();
       atomsContainer.zIndex = 2;
@@ -1373,6 +1602,12 @@ export default function PixiApp({ content }: PixiAppProps) {
         bondGraphicsRef.current.set(bond.id, g);
         isNewBond = true;
       }
+
+      // Skip redrawing bonds whose grow-in animation is still
+      // running — animateBondGrowth owns the Graphics state until it
+      // finishes and clears the flag.
+      if (growingBondsRef.current.has(bond.id)) continue;
+
       // Look up element colors AND radii so the bond inner stroke can
       // gradient between the two endpoints' atom palettes (H-O →
       // blue→red, etc.) AND stop short at each atom's actual visible
@@ -1383,24 +1618,39 @@ export default function PixiApp({ content }: PixiAppProps) {
       const colorB = elementB ? parseColorToken(elementB.colorToken) : undefined;
       const rA = elementA ? getAtomRadius(elementA) : ATOM_RADIUS;
       const rB = elementB ? getAtomRadius(elementB) : ATOM_RADIUS;
-      drawBond(
-        g,
-        atomA,
-        atomB,
-        bond.bondType,
-        selectedBondId === bond.id,
-        colorA,
-        colorB,
-        rA,
-        rB
-      );
       if (isNewBond && !reducedMotion) {
-        // New bonds fade in over ~180ms — matches the atom-spawn
-        // animation cadence so the scene feels coherent. Reduced-motion
-        // users get the bond at full alpha immediately. Graphics
-        // extends Container, so the alpha tween targets the same
-        // displayObject API as atom sprites.
-        animateAlpha(g, 0, 1, 180);
+        // Fresh bonds grow on, drawing from atomA outward to atomB
+        // over ~280ms instead of fading in via alpha. Mark the bond
+        // as growing so the next scene render skips redrawing it
+        // while the animation owns the Graphics.
+        growingBondsRef.current.add(bond.id);
+        animateBondGrowth(
+          g,
+          atomA,
+          atomB,
+          bond.bondType,
+          selectedBondId === bond.id,
+          colorA,
+          colorB,
+          rA,
+          rB,
+          280,
+          () => {
+            growingBondsRef.current.delete(bond.id);
+          }
+        );
+      } else {
+        drawBond(
+          g,
+          atomA,
+          atomB,
+          bond.bondType,
+          selectedBondId === bond.id,
+          colorA,
+          colorB,
+          rA,
+          rB
+        );
       }
     }
 
@@ -1414,6 +1664,50 @@ export default function PixiApp({ content }: PixiAppProps) {
         content.elements,
         content.bondRules
       );
+    }
+    // Connection-hint pass: soft rings around bondable / refused
+    // target atoms while another atom is selected. Cheap O(n) over
+    // atoms and runs validateBond per pair — no per-frame cost
+    // because this only re-runs on scene/selection change.
+    if (connectionHintsRef.current) {
+      const profileState = useProgressStore.getState();
+      const ageBand = profileState.currentProfile?.ageBand ?? "8-10";
+      drawConnectionHints(
+        connectionHintsRef.current,
+        scene,
+        content.elements,
+        content.bondRules,
+        selectedAtomId,
+        ageBand
+      );
+    }
+    // Octet pulse: detect atoms that just transitioned into stable
+    // (octet/duet or ionic-charged) configuration since the last
+    // render and fire a one-shot expanding ring on each. Pure visual
+    // — the static stability ring inside drawValenceDots stays.
+    {
+      const previousStable = previousStableSetRef.current;
+      const currentStable = new Set<string>();
+      for (const atom of scene.atoms) {
+        const element = getElementBySymbol(content.elements, atom.elementId);
+        if (!element) continue;
+        if (isAtomStable(atom, element, scene, content.bondRules)) {
+          currentStable.add(atom.id);
+          if (
+            !previousStable.has(atom.id) &&
+            effectsContainerRef.current
+          ) {
+            spawnOctetPulse(
+              effectsContainerRef.current,
+              atom.x,
+              atom.y,
+              getAtomRadius(element),
+              reducedMotion
+            );
+          }
+        }
+      }
+      previousStableSetRef.current = currentStable;
     }
     // Charge-label pass: only ionic atoms get a label, and the value
     // depends on which ionic bonds the atom is in, so this also
@@ -1739,6 +2033,16 @@ export default function PixiApp({ content }: PixiAppProps) {
         } else {
           state.showFeedback(result.explanation, "error");
           window.dispatchEvent(new CustomEvent("sparklab-invalid-action"));
+          // Shake the atom the player tried to bond to so the
+          // refusal lands as a tactile "no" instead of just a toast.
+          // Reduced-motion users skip the rotation animation but
+          // still see the toast + red preview.
+          const reduce =
+            useProgressStore.getState().settings?.reducedMotion ?? false;
+          if (!reduce) {
+            const targetSprite = atomSpritesRef.current.get(atomId);
+            if (targetSprite) shakeAtomSprite(targetSprite);
+          }
           setSelectedAtom(atomId);
           return;
         }
