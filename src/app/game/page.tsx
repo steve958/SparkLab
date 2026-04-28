@@ -75,13 +75,28 @@ export default function GamePage() {
       completeMission(calc.stars, explanationCorrect);
 
       if (currentProfile) {
+        // Merge against any existing progress record for this mission
+        // so a replay can never *demote* the player. Without this, a
+        // 3-star clear followed by a replay using hints (which scores
+        // 2★) overwrites the 3★ record with 2★ — the cause of the
+        // world-map "27/30 with all missions at 3 stars" report. Keep
+        // the best stars and best independence score; accumulate the
+        // attempt counter; keep the first-clear completedAt when one
+        // exists so the achievement timestamp is stable.
+        const previous = useProgressStore
+          .getState()
+          .progress.find((p) => p.missionId === mission.missionId);
         const progressRecord = {
           profileId: currentProfile.id,
           missionId: mission.missionId,
-          stars: calc.stars,
-          completedAt: Date.now(),
-          attempts: scoreState.attempts + 1,
-          bestIndependenceScore: calc.independenceScore,
+          stars: Math.max(previous?.stars ?? 0, calc.stars),
+          completedAt: previous?.completedAt ?? Date.now(),
+          attempts:
+            (previous?.attempts ?? 0) + scoreState.attempts + 1,
+          bestIndependenceScore: Math.max(
+            previous?.bestIndependenceScore ?? 0,
+            calc.independenceScore
+          ),
         };
         await saveMissionProgress(progressRecord);
         await updateProgress(progressRecord);
