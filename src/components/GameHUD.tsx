@@ -726,7 +726,15 @@ export default function GameHUD({ content }: GameHUDProps) {
             <div className="flex flex-col gap-2">
               {nextMission && (
                 <button
-                  onClick={() => initMission(nextMission)}
+                  onClick={() => {
+                    initMission(nextMission);
+                    // Update URL so a reload after starting the
+                    // next mission still has the right mission id
+                    // to restore from.
+                    router.replace(
+                      `/game?m=${encodeURIComponent(nextMission.missionId)}`
+                    );
+                  }}
                   className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover transition-colors flex items-center justify-center gap-2"
                 >
                   Next mission

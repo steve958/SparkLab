@@ -330,6 +330,33 @@ export default function GamePage() {
     };
   }, [currentProfile, router, contentReloadKey]);
 
+  // Restore mission from URL on fresh page loads / reloads.
+  // /game?m=<missionId> is the canonical link to a mission — set by
+  // every navigation to /game (MissionBrowser, OnboardingIntro,
+  // GameHUD's "Next mission" button). Without this, a SW-driven
+  // auto-reload (or a player landing on /game directly) shows
+  // "No mission selected" because the in-memory game store starts
+  // empty. If the URL has no mission id at all, bounce to /worlds
+  // so the player can pick one rather than getting stuck.
+  useEffect(() => {
+    if (!content) return;
+    if (mission) return;
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const missionIdFromUrl = params.get("m");
+    if (missionIdFromUrl) {
+      const target = content.missions.find(
+        (m) => m.missionId === missionIdFromUrl
+      );
+      if (target) {
+        initMission(target);
+        return;
+      }
+    }
+    // No mission id, or an unknown one — kick back to the world map.
+    router.replace("/worlds");
+  }, [content, mission, initMission, router]);
+
   const retryContentLoad = useCallback(() => {
     clearContentCache();
     setContent(null);

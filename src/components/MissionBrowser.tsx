@@ -57,7 +57,11 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
   const handleSelectMission = (mission: Mission) => {
     if (!isMissionUnlocked(mission.missionId, mission.prerequisites)) return;
     initMission(mission);
-    router.push("/game");
+    // Encode the mission id in the URL so a refresh, a SW-driven
+    // auto-reload, or a direct deep link to /game can restore the
+    // mission. Without this, a reload on /game produces "No mission
+    // selected" because the in-memory store starts empty.
+    router.push(`/game?m=${encodeURIComponent(mission.missionId)}`);
   };
 
   // Find the first unlocked mission with 0 stars (the "next up" mission)

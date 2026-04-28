@@ -46,7 +46,10 @@ export default function OnboardingIntro() {
       return;
     }
     initMission(mission);
-    router.push("/game");
+    // Encode mission id in the URL so reloads / SW-driven auto-
+    // reloads can restore the mission instead of dropping the
+    // player on a "No mission selected" screen.
+    router.push(`/game?m=${encodeURIComponent(mission.missionId)}`);
   };
 
   const handleSkip = async () => {
