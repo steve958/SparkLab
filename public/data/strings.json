@@ -26,6 +26,7 @@
   { "stringKey": "hint_h_c_bond", "locale": "en", "text": "Carbon can make 4 bonds. Hydrogen makes 1.", "voiceoverRef": null, "readingLevelBand": "8-10" },
   { "stringKey": "hint_h_n_bond", "locale": "en", "text": "Nitrogen has 5 valence electrons and usually makes 3 bonds.", "voiceoverRef": null, "readingLevelBand": "11-14" },
   { "stringKey": "hint_h_cl_bond", "locale": "en", "text": "Chlorine has 7 valence electrons and needs 1 more to fill its outer shell.", "voiceoverRef": null, "readingLevelBand": "11-14" },
+  { "stringKey": "hint_cl_cl_bond", "locale": "en", "text": "Each chlorine has 7 valence electrons. They share a single pair to fill both outer shells — that's chlorine gas (Cl₂).", "voiceoverRef": null, "readingLevelBand": "11-14" },
   { "stringKey": "hint_c_o_single", "locale": "en", "text": "Carbon and oxygen can share one pair of electrons.", "voiceoverRef": null, "readingLevelBand": "8-10" },
   { "stringKey": "hint_c_o_double", "locale": "en", "text": "Carbon and oxygen can share two pairs of electrons for a double bond.", "voiceoverRef": null, "readingLevelBand": "11-14" },
   { "stringKey": "hint_c_c_bond", "locale": "en", "text": "Carbon atoms can bond to each other, making chains and rings.", "voiceoverRef": null, "readingLevelBand": "11-14" },
