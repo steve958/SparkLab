@@ -19,6 +19,7 @@ import GameHUD from "@/components/GameHUD";
 import CanvasAccessibilityOverlay from "@/components/CanvasAccessibilityOverlay";
 import ExplanationQuizModal from "@/components/ExplanationQuizModal";
 import OnboardingCoachmark from "@/components/OnboardingCoachmark";
+import ZoomTutorialCoachmark from "@/components/ZoomTutorialCoachmark";
 import { goBackOr } from "@/lib/navigation";
 import { ArrowRight } from "lucide-react";
 import type { ExplanationQuiz, SceneAtom, SceneBond } from "@/types";
@@ -575,6 +576,14 @@ export default function GamePage() {
         {isOnboarding && !coachmarkDismissed && (
           <OnboardingCoachmark onDismiss={() => setCoachmarkDismissed(true)} />
         )}
+
+        {/* Zoom tutorial coachmark — small animated card in the
+            canvas corner that loops a "zoom in reveals nucleus +
+            shells" demo. Self-dismisses after 14s and remembers the
+            dismissal in localStorage so returning players don't see
+            it on every mission. Suppressed during the first-run
+            onboarding flow so we're not stacking two coachmarks. */}
+        {!isOnboarding && <ZoomTutorialCoachmark />}
 
         {/* Accessibility: hidden DOM overlay for screen readers */}
         <div className="sr-only" role="region" aria-live="polite" aria-atomic="true">
