@@ -2119,7 +2119,12 @@ export default function PixiApp({ content }: PixiAppProps) {
         bondType,
       };
       addBond(bond);
-      setSelectedAtom(atomId);
+      // Clear selection after a successful bond so neither atom is
+      // left in the "selected" state. The player's intent ended with
+      // the bond — leaving the second atom selected meant the next
+      // tap on a third atom would try to bond to it and the
+      // connection-hint rings would still light up around the canvas.
+      setSelectedAtom(null);
       return;
     }
     // First tap on this atom (or repeat tap on the already-selected atom): select it.
