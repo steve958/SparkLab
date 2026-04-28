@@ -20,6 +20,7 @@ import CanvasAccessibilityOverlay from "@/components/CanvasAccessibilityOverlay"
 import ExplanationQuizModal from "@/components/ExplanationQuizModal";
 import OnboardingCoachmark from "@/components/OnboardingCoachmark";
 import ZoomTutorialCoachmark from "@/components/ZoomTutorialCoachmark";
+import AtomSpinner from "@/components/AtomSpinner";
 import { goBackOr } from "@/lib/navigation";
 import { ArrowRight } from "lucide-react";
 import type { ExplanationQuiz, SceneAtom, SceneBond } from "@/types";
@@ -566,15 +567,16 @@ export default function GamePage() {
     );
   }
   if (!mission) {
+    // Brief render gap on mount: content is still loading, or has
+    // loaded but the URL-restore effect hasn't run yet, or there's no
+    // ?m=<id> in the URL and the redirect-to-/worlds is about to fire.
+    // None of those states justify showing the player a "No mission
+    // selected" wall — they last a frame or two. Show the loading
+    // spinner instead so the transition reads as "loading" rather
+    // than as a brief failure UI flashing in.
     return (
-      <div className="flex flex-col items-center justify-center min-h-dvh p-4">
-        <p className="text-slate-500">No mission selected.</p>
-        <button
-          onClick={() => goBackOr(router, "/worlds")}
-          className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
-        >
-          Choose a Mission
-        </button>
+      <div className="flex flex-col items-center justify-center min-h-dvh">
+        <AtomSpinner size={56} />
       </div>
     );
   }
