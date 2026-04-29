@@ -13,13 +13,13 @@ import AtomSpinner from "@/components/AtomSpinner";
 
 type FilterCategory = "all" | "metals" | "nonmetals" | "noble" | "lanthanides" | "actinides";
 
-const CATEGORY_FILTERS: { key: FilterCategory; label: string; categories: string[] }[] = [
-  { key: "all", label: "All", categories: [] },
-  { key: "metals", label: "Metals", categories: ["alkali-metal", "alkaline-earth-metal", "transition-metal", "post-transition-metal"] },
-  { key: "nonmetals", label: "Nonmetals", categories: ["nonmetal", "halogen", "metalloid"] },
-  { key: "noble", label: "Noble Gases", categories: ["noble-gas"] },
-  { key: "lanthanides", label: "Lanthanides", categories: ["lanthanide"] },
-  { key: "actinides", label: "Actinides", categories: ["actinide"] },
+const CATEGORY_FILTERS: { key: FilterCategory; labelKey: string; categories: string[] }[] = [
+  { key: "all", labelKey: "periodic_table.filter_all", categories: [] },
+  { key: "metals", labelKey: "periodic_table.filter_metals", categories: ["alkali-metal", "alkaline-earth-metal", "transition-metal", "post-transition-metal"] },
+  { key: "nonmetals", labelKey: "periodic_table.filter_nonmetals", categories: ["nonmetal", "halogen", "metalloid"] },
+  { key: "noble", labelKey: "periodic_table.filter_noble", categories: ["noble-gas"] },
+  { key: "lanthanides", labelKey: "periodic_table.filter_lanthanides", categories: ["lanthanide"] },
+  { key: "actinides", labelKey: "periodic_table.filter_actinides", categories: ["actinide"] },
 ];
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -148,7 +148,7 @@ export default function PeriodicTablePage() {
                 : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
             }`}
           >
-            {f.label}
+            {t(f.labelKey)}
           </button>
         ))}
       </div>
@@ -170,7 +170,13 @@ export default function PeriodicTablePage() {
                     discovered ? "" : "grayscale opacity-50"
                   }`}
                   style={{ backgroundColor: CATEGORY_COLORS[element.category] || "#94a3b8" }}
-                  aria-label={`${element.name}, atomic number ${element.atomicNumber}${discovered ? ", discovered" : ", not yet discovered"}`}
+                  aria-label={t("periodic_table.element_aria", {
+                    name: element.name,
+                    n: element.atomicNumber,
+                    state: discovered
+                      ? t("periodic_table.discovered")
+                      : t("periodic_table.not_discovered"),
+                  })}
                 >
                   {img ? (
                     /* Image is decorative — name + symbol are baked in. */
@@ -193,7 +199,7 @@ export default function PeriodicTablePage() {
             })}
         </div>
         {filteredElements.length === 0 && (
-          <p className="text-center text-slate-500 py-8">No elements match your filter.</p>
+          <p className="text-center text-slate-500 py-8">{t("periodic_table.no_match")}</p>
         )}
       </div>
 
@@ -323,7 +329,7 @@ export default function PeriodicTablePage() {
               <button
                 onClick={() => setSelectedElement(null)}
                 className="p-2 rounded-lg hover:bg-slate-100 shrink-0"
-                aria-label="Close"
+                aria-label={t("common.close")}
               >
                 <ArrowLeft className="w-5 h-5 rotate-45" />
               </button>
@@ -351,7 +357,7 @@ export default function PeriodicTablePage() {
                 <div className="font-semibold">{selectedElement.valenceElectronsMainGroup}</div>
               </div>
               <div className="p-3 rounded-lg bg-slate-50">
-                <div className="text-xs text-slate-500">Electronegativity</div>
+                <div className="text-xs text-slate-500">{t("periodic_table.electronegativity")}</div>
                 <div className="font-semibold">
                   {selectedElement.electronegativityPauling ?? "—"}
                 </div>
@@ -366,9 +372,11 @@ export default function PeriodicTablePage() {
                 </span>
               </div>
               <p className="text-sm text-slate-700">
-                {selectedElement.name} has {selectedElement.atomicNumber} protons
-                and its electron configuration is{" "}
-                {selectedElement.shellOccupancy.join("-")}.
+                {t("periodic_table.fact_template", {
+                  name: selectedElement.name,
+                  protons: selectedElement.atomicNumber,
+                  config: selectedElement.shellOccupancy.join("-"),
+                })}
               </p>
             </div>
           </div>
@@ -385,6 +393,7 @@ interface PeriodicCellProps {
 }
 
 function PeriodicCell({ element, onSelect, discovered = true }: PeriodicCellProps) {
+  const { t } = useTranslation();
   const img = getElementImageUrl(element.symbol);
   // Hover lift: scale up, raise stacking context above neighbors, add a
   // colored glow + white ring + drop shadow for depth. Smooth transition
@@ -416,7 +425,13 @@ function PeriodicCell({ element, onSelect, discovered = true }: PeriodicCellProp
       onMouseLeave={(e) => {
         e.currentTarget.style.boxShadow = "";
       }}
-      aria-label={`${element.name}, atomic number ${element.atomicNumber}${discovered ? ", discovered" : ", not yet discovered"}`}
+      aria-label={t("periodic_table.element_aria", {
+        name: element.name,
+        n: element.atomicNumber,
+        state: discovered
+          ? t("periodic_table.discovered")
+          : t("periodic_table.not_discovered"),
+      })}
     >
       {img ? (
         // Card art has the symbol/number/name baked in; the colored backdrop

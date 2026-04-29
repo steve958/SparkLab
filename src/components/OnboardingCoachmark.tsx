@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useGameStore } from "@/store/gameStore";
 
 // Contextual coachmark that walks a first-run player through the very
@@ -27,6 +28,7 @@ type CoachStep = "empty" | "has-atom" | "done";
 export default function OnboardingCoachmark({
   onDismiss,
 }: OnboardingCoachmarkProps) {
+  const { t } = useTranslation();
   const sceneAtoms = useGameStore((s) => s.scene.atoms);
   const isMissionComplete = useGameStore((s) => s.isMissionComplete);
 
@@ -80,14 +82,14 @@ export default function OnboardingCoachmark({
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold leading-snug">
               {step === "empty"
-                ? "Tap the H button up here to add a Hydrogen atom."
-                : "Nice! Now tap Check below to test it."}
+                ? t("onboarding.coach_empty")
+                : t("onboarding.coach_has_atom")}
             </p>
             <button
               onClick={() => setHidden(true)}
               className="text-[11px] font-medium text-white/80 hover:text-white underline mt-1"
             >
-              I got it from here
+              {t("onboarding.coach_dismiss")}
             </button>
           </div>
         </div>

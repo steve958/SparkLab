@@ -80,7 +80,7 @@ export default function ProfileSelector() {
               <button
                 onClick={() => removeProfile(profile.id)}
                 className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
-                aria-label={`${t("profile.delete")} ${profile.name}`}
+                aria-label={`${t("profile.delete")} — ${profile.name}`}
               >
                 <Trash2 className="w-4 h-4" />
               </button>

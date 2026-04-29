@@ -78,17 +78,17 @@ export default function LabHub() {
             {t("profile.welcome_back", { name: currentProfile.name })}
           </p>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground truncate">
-            {currentProfile.name}&apos;s Lab
+            {t("lab_hub.name_lab", { name: currentProfile.name })}
           </h1>
         </div>
       </div>
 
       {/* Stat strip */}
       <div className="grid grid-cols-4 gap-2 sm:gap-3">
-        <Stat icon={<Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />} value={totalStars} label="Stars" />
-        <Stat icon={<Sparkles className="w-4 h-4 text-primary" />} value={completedMissions} label="Missions" />
-        <Stat icon={<BookOpen className="w-4 h-4 text-sky-600" />} value={discoveries.length} label="Discoveries" />
-        <Stat icon={<Award className="w-4 h-4 text-amber-600" />} value={badges.length} label="Badges" />
+        <Stat icon={<Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />} value={totalStars} label={t("lab_hub.stat_stars")} />
+        <Stat icon={<Sparkles className="w-4 h-4 text-primary" />} value={completedMissions} label={t("lab_hub.stat_missions")} />
+        <Stat icon={<BookOpen className="w-4 h-4 text-sky-600" />} value={discoveries.length} label={t("lab_hub.stat_discoveries")} />
+        <Stat icon={<Award className="w-4 h-4 text-amber-600" />} value={badges.length} label={t("lab_hub.stat_badges")} />
       </div>
 
       {/* Current quest */}
@@ -99,25 +99,31 @@ export default function LabHub() {
           className="block p-4 sm:p-5 rounded-2xl border-2 border-primary bg-white hover:shadow-md transition-all"
         >
           <p className="text-[11px] font-bold uppercase tracking-wider text-primary mb-1">
-            Current quest
+            {t("lab_hub.current_quest")}
           </p>
           <div className="flex items-center gap-3">
             <div className="flex-1 min-w-0">
               <h2 className="font-bold text-base sm:text-lg leading-tight truncate">
-                {currentQuest.mission.title}
+                {t(`content.missions.${currentQuest.mission.missionId}.title`, {
+                  defaultValue: currentQuest.mission.title,
+                })}
               </h2>
               <p className="text-xs sm:text-sm text-slate-600 line-clamp-2">
-                {currentQuest.mission.brief}
+                {t(`content.missions.${currentQuest.mission.missionId}.brief`, {
+                  defaultValue: currentQuest.mission.brief,
+                })}
               </p>
               <p
                 className="text-[11px] font-semibold mt-1.5"
                 style={{ color: currentQuest.world.themeColor }}
               >
-                {currentQuest.world.name}
+                {t(`content.worlds.${currentQuest.world.worldId}.name`, {
+                  defaultValue: currentQuest.world.name,
+                })}
               </p>
             </div>
             <div className="flex items-center gap-1 text-primary font-semibold text-sm shrink-0">
-              Play
+              {t("lab_hub.play_short")}
               <ArrowRight className="w-4 h-4" />
             </div>
           </div>
@@ -125,11 +131,10 @@ export default function LabHub() {
       ) : completedMissions > 0 ? (
         <div className="p-4 sm:p-5 rounded-2xl border-2 border-green-200 bg-green-50/50 text-center">
           <p className="text-[11px] font-bold uppercase tracking-wider text-green-800">
-            Master scientist
+            {t("lab_hub.master_scientist")}
           </p>
           <p className="text-sm text-slate-700 mt-1">
-            You&apos;ve cleared every mission. Try the sandbox to invent
-            something new.
+            {t("lab_hub.master_scientist_msg")}
           </p>
         </div>
       ) : null}
@@ -139,13 +144,13 @@ export default function LabHub() {
         <div>
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider">
-              Latest discoveries
+              {t("lab_hub.latest_discoveries")}
             </h3>
             <Link
               href="/notebook"
               className="text-xs font-medium text-primary hover:underline"
             >
-              See all
+              {t("lab_hub.see_all")}
             </Link>
           </div>
           <div className="grid gap-2">
@@ -170,13 +175,13 @@ export default function LabHub() {
       {/* Action grid */}
       <div>
         <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wider mb-2">
-          Lab tools
+          {t("lab_hub.lab_tools")}
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           <ActionCard href="/worlds" icon={<Play className="w-5 h-5" />} label={t("menu.play")} primary />
-          <ActionCard href="/sandbox" icon={<Beaker className="w-5 h-5" />} label="Sandbox" />
-          <ActionCard href="/notebook" icon={<BookOpen className="w-5 h-5" />} label="Notebook" />
-          <ActionCard href="/badges" icon={<Award className="w-5 h-5" />} label="Badges" />
+          <ActionCard href="/sandbox" icon={<Beaker className="w-5 h-5" />} label={t("lab_hub.sandbox")} />
+          <ActionCard href="/notebook" icon={<BookOpen className="w-5 h-5" />} label={t("lab_hub.notebook")} />
+          <ActionCard href="/badges" icon={<Award className="w-5 h-5" />} label={t("lab_hub.badges")} />
           <ActionCard href="/periodic-table" icon={<Table className="w-5 h-5" />} label={t("periodic_table.title")} />
           <ActionCard href="/settings" icon={<Settings className="w-5 h-5" />} label={t("menu.settings")} />
           <ActionCard href="/cms" icon={<PenTool className="w-5 h-5" />} label={t("cms.title")} />

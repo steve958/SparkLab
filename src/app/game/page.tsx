@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useTranslation } from "react-i18next";
 import { loadContent, clearContentCache, type ContentBundle, getString } from "@/data/loader";
 import { useGameStore } from "@/store/gameStore";
 import { useProgressStore } from "@/store/progressStore";
@@ -29,6 +30,7 @@ const PixiApp = dynamic(() => import("@/game/PixiApp"), { ssr: false });
 
 export default function GamePage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const currentProfile = useProgressStore((s) => s.currentProfile);
   const updateProgress = useProgressStore((s) => s.updateProgress);
   const markOnboardingComplete = useProgressStore(
@@ -232,7 +234,7 @@ export default function GamePage() {
             )
             .filter((t) => t && !t.startsWith("explanation_"));
           const explanation =
-            explanations.length > 0 ? explanations.join(" ") : "Great job!";
+            explanations.length > 0 ? explanations.join(" ") : t("game.great_job");
           await handleSuccess(explanation);
         } else {
           recordFailure(result.explanation);
@@ -250,7 +252,7 @@ export default function GamePage() {
           );
           const explanation = molecule
             ? getString(content.strings, `explanation_${molecule.moleculeId}`, "en")
-            : "Great job!";
+            : t("game.great_job");
           await handleSuccess(explanation);
         } else {
           recordFailure(result.explanation);
@@ -263,9 +265,9 @@ export default function GamePage() {
           (a) => a.elementId === condition.targetElement
         );
         if (atoms.length >= 1) {
-          await handleSuccess("You built the atom correctly!");
+          await handleSuccess(t("game.build_atom_success"));
         } else {
-          recordFailure("Build an atom with the right number of particles.");
+          recordFailure(t("game.build_atom_fail"));
         }
       }
     } else if (mission.objectiveType === "count-atoms") {
@@ -280,11 +282,15 @@ export default function GamePage() {
         (t) => (counts.get(t.element) ?? 0) !== t.count
       );
       if (!wrong) {
-        await handleSuccess("You placed the right number of each atom!");
+        await handleSuccess(t("game.count_atoms_success"));
       } else {
         const have = counts.get(wrong.element) ?? 0;
         recordFailure(
-          `You have ${have} ${wrong.element} atoms — the target is ${wrong.count}.`
+          t("game.count_atoms_fail", {
+            have,
+            element: wrong.element,
+            target: wrong.count,
+          })
         );
       }
     } else if (mission.objectiveType === "run-reaction") {
@@ -294,7 +300,7 @@ export default function GamePage() {
           (r) => r.reactionId === condition.targetReactionId
         );
         if (!reaction) {
-          showFeedback("Reaction not found in content.", "error");
+          showFeedback(t("game.reaction_not_found"), "error");
           return;
         }
 
@@ -322,9 +328,9 @@ export default function GamePage() {
         }
       }
     } else {
-      showFeedback("Checking...", "info");
+      showFeedback(t("game.checking"), "info");
     }
-  }, [mission, content, scene, handleSuccess, showFeedback, recordAttempt]);
+  }, [mission, content, scene, handleSuccess, showFeedback, recordAttempt, t]);
 
   useEffect(() => {
     if (!currentProfile) {
@@ -560,7 +566,7 @@ export default function GamePage() {
   if (contentError) {
     return (
       <div className="flex flex-col items-center justify-center min-h-dvh p-4">
-        <p className="text-slate-700 font-semibold mb-1">Couldn&apos;t load chemistry content.</p>
+        <p className="text-slate-700 font-semibold mb-1">{t("game.load_failed_short")}</p>
         <p className="text-sm text-slate-500 mb-4 max-w-md text-center">
           {contentError.message}
         </p>
@@ -569,13 +575,13 @@ export default function GamePage() {
             onClick={retryContentLoad}
             className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-hover"
           >
-            Retry
+            {t("common.retry")}
           </button>
           <button
             onClick={() => goBackOr(router, "/")}
             className="px-4 py-2 border border-slate-300 rounded-lg hover:bg-slate-50"
           >
-            Back to Home
+            {t("common.back_to_home")}
           </button>
         </div>
       </div>
@@ -630,10 +636,10 @@ export default function GamePage() {
                 to match each zone so they feel like part of the
                 background rather than overlaid UI. */}
             <div className="absolute top-2 left-2 sm:top-3 sm:left-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/85 ring-1 ring-sky-200 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-sky-700">
-              Reactants
+              {t("game.reactants")}
             </div>
             <div className="absolute top-2 right-2 sm:top-3 sm:right-3 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-white/85 ring-1 ring-green-200 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-green-700">
-              Products
+              {t("game.products")}
             </div>
           </div>
         )}

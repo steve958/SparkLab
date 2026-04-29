@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import AvatarBadge, {
   AVATAR_PALETTE,
   AVATAR_ACCESSORIES,
@@ -23,6 +24,7 @@ export default function AvatarBuilder({
   accessory,
   onChange,
 }: AvatarBuilderProps) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-5">
       <div className="flex flex-col items-center gap-2">
@@ -30,16 +32,18 @@ export default function AvatarBuilder({
           profile={{ name, avatarColor: color, avatarAccessory: accessory }}
           size="xl"
         />
-        <p className="text-sm text-slate-500">Your lab badge</p>
+        <p className="text-sm text-slate-500">
+          {t("avatar_builder.your_lab_badge")}
+        </p>
       </div>
 
       <div>
         <label className="block text-sm font-semibold text-slate-700 mb-2">
-          Color
+          {t("avatar_builder.color")}
         </label>
         <div
           role="radiogroup"
-          aria-label="Avatar color"
+          aria-label={t("avatar_builder.color_aria")}
           className="flex flex-wrap gap-2"
         >
           {AVATAR_PALETTE.map((swatch) => {
@@ -50,7 +54,7 @@ export default function AvatarBuilder({
                 type="button"
                 role="radio"
                 aria-checked={selected}
-                aria-label={`Color ${swatch}`}
+                aria-label={t("avatar_builder.color_swatch_aria", { color: swatch })}
                 onClick={() => onChange({ color: swatch, accessory })}
                 className={`w-10 h-10 rounded-full border-2 transition-transform touch-target ${
                   selected
@@ -66,11 +70,11 @@ export default function AvatarBuilder({
 
       <div>
         <label className="block text-sm font-semibold text-slate-700 mb-2">
-          Accessory
+          {t("avatar_builder.accessory")}
         </label>
         <div
           role="radiogroup"
-          aria-label="Avatar accessory"
+          aria-label={t("avatar_builder.accessory_aria")}
           className="flex flex-wrap gap-2"
         >
           {Object.entries(AVATAR_ACCESSORIES).map(([key, Icon]) => {
@@ -81,7 +85,7 @@ export default function AvatarBuilder({
                 type="button"
                 role="radio"
                 aria-checked={selected}
-                aria-label={`Accessory ${key}`}
+                aria-label={t("avatar_builder.accessory_aria_item", { name: key })}
                 onClick={() => onChange({ color, accessory: key })}
                 className={`w-11 h-11 rounded-xl border-2 flex items-center justify-center transition-colors touch-target ${
                   selected

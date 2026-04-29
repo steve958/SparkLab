@@ -189,9 +189,9 @@ export default function SettingsPage() {
         >
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
           <div className="flex-1 min-w-0">
-            <div className="font-medium">Privacy notice</div>
+            <div className="font-medium">{t("settings.privacy_title")}</div>
             <div className="text-sm text-slate-600">
-              What SparkLab knows about you (and what it doesn&apos;t).
+              {t("settings.privacy_desc")}
             </div>
           </div>
         </Link>

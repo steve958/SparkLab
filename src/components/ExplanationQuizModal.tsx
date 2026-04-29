@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Check, X } from "lucide-react";
 import type { ExplanationQuiz } from "@/types";
 
@@ -15,6 +16,7 @@ export default function ExplanationQuizModal({
   explanationText,
   onAnswer,
 }: ExplanationQuizModalProps) {
+  const { t } = useTranslation();
   const [selected, setSelected] = useState<number | null>(null);
   const answered = selected !== null;
   const isCorrect = selected === quiz.correctIndex;
@@ -28,7 +30,7 @@ export default function ExplanationQuizModal({
     >
       <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-6">
         <p className="text-sm font-semibold text-primary uppercase tracking-wide">
-          One last question for the 3rd star
+          {t("explanation_quiz.intro")}
         </p>
         <h2
           id="explanation-quiz-question"
@@ -82,7 +84,7 @@ export default function ExplanationQuizModal({
             }`}
           >
             <p className="font-semibold mb-1">
-              {isCorrect ? "Correct!" : "Not quite — here's why:"}
+              {isCorrect ? t("explanation_quiz.correct") : t("explanation_quiz.wrong")}
             </p>
             <p>{explanationText}</p>
           </div>
@@ -95,7 +97,7 @@ export default function ExplanationQuizModal({
             disabled={!answered}
             className="px-5 py-2.5 bg-primary text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-hover"
           >
-            Continue
+            {t("explanation_quiz.continue")}
           </button>
         </div>
       </div>

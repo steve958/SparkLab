@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useTranslation } from "react-i18next";
 import { ArrowRight, SkipForward } from "lucide-react";
 import { useProgressStore } from "@/store/progressStore";
 import { useGameStore } from "@/store/gameStore";
@@ -22,6 +23,7 @@ const FIRST_MISSION_ID = "f01_build_h_atom";
 
 export default function OnboardingIntro() {
   const router = useRouter();
+  const { t } = useTranslation();
   const currentProfile = useProgressStore((s) => s.currentProfile);
   const markOnboardingComplete = useProgressStore(
     (s) => s.markOnboardingComplete
@@ -69,13 +71,13 @@ export default function OnboardingIntro() {
 
       <div>
         <p className="text-sm font-semibold text-primary uppercase tracking-wide">
-          Welcome to SparkLab
+          {t("onboarding.welcome")}
         </p>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-foreground mt-1">
-          Hi, {currentProfile.name}!
+          {t("onboarding.hi_name", { name: currentProfile.name })}
         </h1>
         <p className="text-base sm:text-lg text-slate-600 mt-3">
-          Ready to build your first atom? It only takes a minute.
+          {t("onboarding.ready_question")}
         </p>
       </div>
 
@@ -85,7 +87,7 @@ export default function OnboardingIntro() {
           className="flex items-center justify-center gap-2 w-full py-4 px-6 rounded-xl bg-primary text-white font-semibold text-lg hover:bg-primary-hover transition-colors touch-target-lg"
           autoFocus
         >
-          Let&apos;s go
+          {t("onboarding.lets_go")}
           <ArrowRight className="w-5 h-5" />
         </button>
 
@@ -94,7 +96,7 @@ export default function OnboardingIntro() {
           className="flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl text-slate-600 hover:bg-slate-100 transition-colors touch-target text-sm font-medium"
         >
           <SkipForward className="w-4 h-4" />
-          Skip the tutorial
+          {t("onboarding.skip")}
         </button>
       </div>
     </div>

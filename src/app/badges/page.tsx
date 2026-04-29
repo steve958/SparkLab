@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import * as Icons from "lucide-react";
 import { useProgressStore } from "@/store/progressStore";
 import { goBackOr } from "@/lib/navigation";
@@ -13,6 +14,7 @@ import { Award, Lock, ArrowLeft } from "lucide-react";
 // description) or locked (greyscale, hint of what unlocks it).
 export default function BadgesPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const currentProfile = useProgressStore((s) => s.currentProfile);
   const earned = useProgressStore((s) => s.badges);
   const [content, setContent] = useState<ContentBundle | null>(null);
@@ -40,16 +42,15 @@ export default function BadgesPage() {
           className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-4 sm:mb-6 touch-target"
         >
           <ArrowLeft className="w-5 h-5" />
-          Back
+          {t("menu.back")}
         </button>
 
         <div className="flex items-center gap-3 mb-2">
           <Award className="w-7 h-7 text-amber-600" />
-          <h1 className="text-2xl sm:text-3xl font-extrabold">Badges</h1>
+          <h1 className="text-2xl sm:text-3xl font-extrabold">{t("badges_page.title")}</h1>
         </div>
         <p className="text-sm sm:text-base text-slate-600 mb-6">
-          {earnedCount} of {total} earned. Each one celebrates something
-          specific you&apos;ve done.
+          {t("badges_page.summary", { earned: earnedCount, total })}
         </p>
 
         <ul className="grid grid-cols-2 sm:grid-cols-3 gap-3">

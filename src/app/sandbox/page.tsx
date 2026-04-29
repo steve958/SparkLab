@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import { useTranslation } from "react-i18next";
 import { useGameStore } from "@/store/gameStore";
 import { useProgressStore } from "@/store/progressStore";
 import { loadContent, type ContentBundle } from "@/data/loader";
@@ -22,6 +23,7 @@ const PixiApp = dynamic(() => import("@/game/PixiApp"), { ssr: false });
 // available immediately so sandbox feels like exploration, not homework.
 export default function SandboxPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const currentProfile = useProgressStore((s) => s.currentProfile);
   const addDiscoveryRecord = useProgressStore((s) => s.addDiscoveryRecord);
 
@@ -51,8 +53,8 @@ export default function SandboxPage() {
       initMission({
         missionId: "sandbox",
         worldId: "sandbox",
-        title: "Sandbox",
-        brief: "Free play",
+        title: t("sandbox.title"),
+        brief: t("sandbox.free_play"),
         objectiveType: "build-molecule",
         allowedElements: bundle.elements.map((e) => e.symbol),
         allowedMolecules: bundle.molecules.map((m) => m.moleculeId),
@@ -75,7 +77,7 @@ export default function SandboxPage() {
     if (!content || !currentProfile) return;
     if (scene.atoms.length === 0) {
       setFeedback({
-        text: "Your bench is empty — try adding some atoms first.",
+        text: t("sandbox.empty_scene"),
         tone: "info",
       });
       return;
@@ -104,8 +106,10 @@ export default function SandboxPage() {
       }).catch(() => {});
       setFeedback({
         text: recorded
-          ? `Saved ${molecule?.displayName ?? "your creation"} to the notebook!`
-          : `Already in your notebook — try something new.`,
+          ? t("sandbox.saved", {
+              name: molecule?.displayName ?? t("sandbox.saved_default_name"),
+            })
+          : t("sandbox.already_saved"),
         tone: "success",
       });
     } else {
@@ -116,11 +120,11 @@ export default function SandboxPage() {
         atomCount: scene.atoms.length,
       }).catch(() => {});
       setFeedback({
-        text: "We don't recognize this molecule yet — keep experimenting!",
+        text: t("sandbox.unknown_molecule"),
         tone: "info",
       });
     }
-  }, [content, currentProfile, scene, addDiscoveryRecord]);
+  }, [content, currentProfile, scene, addDiscoveryRecord, t]);
 
   if (!currentProfile || !content) return null;
 
@@ -131,21 +135,21 @@ export default function SandboxPage() {
         <button
           onClick={() => goBackOr(router, "/")}
           className="p-2 rounded-lg hover:bg-slate-100 touch-target shrink-0"
-          aria-label="Back"
+          aria-label={t("menu.back")}
         >
           <ArrowLeft className="w-5 h-5" />
         </button>
         <div className="flex items-center gap-2 min-w-0">
           <Beaker className="w-5 h-5 text-primary shrink-0" />
           <h2 className="font-semibold text-sm sm:text-base truncate">
-            Sandbox
+            {t("sandbox.title")}
           </h2>
         </div>
         <div className="flex items-center gap-1.5">
           <button
             onClick={() => resetScene()}
             className="p-2 rounded-lg hover:bg-slate-100 touch-target"
-            aria-label="Clear scene"
+            aria-label={t("sandbox.clear_scene")}
           >
             <RotateCcw className="w-5 h-5" />
           </button>
@@ -155,7 +159,7 @@ export default function SandboxPage() {
       {/* Atom tray — every element available */}
       <div className="flex items-center gap-2 px-2 sm:px-3 py-2 bg-slate-50 border-b border-slate-200 overflow-x-auto">
         <span className="text-xs font-medium text-slate-600 shrink-0 mr-1">
-          Atoms:
+          {t("sandbox.atoms_label")}
         </span>
         {content.elements
           .slice()
@@ -183,7 +187,7 @@ export default function SandboxPage() {
                 });
               }}
               className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-slate-200 hover:border-primary hover:bg-sky-50 transition-colors shrink-0 touch-target"
-              aria-label={`Add ${element.name} atom`}
+              aria-label={t("game.add_atom_aria", { name: element.name })}
             >
               <span
                 className="w-4 h-4 rounded-full"
@@ -209,7 +213,7 @@ export default function SandboxPage() {
             <button
               onClick={() => setFeedback(null)}
               className="p-1 rounded hover:bg-white/20"
-              aria-label="Dismiss"
+              aria-label={t("common.dismiss")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -224,7 +228,7 @@ export default function SandboxPage() {
           className="flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover transition-colors touch-target-lg"
         >
           <Save className="w-5 h-5" />
-          Save creation
+          {t("sandbox.save_creation")}
         </button>
       </div>
     </main>

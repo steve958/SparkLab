@@ -290,7 +290,7 @@ export default function GameHUD({ content }: GameHUDProps) {
               goBackOr(router, `/worlds?world=${mission.worldId}`)
             }
             className="p-2 rounded-lg hover:bg-slate-100 touch-target shrink-0"
-            aria-label="Back"
+            aria-label={t("menu.back")}
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -298,7 +298,9 @@ export default function GameHUD({ content }: GameHUDProps) {
               the dedicated rows below render those instead. */}
           <div className="hidden sm:block min-w-0">
             <h2 className="font-semibold text-base truncate">
-              {mission.title}
+              {t(`content.missions.${mission.missionId}.title`, {
+                defaultValue: mission.title,
+              })}
             </h2>
             {reactionEquation ? (
               <p className="text-xs text-primary font-mono font-medium truncate">
@@ -306,7 +308,9 @@ export default function GameHUD({ content }: GameHUDProps) {
               </p>
             ) : (
               <p className="text-xs text-slate-500 truncate">
-                {mission.brief}
+                {t(`content.missions.${mission.missionId}.brief`, {
+                  defaultValue: mission.brief,
+                })}
               </p>
             )}
           </div>
@@ -339,8 +343,8 @@ export default function GameHUD({ content }: GameHUDProps) {
             }}
             disabled={!selectedAtomId && !selectedBondId}
             className="p-1.5 sm:p-2 rounded-lg hover:bg-red-50 hover:text-red-600 touch-target disabled:opacity-30 disabled:cursor-not-allowed"
-            aria-label={selectedBondId ? "Delete selected bond" : "Delete selected atom"}
-            title={selectedBondId ? "Delete selected bond" : "Delete selected atom"}
+            aria-label={selectedBondId ? t("game.delete_bond") : t("game.delete_atom")}
+            title={selectedBondId ? t("game.delete_bond") : t("game.delete_atom")}
           >
             <Trash2 className="w-5 h-5" />
           </button>
@@ -361,7 +365,9 @@ export default function GameHUD({ content }: GameHUDProps) {
           inline version inside the top bar is already visible there. */}
       <div className="sm:hidden px-3 pt-1.5 pb-2 bg-white border-b border-slate-100">
         <h2 className="font-semibold text-base leading-tight text-foreground">
-          {mission.title}
+          {t(`content.missions.${mission.missionId}.title`, {
+            defaultValue: mission.title,
+          })}
         </h2>
         {reactionEquation ? (
           <p className="mt-0.5 text-xs font-mono font-medium text-primary">
@@ -369,7 +375,9 @@ export default function GameHUD({ content }: GameHUDProps) {
           </p>
         ) : (
           <p className="mt-0.5 text-xs text-slate-600 leading-snug">
-            {mission.brief}
+            {t(`content.missions.${mission.missionId}.brief`, {
+              defaultValue: mission.brief,
+            })}
           </p>
         )}
       </div>
@@ -387,15 +395,15 @@ export default function GameHUD({ content }: GameHUDProps) {
             <div className="space-y-0.5">
               <p>
                 {isTouchDevice
-                  ? "Drag an atom to move it. Tap two atoms to bond — tap a bonded pair again to upgrade. Long-press to delete."
-                  : "Drag an atom to move it. Click two atoms to bond — click a bonded pair again to upgrade. Right-click to delete."}
+                  ? t("game.interaction_hint_touch")
+                  : t("game.interaction_hint_mouse")}
               </p>
               <p className="flex items-center gap-1 text-indigo-700">
                 <Search className="w-3.5 h-3.5 shrink-0" />
                 <span>
                   {isTouchDevice
-                    ? "Pinch to zoom in — see the electrons whirl through the bonds."
-                    : "Scroll to zoom in — see the electrons whirl through the bonds."}
+                    ? t("game.zoom_hint_touch")
+                    : t("game.zoom_hint_mouse")}
                 </span>
               </p>
             </div>
@@ -403,7 +411,7 @@ export default function GameHUD({ content }: GameHUDProps) {
           <button
             onClick={dismissInteractionHint}
             className="p-1 rounded hover:bg-indigo-100 shrink-0 -mr-1"
-            aria-label="Dismiss hint"
+            aria-label={t("game.dismiss_hint")}
           >
             <X className="w-4 h-4 text-indigo-600" />
           </button>
@@ -419,7 +427,7 @@ export default function GameHUD({ content }: GameHUDProps) {
       {targetMolecules.length > 0 && (
         <div className="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-1.5 bg-sky-50 border-b border-sky-100 overflow-x-auto">
           <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-sky-700 shrink-0">
-            {targetMolecules.length === 1 ? "Build" : "Build both"}
+            {targetMolecules.length === 1 ? t("game.build") : t("game.build_both")}
           </span>
           {targetMolecules.map((m) => (
             <div
@@ -455,28 +463,35 @@ export default function GameHUD({ content }: GameHUDProps) {
               left/right callouts on tablet+. */}
           <div className="px-2 sm:px-3 py-1.5 bg-amber-50 border-b border-amber-100 text-[11px] sm:text-xs text-amber-900 leading-snug">
             <span className="sm:hidden">
-              <span className="font-semibold">Conserve atoms:</span> same
-              atoms on both sides, just regrouped.
+              <span className="font-semibold">{t("game.conserve_atoms_label")}</span>{" "}
+              {t("game.conserve_atoms_short_after")}
             </span>
             <span className="hidden sm:inline">
-              <span className="font-semibold">Conserve atoms:</span> place
-              the starting atoms as molecules on the{" "}
-              <span className="font-semibold text-sky-700">left</span>,
-              then the <em>same</em> atoms regrouped as products on the{" "}
-              <span className="font-semibold text-green-700">right</span>.
+              <span className="font-semibold">{t("game.conserve_atoms_label")}</span>{" "}
+              {t("game.conserve_atoms_long_pre")}{" "}
+              <span className="font-semibold text-sky-700">
+                {t("game.conserve_atoms_long_left")}
+              </span>
+              {t("game.conserve_atoms_long_mid")}{" "}
+              <em>{t("game.conserve_atoms_long_same")}</em>{" "}
+              {t("game.conserve_atoms_long_after")}{" "}
+              <span className="font-semibold text-green-700">
+                {t("game.conserve_atoms_long_right")}
+              </span>
+              .
             </span>
           </div>
           <div className="grid grid-cols-2 gap-px bg-slate-200 border-b border-slate-200">
             <ReactionAtomGroup
               side="reactants"
-              label="Reactants"
+              label={t("game.reactants")}
               tone="sky"
               allowedElements={mission.allowedElements}
               elements={content.elements}
             />
             <ReactionAtomGroup
               side="products"
-              label="Products"
+              label={t("game.products")}
               tone="green"
               allowedElements={mission.allowedElements}
               elements={content.elements}
@@ -502,7 +517,7 @@ export default function GameHUD({ content }: GameHUDProps) {
                   window.dispatchEvent(event);
                 }}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white border border-slate-200 hover:border-primary hover:bg-sky-50 transition-colors shrink-0 touch-target"
-                aria-label={`Add ${element.name} atom`}
+                aria-label={t("game.add_atom_aria", { name: element.name })}
               >
                 <span
                   className="w-4 h-4 rounded-full"
@@ -564,7 +579,7 @@ export default function GameHUD({ content }: GameHUDProps) {
                 setShowAtomDetails(true);
               }}
               className="flex items-center gap-1 sm:gap-2 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium bg-violet-100 text-violet-700 hover:bg-violet-200 transition-colors touch-target"
-              aria-label={`Show ${selectedElement.name} details`}
+              aria-label={t("game.show_element_details", { name: selectedElement.name })}
             >
               <Info className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>{selectedElement.name}</span>
@@ -594,7 +609,7 @@ export default function GameHUD({ content }: GameHUDProps) {
         >
           {hintAction === "show-me" && (
             <p className="text-[11px] font-bold uppercase tracking-wide text-amber-800 mb-1">
-              Show me
+              {t("game.show_me")}
             </p>
           )}
           <div className="flex items-start justify-between gap-2">
@@ -610,7 +625,7 @@ export default function GameHUD({ content }: GameHUDProps) {
             <button
               onClick={dismissHint}
               className="p-1 rounded hover:bg-yellow-100 shrink-0"
-              aria-label="Dismiss hint"
+              aria-label={t("game.dismiss_hint")}
             >
               <X className="w-4 h-4 text-yellow-600" />
             </button>
@@ -634,7 +649,7 @@ export default function GameHUD({ content }: GameHUDProps) {
             <button
               onClick={dismissFeedback}
               className="p-1 rounded hover:bg-white/20"
-              aria-label="Dismiss"
+              aria-label={t("game.dismiss_feedback")}
             >
               <X className="w-4 h-4" />
             </button>
@@ -670,7 +685,7 @@ export default function GameHUD({ content }: GameHUDProps) {
                 <button
                   onClick={() => setShow3D(false)}
                   className="p-2 rounded-lg hover:bg-slate-100"
-                  aria-label="Close"
+                  aria-label={t("common.close")}
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -745,21 +760,21 @@ export default function GameHUD({ content }: GameHUDProps) {
               if (before === 0) {
                 return (
                   <div className="inline-block text-[11px] font-bold uppercase tracking-wider bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full mb-3">
-                    First clear!
+                    {t("game.first_clear")}
                   </div>
                 );
               }
               if (earned > before) {
                 return (
                   <div className="inline-block text-[11px] font-bold uppercase tracking-wider bg-amber-100 text-amber-800 px-3 py-1 rounded-full mb-3">
-                    New best
+                    {t("game.new_best")}
                   </div>
                 );
               }
               if (earned === 3 && before === 3) {
                 return (
                   <div className="inline-block text-[11px] font-bold uppercase tracking-wider bg-green-100 text-green-800 px-3 py-1 rounded-full mb-3">
-                    Mastered
+                    {t("game.mastered_badge")}
                   </div>
                 );
               }
@@ -795,8 +810,13 @@ export default function GameHUD({ content }: GameHUDProps) {
                 actually has missions; suppressed for partial worlds. */}
             {worldMastery && worldMastery.total > 0 && (
               <p className="text-xs font-medium text-slate-600 mb-6">
-                {worldMastery.worldName}: {worldMastery.perfect} of{" "}
-                {worldMastery.total} missions perfect
+                {t("game.world_perfect", {
+                  worldName: t(`content.worlds.${mission.worldId}.name`, {
+                    defaultValue: worldMastery.worldName,
+                  }),
+                  perfect: worldMastery.perfect,
+                  total: worldMastery.total,
+                })}
               </p>
             )}
             <div className="flex flex-col gap-2">
@@ -813,7 +833,7 @@ export default function GameHUD({ content }: GameHUDProps) {
                   }}
                   className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover transition-colors flex items-center justify-center gap-2"
                 >
-                  Next mission
+                  {t("game.next_mission")}
                   <ArrowRight className="w-4 h-4" />
                 </button>
               )}
@@ -826,7 +846,7 @@ export default function GameHUD({ content }: GameHUDProps) {
                 }
                 className="w-full py-3 rounded-xl border border-slate-300 font-medium hover:bg-slate-50 transition-colors"
               >
-                {nextMission ? "Back to world" : t("game.continue")}
+                {nextMission ? t("game.back_to_world") : t("game.continue")}
               </button>
             </div>
           </div>
@@ -864,6 +884,7 @@ function ReactionAtomGroup({
   allowedElements: string[];
   elements: Element[];
 }) {
+  const { t } = useTranslation();
   const toneStyles =
     tone === "sky"
       ? {
@@ -898,7 +919,7 @@ function ReactionAtomGroup({
               window.dispatchEvent(event);
             }}
             className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-lg bg-white border border-slate-200 transition-colors shrink-0 touch-target ${toneStyles.btn}`}
-            aria-label={`Add ${element.name} atom to ${label}`}
+            aria-label={t("game.add_atom_to_side_aria", { name: element.name, side: label })}
           >
             <span
               className="w-4 h-4 rounded-full"

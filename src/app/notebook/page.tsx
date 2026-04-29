@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { useProgressStore } from "@/store/progressStore";
 import { goBackOr } from "@/lib/navigation";
 import { loadContent, type ContentBundle } from "@/data/loader";
@@ -20,6 +21,7 @@ import type { Discovery, Molecule } from "@/types";
 // missions, generic events) keep the original icon tile.
 export default function NotebookPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const currentProfile = useProgressStore((s) => s.currentProfile);
   const discoveries = useProgressStore((s) => s.discoveries);
   const [mounted, setMounted] = useState(false);
@@ -69,33 +71,33 @@ export default function NotebookPage() {
           className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-4 sm:mb-6 touch-target"
         >
           <ArrowLeft className="w-5 h-5" />
-          Back
+          {t("menu.back")}
         </button>
 
         <div className="flex items-center gap-3 mb-2">
           <BookOpen className="w-7 h-7 text-sky-600" />
           <h1 className="text-2xl sm:text-3xl font-extrabold">
-            {currentProfile.name}&apos;s Notebook
+            {t("notebook_page.title_owner", { name: currentProfile.name })}
           </h1>
         </div>
         <p className="text-sm sm:text-base text-slate-600 mb-6">
-          Every chemistry thing you&apos;ve made shows up here.
+          {t("notebook_page.subtitle")}
         </p>
 
         {discoveries.length === 0 ? (
           <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-white p-8 text-center">
             <Sparkles className="w-10 h-10 text-slate-300 mx-auto mb-3" />
             <p className="text-base font-semibold text-slate-700 mb-1">
-              No discoveries yet
+              {t("notebook_page.empty_title")}
             </p>
             <p className="text-sm text-slate-500 mb-4">
-              Finish a mission and your first sticker lands here.
+              {t("notebook_page.empty_body")}
             </p>
             <Link
               href="/worlds"
               className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-white font-semibold hover:bg-primary-hover transition-colors"
             >
-              Pick a mission
+              {t("notebook_page.pick_mission")}
             </Link>
           </div>
         ) : (
@@ -135,7 +137,7 @@ export default function NotebookPage() {
                       {d.explanation}
                     </p>
                     <p className="text-[11px] font-medium text-slate-400 mt-1.5 uppercase tracking-wider">
-                      {kindLabel(d.kind)} ·{" "}
+                      {kindLabel(d.kind, t)} ·{" "}
                       {molecule ? `${molecule.formulaHill} · ` : ""}
                       {new Date(d.createdAt).toLocaleDateString()}
                     </p>
@@ -150,16 +152,19 @@ export default function NotebookPage() {
   );
 }
 
-function kindLabel(kind: string): string {
+function kindLabel(
+  kind: string,
+  t: ReturnType<typeof useTranslation>["t"]
+): string {
   switch (kind) {
     case "mission-complete":
-      return "Mission";
+      return t("notebook_page.kind_mission");
     case "sandbox-molecule":
-      return "Sandbox";
+      return t("notebook_page.kind_sandbox");
     case "first-element-built":
-      return "Element";
+      return t("notebook_page.kind_element");
     default:
-      return "Discovery";
+      return t("notebook_page.kind_discovery");
   }
 }
 

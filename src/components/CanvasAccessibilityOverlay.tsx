@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
+import { useTranslation } from "react-i18next";
 import { useGameStore } from "@/store/gameStore";
 import { getElementBySymbol } from "@/data/loader";
 import type { ContentBundle } from "@/data/loader";
@@ -12,6 +13,7 @@ interface CanvasAccessibilityOverlayProps {
 export default function CanvasAccessibilityOverlay({
   content,
 }: CanvasAccessibilityOverlayProps) {
+  const { t } = useTranslation();
   const scene = useGameStore((s) => s.scene);
   const selectedAtomId = useGameStore((s) => s.selectedAtomId);
   const setSelectedAtom = useGameStore((s) => s.setSelectedAtom);
@@ -25,9 +27,12 @@ export default function CanvasAccessibilityOverlay({
   useEffect(() => {
     const liveRegion = document.getElementById("scene-live-region");
     if (liveRegion) {
-      liveRegion.textContent = `Scene has ${scene.atoms.length} atoms and ${scene.bonds.length} bonds.`;
+      liveRegion.textContent = t("canvas_a11y.scene_summary", {
+        atoms: scene.atoms.length,
+        bonds: scene.bonds.length,
+      });
     }
-  }, [scene.atoms.length, scene.bonds.length]);
+  }, [scene.atoms.length, scene.bonds.length, t]);
 
   const handleNudge = useCallback(
     (atomId: string, dx: number, dy: number) => {
@@ -75,10 +80,10 @@ export default function CanvasAccessibilityOverlay({
       <ul
         ref={listRef}
         className="sr-only focus-within:not-sr-only bg-white/95 backdrop-blur rounded-xl border border-slate-200 shadow-lg p-2 min-w-[200px]"
-        aria-label="Atom navigation. Use Tab to move between atoms, arrow keys to move the selected atom, Enter to bond to nearest, Delete to remove."
+        aria-label={t("canvas_a11y.atom_navigation")}
       >
         <li className="text-xs font-semibold text-slate-500 px-2 py-1 mb-1 uppercase tracking-wide">
-          Atoms ({scene.atoms.length})
+          {t("canvas_a11y.atom_count", { count: scene.atoms.length })}
         </li>
         {scene.atoms.map((atom) => {
           const element = getElementBySymbol(content.elements, atom.elementId);
@@ -118,9 +123,12 @@ export default function CanvasAccessibilityOverlay({
                     ? "bg-sky-100 text-sky-800 ring-1 ring-sky-300"
                     : "hover:bg-slate-50 text-slate-700"
                 }`}
-                aria-label={`${element?.name ?? atom.elementId} atom. Position ${Math.round(
-                  atom.x
-                )}, ${Math.round(atom.y)}. ${bondCount} bonds.`}
+                aria-label={t("canvas_a11y.atom_aria", {
+                  name: element?.name ?? atom.elementId,
+                  x: Math.round(atom.x),
+                  y: Math.round(atom.y),
+                  count: bondCount,
+                })}
               >
                 <div className="flex items-center gap-2">
                   <span
@@ -133,7 +141,9 @@ export default function CanvasAccessibilityOverlay({
                     {element?.name ?? atom.elementId}
                   </span>
                   <span className="text-xs text-slate-400 ml-auto">
-                    {bondCount} bond{bondCount !== 1 ? "s" : ""}
+                    {bondCount === 1
+                      ? t("canvas_a11y.bonds_one")
+                      : t("canvas_a11y.bonds_other", { count: bondCount })}
                   </span>
                 </div>
                 <div className="text-[10px] text-slate-400 mt-0.5 pl-5">

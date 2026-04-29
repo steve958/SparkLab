@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "react-i18next";
 import type { Element } from "@/types";
 import { X, FlaskConical } from "lucide-react";
 
@@ -21,6 +22,7 @@ export default function AtomDetailsModal({
   element,
   onClose,
 }: AtomDetailsModalProps) {
+  const { t } = useTranslation();
   const protons = element.atomicNumber;
   const neutrons = Math.max(
     0,
@@ -65,7 +67,7 @@ export default function AtomDetailsModal({
           <button
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-slate-100 shrink-0"
-            aria-label="Close"
+            aria-label={t("common.close")}
           >
             <X className="w-5 h-5" />
           </button>
@@ -74,36 +76,36 @@ export default function AtomDetailsModal({
         {/* Nucleus + shells block */}
         <section className="mb-4 p-3 rounded-xl bg-slate-50 border border-slate-100">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
-            Atomic structure
+            {t("atom_details.structure")}
           </h3>
           <div className="grid grid-cols-2 gap-3 text-sm">
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-500 border border-red-700" />
-                <span className="text-slate-600">Protons</span>
+                <span className="text-slate-600">{t("atom_details.protons")}</span>
               </div>
               <div className="font-semibold text-base mt-0.5">{protons}</div>
             </div>
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="w-2.5 h-2.5 rounded-full bg-slate-400 border border-slate-600" />
-                <span className="text-slate-600">Neutrons</span>
+                <span className="text-slate-600">{t("atom_details.neutrons")}</span>
               </div>
               <div className="font-semibold text-base mt-0.5">{neutrons}</div>
               <div className="text-[11px] text-slate-500 mt-0.5">
-                most-common isotope
+                {t("atom_details.most_common_isotope")}
               </div>
             </div>
             <div className="col-span-2">
-              <div className="text-slate-600 mb-1">Electron shells</div>
+              <div className="text-slate-600 mb-1">{t("atom_details.electron_shells")}</div>
               <div className="font-semibold text-base">
                 {shells.length > 0 ? shells.join(" · ") : "—"}
               </div>
               {shells.length > 0 && (
                 <div className="text-[11px] text-slate-500 mt-0.5">
                   {shells.length === 1
-                    ? "1 shell"
-                    : `${shells.length} shells, innermost first`}
+                    ? t("atom_details.shells_one")
+                    : t("atom_details.shells_other", { count: shells.length })}
                 </div>
               )}
             </div>
@@ -113,31 +115,31 @@ export default function AtomDetailsModal({
         {/* Periodic-table coordinates + bulk properties */}
         <section className="mb-4">
           <h3 className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">
-            Properties
+            {t("atom_details.properties")}
           </h3>
           <div className="grid grid-cols-2 gap-2 text-sm">
             <PropRow
-              label="Atomic weight"
+              label={t("atom_details.atomic_weight")}
               value={`${element.standardAtomicWeight} u`}
             />
             <PropRow
-              label="State at STP"
+              label={t("atom_details.state_at_stp")}
               value={element.stateAtStp}
               capitalize
             />
-            <PropRow label="Group" value={element.group ?? "—"} />
-            <PropRow label="Period" value={element.period} />
-            <PropRow label="Block" value={element.block.toUpperCase()} />
+            <PropRow label={t("atom_details.group")} value={element.group ?? "—"} />
+            <PropRow label={t("atom_details.period")} value={element.period} />
+            <PropRow label={t("atom_details.block")} value={element.block.toUpperCase()} />
             <PropRow
-              label="Valence electrons"
+              label={t("atom_details.valence_electrons")}
               value={element.valenceElectronsMainGroup}
             />
             <PropRow
-              label="Electronegativity"
+              label={t("atom_details.electronegativity")}
               value={element.electronegativityPauling ?? "—"}
             />
             <PropRow
-              label="Oxidation states"
+              label={t("atom_details.oxidation_states")}
               value={
                 oxidations.length > 0
                   ? oxidations
@@ -154,7 +156,7 @@ export default function AtomDetailsModal({
           <div className="flex items-center gap-2 mb-1">
             <FlaskConical className="w-4 h-4 text-primary" />
             <span className="text-sm font-medium text-primary">
-              Did you know?
+              {t("atom_details.did_you_know")}
             </span>
           </div>
           <p className="text-sm text-slate-700 leading-snug">

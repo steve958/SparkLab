@@ -56,7 +56,7 @@ export default function CMSPage() {
               setPin(e.target.value.replace(/\D/g, ""));
               setPinError("");
             }}
-            placeholder="Enter 4-digit PIN"
+            placeholder={t("cms.pin_placeholder")}
             className="w-full px-4 py-3 rounded-lg border border-slate-300 text-center text-2xl tracking-widest focus:border-primary focus:ring-2 focus:ring-sky-200 outline-none"
             autoFocus
           />
@@ -137,6 +137,7 @@ export default function CMSPage() {
 // ============================================================================
 
 function ElementsEditor() {
+  const { t } = useTranslation();
   const [elements, setElements] = useState<Element[]>([]);
   const [editing, setEditing] = useState<Element | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -167,7 +168,7 @@ function ElementsEditor() {
   if (editing) {
     return (
       <EditorForm
-        title={isNew ? "New Element" : `Edit ${editing.name}`}
+        title={isNew ? t("cms.new_element") : t("cms.edit_label", { name: editing.name })}
         fields={[
           { key: "atomicNumber", label: "Atomic Number", type: "number" },
           { key: "symbol", label: "Symbol", type: "text" },
@@ -207,7 +208,7 @@ function ElementsEditor() {
   return (
     <div>
       <div className="flex justify-between mb-4">
-        <h2 className="text-lg font-semibold">Elements ({elements.length})</h2>
+        <h2 className="text-lg font-semibold">{t("cms.elements_count", { count: elements.length })}</h2>
         <button
           onClick={() => {
             setEditing({
@@ -235,7 +236,7 @@ function ElementsEditor() {
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition-colors"
         >
           <Plus className="w-4 h-4" />
-          New
+          {t("cms.new_btn")}
         </button>
       </div>
       <div className="grid gap-2 max-h-[60vh] overflow-y-auto">
@@ -269,7 +270,7 @@ function ElementsEditor() {
             <button
               onClick={() => remove(el.atomicNumber)}
               className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
-              aria-label="Delete"
+              aria-label={t("cms.delete_aria")}
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -285,6 +286,7 @@ function ElementsEditor() {
 // ============================================================================
 
 function MoleculesEditor() {
+  const { t } = useTranslation();
   const [molecules, setMolecules] = useState<Molecule[]>([]);
   const [editing, setEditing] = useState<Molecule | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -315,7 +317,7 @@ function MoleculesEditor() {
   if (editing) {
     return (
       <EditorForm
-        title={isNew ? "New Molecule" : `Edit ${editing.displayName}`}
+        title={isNew ? t("cms.new_molecule") : t("cms.edit_label", { name: editing.displayName })}
         fields={[
           { key: "moleculeId", label: "ID", type: "text" },
           { key: "displayName", label: "Name", type: "text" },
@@ -343,7 +345,7 @@ function MoleculesEditor() {
   return (
     <div>
       <div className="flex justify-between mb-4">
-        <h2 className="text-lg font-semibold">Molecules ({molecules.length})</h2>
+        <h2 className="text-lg font-semibold">{t("cms.molecules_count", { count: molecules.length })}</h2>
         <button
           onClick={() => {
             setEditing({
@@ -362,7 +364,7 @@ function MoleculesEditor() {
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition-colors"
         >
           <Plus className="w-4 h-4" />
-          New
+          {t("cms.new_btn")}
         </button>
       </div>
       <div className="grid gap-2 max-h-[60vh] overflow-y-auto">
@@ -388,7 +390,7 @@ function MoleculesEditor() {
             <button
               onClick={() => remove(mol.moleculeId)}
               className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
-              aria-label="Delete"
+              aria-label={t("cms.delete_aria")}
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -404,6 +406,7 @@ function MoleculesEditor() {
 // ============================================================================
 
 function MissionsEditor() {
+  const { t } = useTranslation();
   const [missions, setMissions] = useState<Mission[]>([]);
   const [editing, setEditing] = useState<Mission | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -434,7 +437,7 @@ function MissionsEditor() {
   if (editing) {
     return (
       <EditorForm
-        title={isNew ? "New Mission" : `Edit ${editing.title}`}
+        title={isNew ? t("cms.new_mission") : t("cms.edit_label", { name: editing.title })}
         fields={[
           { key: "missionId", label: "ID", type: "text" },
           { key: "title", label: "Title", type: "text" },
@@ -465,7 +468,7 @@ function MissionsEditor() {
   return (
     <div>
       <div className="flex justify-between mb-4">
-        <h2 className="text-lg font-semibold">Missions ({missions.length})</h2>
+        <h2 className="text-lg font-semibold">{t("cms.missions_count", { count: missions.length })}</h2>
         <button
           onClick={() => {
             setEditing({
@@ -490,7 +493,7 @@ function MissionsEditor() {
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition-colors"
         >
           <Plus className="w-4 h-4" />
-          New
+          {t("cms.new_btn")}
         </button>
       </div>
       <div className="grid gap-2 max-h-[60vh] overflow-y-auto">
@@ -514,7 +517,7 @@ function MissionsEditor() {
             <button
               onClick={() => remove(mission.missionId)}
               className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
-              aria-label="Delete"
+              aria-label={t("cms.delete_aria")}
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -530,6 +533,7 @@ function MissionsEditor() {
 // ============================================================================
 
 function ReactionsEditor() {
+  const { t } = useTranslation();
   const [reactions, setReactions] = useState<Reaction[]>([]);
   const [editing, setEditing] = useState<Reaction | null>(null);
   const [isNew, setIsNew] = useState(false);
@@ -560,7 +564,7 @@ function ReactionsEditor() {
   if (editing) {
     return (
       <EditorForm
-        title={isNew ? "New Reaction" : `Edit ${editing.reactionId}`}
+        title={isNew ? t("cms.new_reaction") : t("cms.edit_label", { name: editing.reactionId })}
         fields={[
           { key: "reactionId", label: "ID", type: "text" },
           { key: "equationDisplay", label: "Equation", type: "text" },
@@ -583,7 +587,7 @@ function ReactionsEditor() {
   return (
     <div>
       <div className="flex justify-between mb-4">
-        <h2 className="text-lg font-semibold">Reactions ({reactions.length})</h2>
+        <h2 className="text-lg font-semibold">{t("cms.reactions_count", { count: reactions.length })}</h2>
         <button
           onClick={() => {
             setEditing({
@@ -603,7 +607,7 @@ function ReactionsEditor() {
           className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition-colors"
         >
           <Plus className="w-4 h-4" />
-          New
+          {t("cms.new_btn")}
         </button>
       </div>
       <div className="grid gap-2 max-h-[60vh] overflow-y-auto">
@@ -627,7 +631,7 @@ function ReactionsEditor() {
             <button
               onClick={() => remove(reaction.reactionId)}
               className="p-2 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors"
-              aria-label="Delete"
+              aria-label={t("cms.delete_aria")}
             >
               <Trash2 className="w-4 h-4" />
             </button>
@@ -664,6 +668,7 @@ function EditorForm({
   onSave: () => void;
   onCancel: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-6">
       <h3 className="text-lg font-bold mb-4">{title}</h3>
@@ -709,13 +714,13 @@ function EditorForm({
           className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-white font-medium hover:bg-primary-hover transition-colors"
         >
           <Save className="w-4 h-4" />
-          Save & Download
+          {t("cms.save_download")}
         </button>
         <button
           onClick={onCancel}
           className="px-4 py-2.5 rounded-lg border border-slate-300 font-medium hover:bg-slate-50 transition-colors"
         >
-          Cancel
+          {t("cms.cancel")}
         </button>
       </div>
     </div>

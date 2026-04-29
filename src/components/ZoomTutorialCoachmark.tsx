@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { X, Search } from "lucide-react";
 
 // Floating card in the canvas corner that loops a small "zoom in
@@ -19,6 +20,7 @@ const STORAGE_KEY = "sparklab_zoom_tutorial_dismissed";
 const AUTO_DISMISS_MS = 14_000;
 
 export default function ZoomTutorialCoachmark() {
+  const { t } = useTranslation();
   const [dismissed, setDismissed] = useState(true);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
@@ -55,25 +57,25 @@ export default function ZoomTutorialCoachmark() {
     <div
       className="absolute right-3 bottom-3 sm:right-4 sm:bottom-4 z-30 pointer-events-auto"
       role="region"
-      aria-label="Zoom tutorial"
+      aria-label={t("onboarding.zoom_region_aria")}
     >
       <div className="flex items-stretch gap-2 px-2.5 py-2 bg-white/95 backdrop-blur-sm rounded-xl shadow-lg ring-1 ring-slate-200 max-w-[200px] sm:max-w-[220px]">
         <ZoomDemoSvg />
         <div className="flex flex-col justify-center min-w-0 flex-1">
           <p className="text-[11px] sm:text-xs font-bold text-slate-800 leading-tight flex items-center gap-1">
             <Search className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0 text-primary" />
-            Zoom in
+            {t("onboarding.zoom_title")}
           </p>
           <p className="text-[10px] sm:text-[11px] text-slate-600 leading-snug mt-0.5">
             {isTouchDevice
-              ? "Pinch the canvas to see the nucleus and electrons."
-              : "Scroll the canvas to see the nucleus and electrons."}
+              ? t("onboarding.zoom_pinch")
+              : t("onboarding.zoom_scroll")}
           </p>
         </div>
         <button
           onClick={dismiss}
           className="self-start p-0.5 -m-0.5 rounded hover:bg-slate-100 shrink-0"
-          aria-label="Dismiss tutorial"
+          aria-label={t("onboarding.zoom_dismiss")}
         >
           <X className="w-3.5 h-3.5 text-slate-400" />
         </button>

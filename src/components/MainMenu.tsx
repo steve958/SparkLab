@@ -39,7 +39,7 @@ export default function MainMenu() {
           {totalStars > 0 && (
             <div className="flex items-center justify-center gap-1.5 text-yellow-600 font-semibold">
               <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-              <span>{totalStars} stars earned</span>
+              <span>{t("main_menu.stars_earned", { count: totalStars })}</span>
             </div>
           )}
         </div>

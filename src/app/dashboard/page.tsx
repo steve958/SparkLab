@@ -96,6 +96,7 @@ function ParentAuthGate({
   onAuthed: (email: string) => void;
 }) {
   const router = useRouter();
+  const { t } = useTranslation();
   const [mode, setMode] = useState<"checking" | "create" | "signin">("checking");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -119,7 +120,7 @@ function ParentAuthGate({
     e.preventDefault();
     setError("");
     if (!validateEmail(email)) {
-      setError("Please enter a valid email address.");
+      setError(t("dashboard.invalid_email"));
       return;
     }
     setPending(true);
@@ -136,14 +137,14 @@ function ParentAuthGate({
       } else {
         const account = await verifyParentLogin(email, password);
         if (!account) {
-          setError("That email and password don't match.");
+          setError(t("dashboard.wrong_credentials"));
           setPending(false);
           return;
         }
         onAuthed(account.email);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      setError(err instanceof Error ? err.message : t("dashboard.generic_error"));
     } finally {
       setPending(false);
     }
@@ -156,7 +157,7 @@ function ParentAuthGate({
         className="absolute top-4 left-4 flex items-center gap-2 text-slate-500 hover:text-foreground touch-target"
       >
         <ArrowLeft className="w-5 h-5" />
-        Back
+        {t("menu.back")}
       </button>
 
       <div className="w-full max-w-sm">
@@ -164,21 +165,21 @@ function ParentAuthGate({
           <Shield className="w-8 h-8" />
         </div>
         <h1 className="text-2xl font-bold text-center mb-2">
-          Grown-up Dashboard
+          {t("dashboard.title")}
         </h1>
         <p className="text-slate-600 text-center mb-6">
           {mode === "create"
-            ? "Create a parent account to manage profiles and data."
+            ? t("dashboard.create_account_intro")
             : mode === "signin"
-              ? "Sign in to manage profiles and data."
-              : "Loading..."}
+              ? t("dashboard.signin_intro")
+              : t("dashboard.loading_intro")}
         </p>
 
         {mode !== "checking" && (
           <form onSubmit={handleSubmit} className="space-y-3">
             <label className="block">
               <span className="block text-sm font-medium text-slate-700 mb-1">
-                Email
+                {t("dashboard.email_label")}
               </span>
               <input
                 type="email"
@@ -195,7 +196,7 @@ function ParentAuthGate({
             </label>
             <label className="block">
               <span className="block text-sm font-medium text-slate-700 mb-1">
-                Password
+                {t("dashboard.password_label")}
               </span>
               <input
                 type="password"
@@ -213,7 +214,7 @@ function ParentAuthGate({
               />
               {mode === "create" && (
                 <span className="block text-xs text-slate-600 mt-1">
-                  At least 8 characters.
+                  {t("dashboard.password_hint")}
                 </span>
               )}
             </label>
@@ -227,15 +228,15 @@ function ParentAuthGate({
               disabled={pending}
               className="w-full py-3 rounded-lg bg-primary text-white font-semibold hover:bg-primary-hover disabled:opacity-50 transition-colors"
             >
-              {mode === "create" ? "Create account" : "Sign in"}
+              {mode === "create" ? t("dashboard.create_account_btn") : t("dashboard.signin_btn")}
             </button>
             <p className="text-xs text-slate-600 text-center mt-2">
-              All data stays on this device. See the{" "}
+              {t("dashboard.all_local")}{" "}
               <Link
                 href="/privacy"
                 className="text-primary underline hover:no-underline"
               >
-                privacy notice
+                {t("dashboard.privacy_link")}
               </Link>
               .
             </p>
@@ -280,7 +281,7 @@ function DashboardSignedIn({
     const ok = await verifyParentLogin(adultSession.email, confirmPassword);
     setConfirmPending(false);
     if (!ok) {
-      setConfirmError("Password didn't match.");
+      setConfirmError(t("dashboard.wrong_password"));
       return;
     }
     if (profileDeleteId) {
@@ -304,7 +305,7 @@ function DashboardSignedIn({
           className="flex items-center gap-2 text-slate-500 hover:text-foreground touch-target"
         >
           <ArrowLeft className="w-5 h-5" />
-          Back
+          {t("menu.back")}
         </button>
         <h1 className="text-2xl font-bold flex-1 text-center">
           {t("dashboard.title")}
@@ -312,17 +313,17 @@ function DashboardSignedIn({
         <button
           onClick={onSignOut}
           className="flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-foreground touch-target"
-          aria-label="Sign out"
+          aria-label={t("menu.sign_out")}
         >
           <LogOut className="w-4 h-4" />
-          <span className="hidden sm:inline">Sign out</span>
+          <span className="hidden sm:inline">{t("menu.sign_out")}</span>
         </button>
       </div>
 
       {adultSession?.email && (
         <div className="mb-6 flex items-center gap-2 text-sm text-slate-600">
           <ShieldCheck className="w-4 h-4 text-primary" />
-          <span>Signed in as {adultSession.email}</span>
+          <span>{t("dashboard.signed_in_as", { email: adultSession.email })}</span>
         </div>
       )}
 
@@ -360,14 +361,14 @@ function DashboardSignedIn({
                           {profile.name}
                         </div>
                         <div className="text-sm text-slate-600">
-                          Age {profile.ageBand}
+                          {t("dashboard.age_label", { ageBand: profile.ageBand })}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       <div className="text-right text-sm text-slate-600">
-                        <div>{completed} missions</div>
-                        <div>{totalStars} stars</div>
+                        <div>{t("dashboard.missions_short", { count: completed })}</div>
+                        <div>{t("dashboard.stars_short", { count: totalStars })}</div>
                       </div>
                       <button
                         onClick={() => {
@@ -376,8 +377,8 @@ function DashboardSignedIn({
                           setConfirmError("");
                         }}
                         className="p-2 rounded-lg hover:bg-red-50 text-slate-500 hover:text-red-700 transition-colors"
-                        aria-label={`Delete profile ${profile.name}`}
-                        title={`Delete profile ${profile.name}`}
+                        aria-label={t("dashboard.delete_profile_aria", { name: profile.name })}
+                        title={t("dashboard.delete_profile_aria", { name: profile.name })}
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -395,10 +396,10 @@ function DashboardSignedIn({
       <section className="mb-8">
         <h2 className="text-lg font-semibold flex items-center gap-2 mb-4">
           <Activity className="w-5 h-5 text-primary" />
-          Recent activity
+          {t("dashboard.recent_activity")}
         </h2>
         {profiles.length === 0 ? (
-          <p className="text-slate-600">No profiles yet.</p>
+          <p className="text-slate-600">{t("dashboard.no_profiles")}</p>
         ) : (
           <div className="grid gap-3">
             {profiles.map((p) => (
@@ -407,8 +408,9 @@ function DashboardSignedIn({
           </div>
         )}
         <p className="text-xs text-slate-600 mt-3">
-          Activity events are stored on this device only and auto-expire
-          after {Math.round(TELEMETRY_RETENTION_MS / (24 * 60 * 60 * 1000))} days.
+          {t("dashboard.telemetry_retention", {
+            days: Math.round(TELEMETRY_RETENTION_MS / (24 * 60 * 60 * 1000)),
+          })}
         </p>
       </section>
 
@@ -439,8 +441,7 @@ function DashboardSignedIn({
           </button>
         </div>
         <p className="text-xs text-slate-600 mt-3">
-          Export downloads a JSON copy of all locally stored data. Delete
-          requires re-entering your password.
+          {t("dashboard.data_management_desc")}
         </p>
       </section>
 
@@ -460,16 +461,14 @@ function DashboardSignedIn({
         >
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full">
             <h3 id="profile-delete-title" className="text-xl font-bold mb-2">
-              Delete {profileBeingDeleted.name}&apos;s profile?
+              {t("dashboard.delete_profile_title", { name: profileBeingDeleted.name })}
             </h3>
             <p className="text-slate-600 mb-4">
-              This removes their progress, discoveries, badges, mastery
-              results, and saved scenes. Other profiles are not affected.
-              This cannot be undone.
+              {t("dashboard.delete_profile_text")}
             </p>
             <label className="block mb-3">
               <span className="block text-sm font-medium text-slate-700 mb-1">
-                Re-enter your password
+                {t("dashboard.reenter_password")}
               </span>
               <input
                 type="password"
@@ -497,14 +496,14 @@ function DashboardSignedIn({
                 }}
                 className="flex-1 py-3 rounded-xl border border-slate-300 font-medium hover:bg-slate-50 transition-colors"
               >
-                Cancel
+                {t("common.cancel")}
               </button>
               <button
                 onClick={confirmAndDelete}
                 disabled={!confirmPassword || confirmPending}
                 className="flex-1 py-3 rounded-xl bg-red-700 text-white font-medium hover:bg-red-800 disabled:opacity-50 transition-colors"
               >
-                Delete profile
+                {t("dashboard.delete_profile_btn")}
               </button>
             </div>
           </div>
@@ -529,7 +528,7 @@ function DashboardSignedIn({
             </p>
             <label className="block mb-3">
               <span className="block text-sm font-medium text-slate-700 mb-1">
-                Re-enter your password
+                {t("dashboard.reenter_password")}
               </span>
               <input
                 type="password"
@@ -579,6 +578,7 @@ function ProfileActivityCard({
   profileId: string;
   name: string;
 }) {
+  const { t } = useTranslation();
   const [events, setEvents] = useState<TelemetryEvent[] | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
 
@@ -623,22 +623,22 @@ function ProfileActivityCard({
           disabled={events?.length === 0}
           className="text-xs font-medium text-slate-600 hover:text-red-700 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          Clear activity
+          {t("dashboard.clear_activity")}
         </button>
       </div>
       {!summary ? (
-        <p className="text-xs text-slate-500">Loading…</p>
+        <p className="text-xs text-slate-500">{t("common.loading_short")}</p>
       ) : events && events.length === 0 ? (
         <p className="text-xs text-slate-600">
-          No activity in the last 7 days.
+          {t("dashboard.no_recent_activity")}
         </p>
       ) : (
         <dl className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-xs">
-          <ActivityStat label="Started" value={summary.mission_start} />
-          <ActivityStat label="Completed" value={summary.mission_complete} />
-          <ActivityStat label="Hints" value={summary.hint_used} />
-          <ActivityStat label="Quizlets" value={summary.mastery_check} />
-          <ActivityStat label="Sandbox" value={summary.sandbox_save} />
+          <ActivityStat label={t("dashboard.activity_started")} value={summary.mission_start} />
+          <ActivityStat label={t("dashboard.activity_completed")} value={summary.mission_complete} />
+          <ActivityStat label={t("dashboard.activity_hints")} value={summary.hint_used} />
+          <ActivityStat label={t("dashboard.activity_quizlets")} value={summary.mastery_check} />
+          <ActivityStat label={t("dashboard.activity_sandbox")} value={summary.sandbox_save} />
         </dl>
       )}
     </div>
