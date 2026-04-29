@@ -11,13 +11,16 @@ import { X, Search } from "lucide-react";
 // reminder, but a moving preview lands the idea faster for kids who
 // don't read every line.
 //
-// Auto-dismisses 14 seconds after the player first sees it, so it
-// never permanently crowds the canvas. Dismissed state is stored in
-// localStorage so returning players don't see it again unless they
-// clear their data. The X button dismisses immediately.
+// Stays visible until the player either taps X or actually zooms in
+// past the threshold (at which point the hint has done its job and we
+// auto-dismiss). No time-based auto-dismiss — earlier 14s timer caused
+// the card to disappear before kids had time to read it, and Fast
+// Refresh in dev was resetting state mid-timer. Dismissed state is
+// stored in localStorage so returning players don't see it again.
 
 const STORAGE_KEY = "sparklab_zoom_tutorial_dismissed";
-const AUTO_DISMISS_MS = 14_000;
+const ZOOM_DISMISS_THRESHOLD = 1.4;
+const ZOOM_POLL_MS = 500;
 
 export default function ZoomTutorialCoachmark() {
   const { t } = useTranslation();
@@ -36,12 +39,23 @@ export default function ZoomTutorialCoachmark() {
     );
   }, []);
 
+  // Auto-dismiss once the player has actually zoomed in — the hint's
+  // job is done. Polls the viewport bridge that PixiApp publishes;
+  // a custom event would be cleaner but the polling cost (one ref
+  // read every 500ms while the card is visible) is negligible.
   useEffect(() => {
     if (dismissed) return;
-    const t = window.setTimeout(() => {
-      setDismissed(true);
-    }, AUTO_DISMISS_MS);
-    return () => window.clearTimeout(t);
+    if (typeof window === "undefined") return;
+    const interval = window.setInterval(() => {
+      const viewport = window.__sparklabViewport;
+      if (!viewport) return;
+      const { zoom } = viewport.getTransform();
+      if (zoom >= ZOOM_DISMISS_THRESHOLD) {
+        setDismissed(true);
+        window.localStorage.setItem(STORAGE_KEY, "1");
+      }
+    }, ZOOM_POLL_MS);
+    return () => window.clearInterval(interval);
   }, [dismissed]);
 
   const dismiss = () => {

@@ -966,6 +966,7 @@ interface PixiAppProps {
 export default function PixiApp({ content }: PixiAppProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
+  const resizeObserverRef = useRef<ResizeObserver | null>(null);
   const sceneContainerRef = useRef<Container | null>(null);
   const atomsContainerRef = useRef<Container | null>(null);
   const bondsContainerRef = useRef<Container | null>(null);
@@ -1075,6 +1076,25 @@ export default function PixiApp({ content }: PixiAppProps) {
       mountedCanvas = pixiCanvas;
 
       appRef.current = app;
+
+      // Pixi's `resizeTo: container` only listens to window.resize. On
+      // mobile orientation change the resize event fires before the
+      // visual viewport settles, so the renderer ends up with stale
+      // dimensions and `app.stage.hitArea = app.screen` rejects pointer
+      // events that fall in the newly-visible region — pan/scroll gestures
+      // silently stop firing. ResizeObserver tracks the actual container
+      // box reliably and re-runs the resize once layout settles.
+      const ro = new ResizeObserver(() => {
+        const a = appRef.current;
+        if (!a) return;
+        a.resize();
+        // Defensive: Pixi v8 mutates app.screen in place on resize, but
+        // re-pointing hitArea costs nothing and guards against any
+        // future change that would replace the rect instance.
+        if (a.stage) a.stage.hitArea = a.screen;
+      });
+      ro.observe(container);
+      resizeObserverRef.current = ro;
 
       // Publish the current viewport transform so the spawn handler in
       // game/page.tsx can convert canvas-display coordinates into
@@ -1500,6 +1520,10 @@ export default function PixiApp({ content }: PixiAppProps) {
 
     return () => {
       destroyed = true;
+      if (resizeObserverRef.current) {
+        resizeObserverRef.current.disconnect();
+        resizeObserverRef.current = null;
+      }
       if (hoverRafRef.current !== null) {
         cancelAnimationFrame(hoverRafRef.current);
         hoverRafRef.current = null;
