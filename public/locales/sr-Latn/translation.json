@@ -1,0 +1,125 @@
+{
+  "app": {
+    "name": "SparkLab",
+    "tagline": "Igraj se sa hemijom"
+  },
+  "menu": {
+    "play": "Igraj",
+    "settings": "Podešavanja",
+    "dashboard": "Odrasli",
+    "back": "Nazad"
+  },
+  "profile": {
+    "title": "Ko se igra?",
+    "new": "Novi igrač",
+    "name_placeholder": "Unesi svoje ime",
+    "age": "Godine",
+    "create": "Napravi",
+    "cancel": "Otkaži",
+    "welcome_back": "Dobrodošao nazad, {{name}}!"
+  },
+  "worlds": {
+    "title": "Izaberi svet",
+    "subtitle": "Izaberi gde želiš da istražuješ",
+    "foundations_name": "Osnove",
+    "foundations_desc": "Uči o atomima i jednostavnim molekulima. Uzrast 8–10.",
+    "core_name": "Osnovna hemija",
+    "core_desc": "Pravi veze, izvodi reakcije i čuvaj atome. Uzrast 11–14."
+  },
+  "missions": {
+    "locked": "Zaključano",
+    "minutes": "{{count}} min",
+    "star_0": "Probaj ponovo! Možeš ti to.",
+    "star_1": "Dobar početak! Pokušaj ponovo za više zvezda.",
+    "star_2": "Odlično! Dobro razumeš ovo.",
+    "star_3": "Sjajno! Ti si zvezda hemije!"
+  },
+  "game": {
+    "hint": "Savet",
+    "hide_hint": "Sakrij savet",
+    "undo": "Poništi",
+    "redo": "Ponovi",
+    "reset": "Resetuj",
+    "check": "Proveri",
+    "submit": "Pošalji",
+    "exit": "Izađi",
+    "atoms_label": "Atomi:",
+    "mission_complete": "Misija završena!",
+    "continue": "Nastavi",
+    "view_3d": "Prikaži 3D",
+    "view_3d_title": "3D prikaz molekula",
+    "reactants": "Reaktanti",
+    "products": "Proizvodi",
+    "conserved": "Uravnoteženo",
+    "not_conserved": "Neuravnoteženo"
+  },
+  "feedback": {
+    "valid_bond": "Odlično! Ta veza radi.",
+    "invalid_bond": "Ta veza ne radi ovde. Razmisli koliko elektrona svaki atom treba.",
+    "mission_complete_msg": "Misija završena! Uspeo si!"
+  },
+  "settings": {
+    "title": "Podešavanja",
+    "subtitle": "Prilagodi svoje iskustvo",
+    "sound": "Zvuk",
+    "sound_desc": "Reprodukuj zvučne efekte",
+    "reduced_motion": "Smanjeno kretanje",
+    "reduced_motion_desc": "Smanji animacije",
+    "high_contrast": "Visok kontrast",
+    "high_contrast_desc": "Jače boje i ivice",
+    "language": "Jezik",
+    "language_desc": "Srpski (latinica)",
+    "no_profile": "Napravi profil da sačuvaš podešavanja."
+  },
+  "dashboard": {
+    "title": "Tabla za odrasle",
+    "pin_prompt": "Unesi PIN za nastavak",
+    "pin_enter": "Unesi",
+    "pin_error": "Pogrešan PIN. Pokušaj ponovo.",
+    "profiles": "Profili igrača",
+    "progress": "Napredak",
+    "export": "Izvezi podatke",
+    "delete": "Obriši sve podatke",
+    "no_profiles": "Još nema profila.",
+    "missions_completed": "{{count}} završenih misija",
+    "stars_earned": "{{count}} osvojenih zvezda",
+    "data_management": "Upravljanje podacima",
+    "delete_confirm_title": "Obrisati sve podatke?",
+    "delete_confirm_text": "Ovo će trajno obrisati sve profile, napredak i podešavanja. Ovo se ne može poništiti.",
+    "delete_cancel": "Otkaži",
+    "delete_confirm": "Obriši sve"
+  },
+  "periodic_table": {
+    "title": "Periodni sistem",
+    "subtitle": "Istraži svih 118 elemenata",
+    "search": "Pretraži elemente...",
+    "filter_all": "Svi",
+    "filter_metals": "Metali",
+    "filter_nonmetals": "Nemetali",
+    "filter_noble": "Plemeniti gasovi",
+    "atomic_number": "Atomski broj",
+    "atomic_weight": "Atomska masa",
+    "group": "Grupa",
+    "period": "Perioda",
+    "category": "Kategorija",
+    "state": "Stanje pri STP",
+    "electrons": "Valentni elektroni",
+    "fact": "Da li si znao?"
+  },
+  "cms": {
+    "title": "Studio za sadržaj",
+    "subtitle": "Pravi i uređuj hemijski sadržaj",
+    "tab_elements": "Elementi",
+    "tab_molecules": "Molekuli",
+    "tab_missions": "Misije",
+    "tab_reactions": "Reakcije",
+    "save": "Sačuvaj",
+    "preview": "Pregled",
+    "export_json": "Izvezi JSON",
+    "import_json": "Uvezi JSON",
+    "new_element": "Novi element",
+    "new_molecule": "Novi molekul",
+    "new_mission": "Nova misija",
+    "new_reaction": "Nova reakcija"
+  }
+}

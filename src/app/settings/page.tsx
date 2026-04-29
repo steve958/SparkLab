@@ -22,6 +22,7 @@ const LANGUAGES = [
   { code: "es", label: "Español" },
   { code: "fr", label: "Français" },
   { code: "de", label: "Deutsch" },
+  { code: "sr-Latn", label: "Srpski" },
 ];
 
 export default function SettingsPage() {
