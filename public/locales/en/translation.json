@@ -32,7 +32,31 @@
     "replay": "Replay",
     "back_to_worlds": "Back to Worlds",
     "open_aria": "Open {{name}}: {{completed}} of {{total}} missions complete",
-    "missions_aria": "{{completed}} of {{total}} missions"
+    "missions_aria": "{{completed}} of {{total}} missions",
+    "world_not_found": "World not found.",
+    "load_failed": "Failed to load content: {{error}}",
+    "retry": "Retry"
+  },
+  "mastery": {
+    "phase_pre": "Pre-check — what you already know",
+    "phase_post": "Post-check — what you learned",
+    "question_progress": "Question {{current}} of {{total}}",
+    "next": "Next",
+    "finish": "Finish",
+    "close": "Close",
+    "pre_cta_title_first": "Quick check before you start",
+    "pre_cta_title_started": "Take the pre-check",
+    "pre_cta_desc_first": "3 questions — see what you already know.",
+    "pre_cta_desc_started": "3 questions — set a baseline to compare against later.",
+    "pre_done_title": "Pre-check done · {{correct}}/{{total}}",
+    "pre_done_desc": "Finish every mission to unlock the post-check.",
+    "post_unlocked_title": "Post-check unlocked",
+    "post_unlocked_desc_with_pre": "Pre: {{correct}}/{{total}} — see how much you've learned.",
+    "post_unlocked_desc": "See how much you've learned.",
+    "post_done_title_with_pre": "Mastery: {{preCorrect}}/{{preTotal}} → {{postCorrect}}/{{postTotal}}",
+    "post_done_title": "Mastery: {{correct}}/{{total}}",
+    "post_done_desc": "Nice work — that's real chemistry learning.",
+    "take_it": "Take it"
   },
   "missions": {
     "locked": "Locked",

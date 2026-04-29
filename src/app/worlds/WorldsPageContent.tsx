@@ -38,12 +38,14 @@ export default function WorldsPageContent() {
   if (error) {
     return (
       <div className="flex flex-col items-center justify-center min-h-dvh p-4">
-        <p className="text-red-600">Failed to load content: {error}</p>
+        <p className="text-red-600">
+          {t("worlds.load_failed", { error })}
+        </p>
         <button
           onClick={() => window.location.reload()}
           className="mt-4 px-4 py-2 bg-primary text-white rounded-lg"
         >
-          Retry
+          {t("worlds.retry")}
         </button>
       </div>
     );

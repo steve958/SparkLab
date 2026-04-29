@@ -49,7 +49,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
   if (!world) {
     return (
       <div className="p-8 text-center">
-        <p className="text-slate-500">World not found.</p>
+        <p className="text-slate-500">{t("worlds.world_not_found")}</p>
         <button
           onClick={() => goBackOr(router, "/worlds")}
           className="mt-4 text-primary hover:underline"
@@ -145,36 +145,41 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
               <>
                 <p className="text-sm font-semibold text-amber-900">
                   {completedCount === 0
-                    ? "Quick check before you start"
-                    : "Take the pre-check"}
+                    ? t("mastery.pre_cta_title_first")
+                    : t("mastery.pre_cta_title_started")}
                 </p>
                 <p className="text-xs text-amber-800 mt-0.5">
                   {completedCount === 0
-                    ? "3 questions — see what you already know."
-                    : "3 questions — set a baseline to compare against later."}
+                    ? t("mastery.pre_cta_desc_first")
+                    : t("mastery.pre_cta_desc_started")}
                 </p>
               </>
             )}
             {preTaken && !worldMastered && (
               <>
                 <p className="text-sm font-semibold text-amber-900">
-                  Pre-check done · {preResult?.correctCount ?? 0}/
-                  {preResult?.totalCount ?? 0}
+                  {t("mastery.pre_done_title", {
+                    correct: preResult?.correctCount ?? 0,
+                    total: preResult?.totalCount ?? 0,
+                  })}
                 </p>
                 <p className="text-xs text-amber-800 mt-0.5">
-                  Finish every mission to unlock the post-check.
+                  {t("mastery.pre_done_desc")}
                 </p>
               </>
             )}
             {worldMastered && !postTaken && (
               <>
                 <p className="text-sm font-semibold text-amber-900">
-                  Post-check unlocked
+                  {t("mastery.post_unlocked_title")}
                 </p>
                 <p className="text-xs text-amber-800 mt-0.5">
                   {preResult
-                    ? `Pre: ${preResult.correctCount}/${preResult.totalCount} — see how much you've learned.`
-                    : "See how much you've learned."}
+                    ? t("mastery.post_unlocked_desc_with_pre", {
+                        correct: preResult.correctCount,
+                        total: preResult.totalCount,
+                      })
+                    : t("mastery.post_unlocked_desc")}
                 </p>
               </>
             )}
@@ -182,11 +187,19 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
               <>
                 <p className="text-sm font-semibold text-amber-900">
                   {preResult && postResult
-                    ? `Mastery: ${preResult.correctCount}/${preResult.totalCount} → ${postResult.correctCount}/${postResult.totalCount}`
-                    : `Mastery: ${postResult?.correctCount ?? 0}/${postResult?.totalCount ?? 0}`}
+                    ? t("mastery.post_done_title_with_pre", {
+                        preCorrect: preResult.correctCount,
+                        preTotal: preResult.totalCount,
+                        postCorrect: postResult.correctCount,
+                        postTotal: postResult.totalCount,
+                      })
+                    : t("mastery.post_done_title", {
+                        correct: postResult?.correctCount ?? 0,
+                        total: postResult?.totalCount ?? 0,
+                      })}
                 </p>
                 <p className="text-xs text-amber-800 mt-0.5">
-                  Nice work — that&apos;s real chemistry learning.
+                  {t("mastery.post_done_desc")}
                 </p>
               </>
             )}
@@ -196,7 +209,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
               onClick={() => setMasteryModalPhase("pre")}
               className="px-3 py-1.5 rounded-lg bg-amber-700 text-white text-sm font-semibold hover:bg-amber-800 transition-colors shrink-0"
             >
-              Take it
+              {t("mastery.take_it")}
             </button>
           )}
           {worldMastered && !postTaken && (
@@ -204,7 +217,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
               onClick={() => setMasteryModalPhase("post")}
               className="px-3 py-1.5 rounded-lg bg-amber-700 text-white text-sm font-semibold hover:bg-amber-800 transition-colors shrink-0"
             >
-              Take it
+              {t("mastery.take_it")}
             </button>
           )}
         </div>
@@ -212,6 +225,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
 
       {masteryCheck && masteryModalPhase && (
         <MasteryCheckModal
+          worldId={worldId}
           worldName={localizedWorldName}
           phase={masteryModalPhase}
           questions={masteryCheck[masteryModalPhase]}

@@ -32,7 +32,31 @@
     "replay": "Ponovo",
     "back_to_worlds": "Nazad na svetove",
     "open_aria": "Otvori {{name}}: završeno {{completed}} od {{total}} misija",
-    "missions_aria": "{{completed}} od {{total}} misija"
+    "missions_aria": "{{completed}} od {{total}} misija",
+    "world_not_found": "Svet nije pronađen.",
+    "load_failed": "Učitavanje sadržaja nije uspelo: {{error}}",
+    "retry": "Pokušaj ponovo"
+  },
+  "mastery": {
+    "phase_pre": "Početna provera — šta već znaš",
+    "phase_post": "Završna provera — šta si naučio",
+    "question_progress": "Pitanje {{current}} od {{total}}",
+    "next": "Sledeće",
+    "finish": "Završi",
+    "close": "Zatvori",
+    "pre_cta_title_first": "Brza provera pre nego što počneš",
+    "pre_cta_title_started": "Uradi početnu proveru",
+    "pre_cta_desc_first": "3 pitanja — vidi šta već znaš.",
+    "pre_cta_desc_started": "3 pitanja — postavi polaznu tačku za kasnije poređenje.",
+    "pre_done_title": "Početna provera urađena · {{correct}}/{{total}}",
+    "pre_done_desc": "Završi sve misije da otključaš završnu proveru.",
+    "post_unlocked_title": "Završna provera otključana",
+    "post_unlocked_desc_with_pre": "Početak: {{correct}}/{{total}} — vidi koliko si naučio.",
+    "post_unlocked_desc": "Vidi koliko si naučio.",
+    "post_done_title_with_pre": "Savladano: {{preCorrect}}/{{preTotal}} → {{postCorrect}}/{{postTotal}}",
+    "post_done_title": "Savladano: {{correct}}/{{total}}",
+    "post_done_desc": "Bravo — ovo je prava hemija u akciji.",
+    "take_it": "Uradi"
   },
   "missions": {
     "locked": "Zaključano",
@@ -266,6 +290,46 @@
       "r06_acid_base": {
         "title": "Kiselina sreće bazu",
         "brief": "Kiselina (HCl) i baza (NaOH) se međusobno poništavaju. Napravi reaktante i proizvode reakcije HCl + NaOH → NaCl + H₂O — svaki atom je sa obe strane."
+      }
+    },
+    "mastery_checks": {
+      "foundations": {
+        "pre": [
+          {
+            "question": "Koja je najmanja čestica elementa?",
+            "options": ["Molekul", "Atom", "Veza"]
+          },
+          {
+            "question": "Kako se atomi spajaju u molekule?",
+            "options": [
+              "Dele ili razmenjuju elektrone (veze)",
+              "Slepe se zajedno",
+              "Privlače se gravitacijom"
+            ]
+          },
+          {
+            "question": "Koji od ovih je molekul?",
+            "options": ["H₂O (voda)", "Elektron", "Proton"]
+          }
+        ],
+        "post": [
+          {
+            "question": "Koliko atoma vodonika ima u molekulu vode?",
+            "options": ["1", "2", "3"]
+          },
+          {
+            "question": "Ugljenik obično pravi koliko veza?",
+            "options": ["1", "2", "4"]
+          },
+          {
+            "question": "Po čemu se molekul razlikuje od atoma?",
+            "options": [
+              "Molekul je sastavljen od dva ili više atoma povezanih vezama",
+              "Molekul je veći od Sunca",
+              "Molekul je isto što i atom"
+            ]
+          }
+        ]
       }
     }
   }

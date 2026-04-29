@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Check, X } from "lucide-react";
 import type { MasteryQuestion } from "@/types";
 
 interface MasteryCheckModalProps {
+  worldId: string;
   worldName: string;
   phase: "pre" | "post";
   questions: MasteryQuestion[];
@@ -18,12 +20,14 @@ interface MasteryCheckModalProps {
 // questions. Reuses the visual language of [ExplanationQuizModal] but
 // strung across N questions instead of one. No timing pressure.
 export default function MasteryCheckModal({
+  worldId,
   worldName,
   phase,
   questions,
   onFinish,
   onCancel,
 }: MasteryCheckModalProps) {
+  const { t } = useTranslation();
   const [index, setIndex] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [correctSoFar, setCorrectSoFar] = useState(0);
@@ -48,7 +52,17 @@ export default function MasteryCheckModal({
   };
 
   const phaseLabel =
-    phase === "pre" ? "Pre-check — what you already know" : "Post-check — what you learned";
+    phase === "pre" ? t("mastery.phase_pre") : t("mastery.phase_post");
+
+  const localizedQuestion = t(
+    `content.mastery_checks.${worldId}.${phase}.${index}.question`,
+    { defaultValue: q.question }
+  );
+  const localizedOption = (optionIndex: number, fallback: string) =>
+    t(
+      `content.mastery_checks.${worldId}.${phase}.${index}.options.${optionIndex}`,
+      { defaultValue: fallback }
+    );
 
   return (
     <div
@@ -65,21 +79,24 @@ export default function MasteryCheckModal({
           <button
             onClick={onCancel}
             className="p-1 rounded hover:bg-slate-100"
-            aria-label="Close"
+            aria-label={t("mastery.close")}
           >
             <X className="w-4 h-4 text-slate-500" />
           </button>
         </div>
 
         <p className="text-xs font-medium text-slate-500 mb-3">
-          Question {index + 1} of {questions.length}
+          {t("mastery.question_progress", {
+            current: index + 1,
+            total: questions.length,
+          })}
         </p>
 
         <h2
           id="mastery-question"
           className="text-lg font-bold text-foreground"
         >
-          {q.question}
+          {localizedQuestion}
         </h2>
 
         <ul className="mt-4 space-y-2">
@@ -105,7 +122,9 @@ export default function MasteryCheckModal({
                   disabled={answered}
                   className={`w-full flex items-center justify-between gap-3 text-left px-4 py-3 rounded-xl border-2 transition ${optionClass}`}
                 >
-                  <span className="text-base text-foreground">{option}</span>
+                  <span className="text-base text-foreground">
+                    {localizedOption(optionIndex, option)}
+                  </span>
                   {answered && isCorrectOption && (
                     <Check className="w-5 h-5 text-green-600 shrink-0" />
                   )}
@@ -125,7 +144,7 @@ export default function MasteryCheckModal({
             disabled={!answered}
             className="px-5 py-2.5 bg-primary text-white rounded-lg font-semibold disabled:opacity-50 disabled:cursor-not-allowed hover:bg-primary-hover"
           >
-            {isLast ? "Finish" : "Next"}
+            {isLast ? t("mastery.finish") : t("mastery.next")}
           </button>
         </div>
       </div>
