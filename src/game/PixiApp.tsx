@@ -967,6 +967,8 @@ export default function PixiApp({ content }: PixiAppProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const appRef = useRef<Application | null>(null);
   const resizeObserverRef = useRef<ResizeObserver | null>(null);
+  const orientationHandlerRef = useRef<(() => void) | null>(null);
+  const visualViewportHandlerRef = useRef<(() => void) | null>(null);
   const sceneContainerRef = useRef<Container | null>(null);
   const atomsContainerRef = useRef<Container | null>(null);
   const bondsContainerRef = useRef<Container | null>(null);
@@ -1049,8 +1051,19 @@ export default function PixiApp({ content }: PixiAppProps) {
 
     async function init() {
       const app = new Application();
+      // Don't pass `resizeTo`. Pixi's built-in resize listener fires on
+      // window.resize only, races with mobile orientation transitions,
+      // and on iOS Safari ends up sized to a stale viewport. We own the
+      // resize lifecycle below (ResizeObserver + orientationchange +
+      // visualViewport.resize) and need to be the only writer so the
+      // two paths can't fight each other. Initial dims are read from
+      // the container; the observer fires immediately on observe() to
+      // catch any layout that landed between init and observe.
+      const initWidth = container?.clientWidth || window.innerWidth;
+      const initHeight = container?.clientHeight || window.innerHeight;
       await app.init({
-        resizeTo: container ?? undefined,
+        width: initWidth,
+        height: initHeight,
         backgroundColor: 0xf8fafc,
         antialias: true,
         resolution: window.devicePixelRatio || 1,
@@ -1077,24 +1090,48 @@ export default function PixiApp({ content }: PixiAppProps) {
 
       appRef.current = app;
 
-      // Pixi's `resizeTo: container` only listens to window.resize. On
-      // mobile orientation change the resize event fires before the
-      // visual viewport settles, so the renderer ends up with stale
-      // dimensions and `app.stage.hitArea = app.screen` rejects pointer
-      // events that fall in the newly-visible region — pan/scroll gestures
-      // silently stop firing. ResizeObserver tracks the actual container
-      // box reliably and re-runs the resize once layout settles.
-      const ro = new ResizeObserver(() => {
+      // Pixi's `resizeTo: container` only listens to window.resize, and
+      // on mobile orientation change that fires too early — before the
+      // visual viewport settles — so the renderer ends up at stale
+      // dimensions and `app.stage.hitArea = app.screen` silently rejects
+      // pointer events in the newly-visible region (pan/scroll dies).
+      // Belt-and-suspenders: ResizeObserver on the container catches
+      // layout-driven resizes, orientationchange + visualViewport.resize
+      // catch mobile rotation paths the observer can miss, and a couple
+      // of delayed re-fires after orientationchange catch the post-
+      // animation viewport that some browsers report only after the
+      // rotation transition completes.
+      const syncRendererSize = () => {
         const a = appRef.current;
-        if (!a) return;
-        a.resize();
-        // Defensive: Pixi v8 mutates app.screen in place on resize, but
-        // re-pointing hitArea costs nothing and guards against any
-        // future change that would replace the rect instance.
+        if (!a || !container) return;
+        const w = container.clientWidth;
+        const h = container.clientHeight;
+        if (w <= 0 || h <= 0) return;
+        // Skip if already at the right size — avoids redundant
+        // reallocations of the canvas buffer.
+        if (a.renderer.width === w && a.renderer.height === h) return;
+        a.renderer.resize(w, h);
+        // Defensive: Pixi v8 mutates app.screen in place on resize,
+        // but re-pointing hitArea costs nothing and guards against any
+        // future Pixi change that would replace the rect instance.
         if (a.stage) a.stage.hitArea = a.screen;
-      });
+      };
+      const ro = new ResizeObserver(syncRendererSize);
       ro.observe(container);
       resizeObserverRef.current = ro;
+      const orientationHandler = () => {
+        // Browsers report final orientation viewport at varying delays;
+        // 50/200/600ms covers iOS Safari (slow), Android Chrome (mid),
+        // and pathological devices. Each is a no-op if dims unchanged.
+        syncRendererSize();
+        window.setTimeout(syncRendererSize, 50);
+        window.setTimeout(syncRendererSize, 200);
+        window.setTimeout(syncRendererSize, 600);
+      };
+      window.addEventListener("orientationchange", orientationHandler);
+      window.visualViewport?.addEventListener("resize", syncRendererSize);
+      orientationHandlerRef.current = orientationHandler;
+      visualViewportHandlerRef.current = syncRendererSize;
 
       // Publish the current viewport transform so the spawn handler in
       // game/page.tsx can convert canvas-display coordinates into
@@ -1523,6 +1560,20 @@ export default function PixiApp({ content }: PixiAppProps) {
       if (resizeObserverRef.current) {
         resizeObserverRef.current.disconnect();
         resizeObserverRef.current = null;
+      }
+      if (orientationHandlerRef.current) {
+        window.removeEventListener(
+          "orientationchange",
+          orientationHandlerRef.current
+        );
+        orientationHandlerRef.current = null;
+      }
+      if (visualViewportHandlerRef.current) {
+        window.visualViewport?.removeEventListener(
+          "resize",
+          visualViewportHandlerRef.current
+        );
+        visualViewportHandlerRef.current = null;
       }
       if (hoverRafRef.current !== null) {
         cancelAnimationFrame(hoverRafRef.current);
