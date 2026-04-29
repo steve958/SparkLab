@@ -24,7 +24,15 @@
     "foundations_name": "Foundations",
     "foundations_desc": "Learn about atoms and simple molecules. Ages 8–10.",
     "core_name": "Core Chemistry",
-    "core_desc": "Build bonds, run reactions, and conserve atoms. Ages 11–14."
+    "core_desc": "Build bonds, run reactions, and conserve atoms. Ages 11–14.",
+    "continue": "Continue",
+    "start_here": "Start here",
+    "mastered": "Mastered",
+    "next_up": "Next Up",
+    "replay": "Replay",
+    "back_to_worlds": "Back to Worlds",
+    "open_aria": "Open {{name}}: {{completed}} of {{total}} missions complete",
+    "missions_aria": "{{completed}} of {{total}} missions"
   },
   "missions": {
     "locked": "Locked",
@@ -32,7 +40,8 @@
     "star_0": "Keep trying! You can do it.",
     "star_1": "Good start! Try again for more stars.",
     "star_2": "Great work! You understand this well.",
-    "star_3": "Amazing! You are a chemistry star!"
+    "star_3": "Amazing! You are a chemistry star!",
+    "unlock_tooltip": "Complete {{titles}} to unlock"
   },
   "game": {
     "hint": "Hint",

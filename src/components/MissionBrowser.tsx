@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { useProgressStore } from "@/store/progressStore";
 import { useGameStore } from "@/store/gameStore";
 import { goBackOr } from "@/lib/navigation";
@@ -27,8 +28,13 @@ interface MissionBrowserProps {
 
 export default function MissionBrowser({ content, worldId }: MissionBrowserProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const world = content.worlds.find((w) => w.worldId === worldId);
   const missions = content.missions.filter((m) => m.worldId === worldId);
+  const localizedMissionTitle = (m: Mission) =>
+    t(`content.missions.${m.missionId}.title`, { defaultValue: m.title });
+  const localizedMissionBrief = (m: Mission) =>
+    t(`content.missions.${m.missionId}.brief`, { defaultValue: m.brief });
   const progress = useProgressStore((s) => s.progress);
   const isMissionUnlocked = useProgressStore((s) => s.isMissionUnlocked);
   const masteryResults = useProgressStore((s) => s.masteryResults);
@@ -48,11 +54,19 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
           onClick={() => goBackOr(router, "/worlds")}
           className="mt-4 text-primary hover:underline"
         >
-          Back to Worlds
+          {t("worlds.back_to_worlds")}
         </button>
       </div>
     );
   }
+
+  const localizedWorldName = t(`content.worlds.${world.worldId}.name`, {
+    defaultValue: world.name,
+  });
+  const localizedWorldDesc = t(
+    `content.worlds.${world.worldId}.description`,
+    { defaultValue: world.description }
+  );
 
   const handleSelectMission = (mission: Mission) => {
     if (!isMissionUnlocked(mission.missionId, mission.prerequisites)) return;
@@ -109,14 +123,14 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
         className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-3 sm:mb-6 touch-target"
       >
         <ArrowLeft className="w-5 h-5" />
-        Back to Worlds
+        {t("worlds.back_to_worlds")}
       </button>
 
       <div className="mb-4 sm:mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold" style={{ color: world.themeColor }}>
-          {world.name}
+          {localizedWorldName}
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 mt-1">{world.description}</p>
+        <p className="text-sm sm:text-base text-slate-600 mt-1">{localizedWorldDesc}</p>
       </div>
 
       {/* Mastery check entry point. Pre-check is offered before the
@@ -198,7 +212,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
 
       {masteryCheck && masteryModalPhase && (
         <MasteryCheckModal
-          worldName={world.name}
+          worldName={localizedWorldName}
           phase={masteryModalPhase}
           questions={masteryCheck[masteryModalPhase]}
           onCancel={() => setMasteryModalPhase(null)}
@@ -242,9 +256,14 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
           let lockTitle = "";
           if (!unlocked && mission.prerequisites.length > 0) {
             const preTitles = mission.prerequisites
-              .map((preId) => content.missions.find((m) => m.missionId === preId)?.title)
+              .map((preId) => {
+                const pre = content.missions.find((m) => m.missionId === preId);
+                return pre ? localizedMissionTitle(pre) : undefined;
+              })
               .filter(Boolean);
-            lockTitle = `Complete ${preTitles.join(", ")} to unlock`;
+            lockTitle = t("missions.unlock_tooltip", {
+              titles: preTitles.join(", "),
+            });
           }
 
           // Resolve the mission's primary target molecule (for
@@ -283,7 +302,7 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
               {isNextUp && (
                 <div className="absolute -top-2 -right-2 bg-primary text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                   <ArrowRight className="w-3 h-3" />
-                  Next Up
+                  {t("worlds.next_up")}
                 </div>
               )}
 
@@ -326,21 +345,21 @@ export default function MissionBrowser({ content, worldId }: MissionBrowserProps
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <h3 className="font-semibold text-sm sm:text-lg truncate">
-                    {mission.title}
+                    {localizedMissionTitle(mission)}
                   </h3>
                   {isCompleted && (
                     <span className="text-[10px] font-bold uppercase tracking-wider text-green-600 bg-green-100 px-1.5 py-0.5 rounded shrink-0">
-                      Replay
+                      {t("worlds.replay")}
                     </span>
                   )}
                 </div>
                 <p className="text-xs sm:text-sm text-slate-500 line-clamp-1 sm:line-clamp-1">
-                  {mission.brief}
+                  {localizedMissionBrief(mission)}
                 </p>
                 <div className="flex items-center gap-2 sm:gap-3 mt-1 text-[11px] sm:text-xs text-slate-600">
                   <span className="flex items-center gap-1 shrink-0">
                     <Clock className="w-3 h-3" />
-                    {mission.estimatedMinutes} min
+                    {t("missions.minutes", { count: mission.estimatedMinutes })}
                   </span>
                   {/* Star row inline with metadata on mobile so cards stay short. */}
                   <span className="flex sm:hidden items-center gap-0.5 ml-auto shrink-0">

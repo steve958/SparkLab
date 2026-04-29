@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { Star, FlaskConical, FlaskRound, Flame, ArrowRight, CheckCircle } from "lucide-react";
 import type { World, MissionProgress, Mission } from "@/types";
 
@@ -57,6 +58,7 @@ function statsFor(
 
 export default function WorldMap({ worlds, missions, progress }: WorldMapProps) {
   const router = useRouter();
+  const { t } = useTranslation();
   const stats = worlds.map((w) => statsFor(w, missions, progress));
 
   // "Next up" = the first world that isn't mastered. Drives the call-out.
@@ -65,10 +67,10 @@ export default function WorldMap({ worlds, missions, progress }: WorldMapProps) 
   return (
     <div className="w-full max-w-3xl">
       <h1 className="text-2xl sm:text-3xl font-bold text-center mb-1 sm:mb-2">
-        Choose a World
+        {t("worlds.title")}
       </h1>
       <p className="text-slate-600 text-center text-sm sm:text-base mb-6 sm:mb-10">
-        Pick where you want to explore
+        {t("worlds.subtitle")}
       </p>
 
       {/* The map itself: nodes in a row (or column on mobile) with connectors
@@ -80,6 +82,13 @@ export default function WorldMap({ worlds, missions, progress }: WorldMapProps) 
           const next = i < worlds.length - 1 ? stats[i + 1] : null;
           const isNextUp = i === nextUpIndex;
           const Icon = WORLD_ICON[world.worldId] ?? FlaskConical;
+          const localizedName = t(`content.worlds.${world.worldId}.name`, {
+            defaultValue: world.name,
+          });
+          const localizedDesc = t(
+            `content.worlds.${world.worldId}.description`,
+            { defaultValue: world.description }
+          );
 
           // Edge color: themed if predecessor has been started (visual
           // progression cue), neutral grey otherwise.
@@ -92,7 +101,11 @@ export default function WorldMap({ worlds, missions, progress }: WorldMapProps) 
             >
               <button
                 onClick={() => router.push(`/worlds?world=${world.worldId}`)}
-                aria-label={`Open ${world.name}: ${stat.completed} of ${stat.total} missions complete`}
+                aria-label={t("worlds.open_aria", {
+                  name: localizedName,
+                  completed: stat.completed,
+                  total: stat.total,
+                })}
                 className={`relative flex-1 w-full sm:w-auto flex sm:flex-col items-center gap-3 sm:gap-2 p-4 sm:p-5 rounded-2xl border-2 text-left transition-all hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ${
                   isNextUp
                     ? "border-primary bg-white shadow-sm"
@@ -109,13 +122,13 @@ export default function WorldMap({ worlds, missions, progress }: WorldMapProps) 
                 {isNextUp && (
                   <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 sm:left-auto sm:right-3 sm:translate-x-0 bg-primary text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm shrink-0 whitespace-nowrap">
                     <ArrowRight className="w-3 h-3" />
-                    {stat.isStarted ? "Continue" : "Start here"}
+                    {stat.isStarted ? t("worlds.continue") : t("worlds.start_here")}
                   </span>
                 )}
                 {stat.isMastered && (
                   <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 sm:left-auto sm:right-3 sm:translate-x-0 bg-green-600 text-white text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm shrink-0 whitespace-nowrap">
                     <CheckCircle className="w-3 h-3" />
-                    Mastered
+                    {t("worlds.mastered")}
                   </span>
                 )}
 
@@ -129,10 +142,10 @@ export default function WorldMap({ worlds, missions, progress }: WorldMapProps) 
 
                 <div className="flex-1 min-w-0 sm:text-center">
                   <h2 className="font-bold text-base sm:text-lg leading-tight">
-                    {world.name}
+                    {localizedName}
                   </h2>
                   <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 mt-0.5">
-                    {world.description}
+                    {localizedDesc}
                   </p>
 
                   {/* Progress bar uses the world theme color */}
@@ -143,7 +156,10 @@ export default function WorldMap({ worlds, missions, progress }: WorldMapProps) 
                       aria-valuenow={stat.completed}
                       aria-valuemin={0}
                       aria-valuemax={stat.total}
-                      aria-label={`${stat.completed} of ${stat.total} missions`}
+                      aria-label={t("worlds.missions_aria", {
+                        completed: stat.completed,
+                        total: stat.total,
+                      })}
                     >
                       <div
                         className="h-full rounded-full transition-all"

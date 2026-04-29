@@ -24,7 +24,15 @@
     "foundations_name": "Osnove",
     "foundations_desc": "Uči o atomima i jednostavnim molekulima. Uzrast 8–10.",
     "core_name": "Osnovna hemija",
-    "core_desc": "Pravi veze, izvodi reakcije i čuvaj atome. Uzrast 11–14."
+    "core_desc": "Pravi veze, izvodi reakcije i čuvaj atome. Uzrast 11–14.",
+    "continue": "Nastavi",
+    "start_here": "Počni ovde",
+    "mastered": "Savladano",
+    "next_up": "Sledeće",
+    "replay": "Ponovo",
+    "back_to_worlds": "Nazad na svetove",
+    "open_aria": "Otvori {{name}}: završeno {{completed}} od {{total}} misija",
+    "missions_aria": "{{completed}} od {{total}} misija"
   },
   "missions": {
     "locked": "Zaključano",
@@ -32,7 +40,8 @@
     "star_0": "Probaj ponovo! Možeš ti to.",
     "star_1": "Dobar početak! Pokušaj ponovo za više zvezda.",
     "star_2": "Odlično! Dobro razumeš ovo.",
-    "star_3": "Sjajno! Ti si zvezda hemije!"
+    "star_3": "Sjajno! Ti si zvezda hemije!",
+    "unlock_tooltip": "Završi {{titles}} da otključaš"
   },
   "game": {
     "hint": "Savet",
@@ -121,5 +130,143 @@
     "new_molecule": "Novi molekul",
     "new_mission": "Nova misija",
     "new_reaction": "Nova reakcija"
+  },
+  "content": {
+    "worlds": {
+      "foundations": {
+        "name": "Osnove",
+        "description": "Uči o atomima i jednostavnim molekulima. Uzrast 8–10."
+      },
+      "core": {
+        "name": "Osnovna hemija",
+        "description": "Pravi veze, izvodi reakcije i čuvaj atome. Uzrast 11–14."
+      },
+      "reactions": {
+        "name": "Laboratorija reakcija",
+        "description": "Pomešaj. Zapali, sagori, razdvoji — gledaj kako se atomi preraspoređuju ali nikad ne nestaju."
+      }
+    },
+    "missions": {
+      "f01_build_h_atom": {
+        "title": "Napravi atom vodonika",
+        "brief": "Vodonik je najjednostavniji atom. Ima 1 proton i 1 elektron. Možeš li ga napraviti?"
+      },
+      "f02_make_water": {
+        "title": "Napravi vodu",
+        "brief": "Voda se sastoji od 2 atoma vodonika i 1 atoma kiseonika. Poveži ih vezama!"
+      },
+      "f03_make_methane": {
+        "title": "Napravi metan",
+        "brief": "Metan je gas sa 1 ugljenikom i 4 vodonika. Glavni je sastojak prirodnog gasa."
+      },
+      "f04_count_particles": {
+        "title": "Prebroj čestice",
+        "brief": "Molekul vode ima 2 atoma vodonika i 1 atom kiseonika. Postavi tačno toliko na platno da prikažeš broj, pa pritisni Proveri."
+      },
+      "f05_make_co2": {
+        "title": "Ugljen-dioksid",
+        "brief": "Ugljen-dioksid ima 1 ugljenik i 2 atoma kiseonika. Veze su posebno jake — možeš li ih napraviti?"
+      },
+      "f06_helium_atom": {
+        "title": "Napravi atom helijuma",
+        "brief": "Helijum puni rođendanske balone jer je lakši od vazduha. Ima 2 protona i 2 elektrona."
+      },
+      "f07_oxygen_atom": {
+        "title": "Napravi atom kiseonika",
+        "brief": "Kiseonik je gas koji udišeš. Ima 8 protona. Napravi neutralan atom kiseonika!"
+      },
+      "f08_carbon_atom": {
+        "title": "Napravi atom ugljenika",
+        "brief": "Ugljenik je u olovkama, dijamantima i u svakom živom biću. Napravi neutralan atom ugljenika (6 protona, 6 elektrona)."
+      },
+      "f09_make_h2_gas": {
+        "title": "Vodonikov gas",
+        "brief": "Dva atoma vodonika mogu da dele jednu vezu i postanu molekul vodonikovog gasa (H₂). Probaj!"
+      },
+      "f10_make_o2_gas": {
+        "title": "Kiseonik gas",
+        "brief": "Kiseonik u vazduhu dolazi u parovima (O₂). Dva atoma dele jaču dvostruku vezu. Napravi ga!"
+      },
+      "c01_form_nacl": {
+        "title": "Napravi natrijum-hlorid",
+        "brief": "Natrijum i hlor formiraju jonsku vezu. Natrijum daje elektron, a hlor ga uzima. Napravi kristal soli!"
+      },
+      "c02_conserve_atoms": {
+        "title": "Sačuvaj atome",
+        "brief": "U hemijskoj reakciji atomi se preraspoređuju ali nikada ne nastaju i ne nestaju. Proveri da reakcija ima iste atome sa obe strane!"
+      },
+      "c03_ionic_vs_covalent": {
+        "title": "Jonska protiv kovalentne",
+        "brief": "Neki atomi dele elektrone. Drugi ih razmenjuju. Možeš li da prepoznaš koja je koja? Napravi obe vrste veza!"
+      },
+      "c04_make_ammonia": {
+        "title": "Napravi amonijak",
+        "brief": "Amonijak je NH₃. Azot i vodonik dele elektrone da popune svoje spoljne ljuske. Napravi ga!"
+      },
+      "c05_nitrogen_triple": {
+        "title": "Trostruka veza",
+        "brief": "Azotni gas ima jednu od najjačih veza u prirodi — trostruku vezu! Možeš li je napraviti?"
+      },
+      "c06_hcl_formation": {
+        "title": "Hlorovodonik",
+        "brief": "Vodonik i hlor reaguju i grade gas hlorovodonika. Napravi reaktante levo i proizvode desno!"
+      },
+      "c07_methane_combustion": {
+        "title": "Sagorevanje metana",
+        "brief": "Kada metan sagoreva, spaja se sa kiseonikom i daje ugljen-dioksid i vodu. Prikaži ovu reakciju i proveri da su atomi sačuvani!"
+      },
+      "c08_ammonia_formation": {
+        "title": "Sinteza amonijaka",
+        "brief": "Azot i vodonik se spajaju u amonijak. Tako se prave veštačka đubriva! Napravi reakciju i sačuvaj atome."
+      },
+      "c09_chlorine_atom": {
+        "title": "Napravi atom hlora",
+        "brief": "Hlor ima 17 protona i reaktivan je halogen. Napravi neutralan atom hlora."
+      },
+      "c10_make_cl2_gas": {
+        "title": "Hlorni gas",
+        "brief": "Dva atoma hlora dele jednu vezu i grade Cl₂, žuto-zeleni gas koji se koristi za bazene. Napravi ga!"
+      },
+      "c11_make_carbon_monoxide": {
+        "title": "Ugljen-monoksid",
+        "brief": "Ugljenik i kiseonik mogu da dele trostruku vezu i grade CO. Nevidljiv je i opasan, ali zanimljiva hemija. Napravi molekul!"
+      },
+      "c12_make_hydrogen_peroxide": {
+        "title": "Vodonik-peroksid",
+        "brief": "Vodonik-peroksid (H₂O₂) je voda sa jednim dodatnim kiseonikom. U sredini su povezana dva kiseonika, sa po jednim vodonikom na svakom kraju. Napravi ga!"
+      },
+      "c11_salt_water": {
+        "title": "Slana voda",
+        "brief": "Morska voda je so rastvorena u vodi. Napravi jedan NaCl i tri molekula vode jedan pored drugog — isti atomi koje već znaš, u svakodnevnoj kombinaciji."
+      },
+      "c12_carbon_chains": {
+        "title": "Veći ugljenikovi lanci",
+        "brief": "Atomi ugljenika mogu da se vezuju jedni za druge i grade lance. Napravi etan (C₂H₆): dva ugljenika koji dele jednu vezu, sa po tri vodonika na svakoj strani."
+      },
+      "r01_water_decomposition": {
+        "title": "Razdvoji vodu",
+        "brief": "Pusti struju kroz vodu i ona se razdvaja na vodonik i kiseonik. Pokaži 2H₂O → 2H₂ + O₂."
+      },
+      "r02_co_oxidation": {
+        "title": "Sagori ugljen-monoksid",
+        "brief": "Dodaj kiseonik ugljen-monoksidu i dobićeš ugljen-dioksid. Napravi 2CO + O₂ → 2CO₂ na platnu."
+      },
+      "r03_h2o2_decomposition": {
+        "title": "Vodonik-peroksid se raspada",
+        "brief": "Vodonik-peroksid se razlaže u vodu i kiseonik — to je ono pucketanje kad ga sipaš na ranicu. Pokaži 2H₂O₂ → 2H₂O + O₂."
+      },
+      "r04_methane_combustion_review": {
+        "title": "Sagorevanje metana — ponovo",
+        "brief": "Sagorevanje metana je ono što pravi plamen na šporetu. Ponovo pokreni CH₄ + 2O₂ → CO₂ + 2H₂O i proveri da su sva 4 vodonika i 4 kiseonika tu."
+      },
+      "r05_ammonia_synthesis_review": {
+        "title": "Amonijak iz vazduha",
+        "brief": "Azot iz vazduha plus vodonik daje amonijak, polazište većine veštačkih đubriva. Pokaži N₂ + 3H₂ → 2NH₃ i izbalansiraj atome."
+      },
+      "r06_acid_base": {
+        "title": "Kiselina sreće bazu",
+        "brief": "Kiselina (HCl) i baza (NaOH) se međusobno poništavaju. Napravi reaktante i proizvode reakcije HCl + NaOH → NaCl + H₂O — svaki atom je sa obe strane."
+      }
+    }
   }
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useTranslation } from "react-i18next";
 import { loadContent, type ContentBundle } from "@/data/loader";
 import { useProgressStore } from "@/store/progressStore";
 import { goBackOr } from "@/lib/navigation";
@@ -13,6 +14,7 @@ import { ArrowLeft } from "lucide-react";
 
 export default function WorldsPageContent() {
   const router = useRouter();
+  const { t } = useTranslation();
   const searchParams = useSearchParams();
   const selectedWorld = searchParams.get("world");
   const currentProfile = useProgressStore((s) => s.currentProfile);
@@ -78,7 +80,7 @@ export default function WorldsPageContent() {
           className="flex items-center gap-2 text-slate-500 hover:text-foreground mb-3 sm:mb-6 touch-target"
         >
           <ArrowLeft className="w-5 h-5" />
-          Back
+          {t("menu.back")}
         </button>
 
         <WorldMap
