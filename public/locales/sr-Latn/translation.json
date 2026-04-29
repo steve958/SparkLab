@@ -119,6 +119,7 @@
     "interaction_hint_mouse": "Prevuci atom da ga pomeriš. Klikni dva atoma da napraviš vezu — ponovo klikni vezu da je nadogradiš. Desni klik za brisanje.",
     "zoom_hint_touch": "Skupi prste za zumiranje — vidi kako elektroni jure kroz veze.",
     "zoom_hint_mouse": "Skroluj za zumiranje — vidi kako elektroni jure kroz veze.",
+    "rotate_hint": "Okreni telefon — lakše ćeš videti obe strane.",
     "conserve_atoms_label": "Sačuvaj atome:",
     "conserve_atoms_short_after": "isti atomi sa obe strane, samo drugačije raspoređeni.",
     "conserve_atoms_long_pre": "postavi početne atome kao molekule",

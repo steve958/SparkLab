@@ -119,6 +119,7 @@
     "interaction_hint_mouse": "Drag an atom to move it. Click two atoms to bond — click a bonded pair again to upgrade. Right-click to delete.",
     "zoom_hint_touch": "Pinch to zoom in — see the electrons whirl through the bonds.",
     "zoom_hint_mouse": "Scroll to zoom in — see the electrons whirl through the bonds.",
+    "rotate_hint": "Turn your phone — easier to see both sides.",
     "conserve_atoms_label": "Conserve atoms:",
     "conserve_atoms_short_after": "same atoms on both sides, just regrouped.",
     "conserve_atoms_long_pre": "place the starting atoms as molecules on the",

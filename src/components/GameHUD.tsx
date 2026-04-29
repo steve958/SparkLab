@@ -29,6 +29,7 @@ import {
   Trash2,
   Info,
   Search,
+  Smartphone,
 } from "lucide-react";
 
 interface GameHUDProps {
@@ -110,6 +111,8 @@ export default function GameHUD({ content }: GameHUDProps) {
   const [canvasCenterX, setCanvasCenterX] = useState(400);
   const [showInteractionHint, setShowInteractionHint] = useState(false);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(false);
+  const [showRotateHint, setShowRotateHint] = useState(false);
 
   // Snapshot the player's previous best at mission-init time so the
   // complete overlay can distinguish first-clear / new-best / replay.
@@ -170,6 +173,51 @@ export default function GameHUD({ content }: GameHUDProps) {
     setShowInteractionHint(false);
     const dismissedKey = `sparklab_hint_dismissed_${mission?.missionId ?? "global"}`;
     localStorage.setItem(dismissedKey, "1");
+  };
+
+  // Track orientation so the rotate-hint can appear/dismiss as the
+  // device flips. matchMedia listener fires on orientation change.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const mq = window.matchMedia("(orientation: portrait)");
+    setIsPortrait(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setIsPortrait(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  // Rotate-to-landscape nudge for reaction missions on portrait phones.
+  // The two-zone reaction layout (reactants left / products right) is
+  // cramped under ~480px wide; once the player rotates we treat the
+  // hint as satisfied and persist that so it doesn't re-trigger on
+  // every reaction mission. Stored globally rather than per-mission —
+  // once a player knows the trick, they know it.
+  const ROTATE_DISMISSED_KEY = "sparklab_rotate_hint_dismissed";
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!reactionMode || !isTouchDevice || !isPortrait) {
+      setShowRotateHint(false);
+      return;
+    }
+    const dismissed = localStorage.getItem(ROTATE_DISMISSED_KEY) === "1";
+    setShowRotateHint(!dismissed);
+  }, [reactionMode, isTouchDevice, isPortrait]);
+
+  // Persist dismissal whenever the player actually rotates to
+  // landscape during a reaction mission — that's the success path
+  // and should count as "I've seen the hint."
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (reactionMode && isTouchDevice && !isPortrait) {
+      localStorage.setItem(ROTATE_DISMISSED_KEY, "1");
+    }
+  }, [reactionMode, isTouchDevice, isPortrait]);
+
+  const dismissRotateHint = () => {
+    setShowRotateHint(false);
+    if (typeof window !== "undefined") {
+      localStorage.setItem(ROTATE_DISMISSED_KEY, "1");
+    }
   };
 
   // Find target molecule for 3D view (first allowed molecule for build-molecule missions)
@@ -382,13 +430,36 @@ export default function GameHUD({ content }: GameHUDProps) {
         )}
       </div>
 
+      {/* Rotate-phone nudge for reaction missions on portrait phones.
+          Replaces the generic interaction hint while it's showing —
+          stacking two banners on a small screen wastes vertical space
+          and the rotate tip is more pressing here (the two-zone layout
+          is unusably narrow in portrait). Auto-resolves when the
+          player flips to landscape. */}
+      {showRotateHint ? (
+        <div className="flex items-start justify-between gap-2 px-2 sm:px-3 py-2 bg-indigo-50 border-b border-indigo-100">
+          <div className="flex items-start gap-2 text-xs sm:text-sm text-indigo-800 min-w-0">
+            <Smartphone className="w-4 h-4 shrink-0 mt-0.5 rotate-90" />
+            <p>{t("game.rotate_hint")}</p>
+          </div>
+          <button
+            onClick={dismissRotateHint}
+            className="p-1 rounded hover:bg-indigo-100 shrink-0 -mr-1"
+            aria-label={t("game.dismiss_hint")}
+          >
+            <X className="w-4 h-4 text-indigo-600" />
+          </button>
+        </div>
+      ) : null}
+
       {/* Interaction hint banner. Two stacked tips: the basics
           (drag / tap / delete) plus a "zoom in for the real magic"
           line that surfaces the Bohr nucleus + electron-shell + bond
           electron-flow visuals — easy to miss without a nudge since
           they're gated on a zoom threshold. Both share one banner so
-          the player only has one thing to dismiss. */}
-      {showInteractionHint && (
+          the player only has one thing to dismiss. Suppressed when
+          the rotate hint is up so we don't stack two banners. */}
+      {showInteractionHint && !showRotateHint && (
         <div className="flex items-start justify-between gap-2 px-2 sm:px-3 py-2 bg-indigo-50 border-b border-indigo-100">
           <div className="flex items-start gap-2 text-xs sm:text-sm text-indigo-800 min-w-0">
             <Lightbulb className="w-4 h-4 shrink-0 mt-0.5" />
